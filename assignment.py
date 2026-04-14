@@ -89,6 +89,27 @@ def _ev_stops(it: Dict[str, Any]) -> List[Dict[str, Any]]:
     return stops
 
 
+def _ev_stops_at_time(it: Dict[str, Any], t: int) -> List[Dict[str, Any]]:
+    """EV charging stops at time t, including implicit multimodal access fallback.
+
+    Fallback rule (Scheme A):
+    - For EV_to_eVTOL, if scalar access_energy_kwh is present at t and explicit
+      access_stations energy is not present at t, dep_station is treated as an
+      implicit EV stop for wait/utilization/reliability/charging accounting.
+    """
+    out: List[Dict[str, Any]] = []
+    for stop in _ev_stops(it):
+        if stop.get("t") == t:
+            out.append(stop)
+    if is_multimodal_evtol(it):
+        explicit_access_energy, scalar_access_energy = _access_energy_for_time(it, t)
+        dep_station = it.get("dep_station")
+        has_explicit_at_t = any(st.get("t") == t for st in (it.get("access_stations", []) or []))
+        if scalar_access_energy > 1.0e-12 and explicit_access_energy <= 1.0e-12 and not has_explicit_at_t and dep_station is not None:
+            out.append({"station": dep_station, "t": t, "energy": scalar_access_energy, "implicit_access_fallback": True})
+    return out
+
+
 
 
 def _access_energy_for_time(it: Dict[str, Any], t: int) -> Tuple[float, float]:
@@ -163,6 +184,9 @@ def compute_itinerary_costs(
     vt_departure_waits: Dict[str, Dict[str, Dict[int, float]]] | None = None,
     transfer_time_by_station: Dict[str, float] | Dict[str, Dict[int, float]] | None = None,
     transfer_time_default: float = 0.0,
+    multimodal_penalty_cfg: Dict[str, Any] | None = None,
+    vt_service_prob: Dict[str, Dict[int, float]] | None = None,
+    ev_service_prob: Dict[str, Dict[int, float]] | None = None,
 ) -> Dict[str, Dict[int, Dict[str, float]]]:
     costs: Dict[str, Dict[int, Dict[str, float]]] = {it["id"]: {} for it in itineraries}
     for it in itineraries:
@@ -173,6 +197,9 @@ def compute_itinerary_costs(
             money_t = _value_by_time(it.get("money", 0.0), t, 0.0)
             tt = 0.0
             charge_cost = 0.0
+            access_travel_time_applied = 0.0
+            ev_access_wait_applied = 0.0
+            flight_time_applied = 0.0
             for seg in _road_segments(it):
                 if seg["t"] != t:
                     continue
@@ -180,28 +207,48 @@ def compute_itinerary_costs(
                 if arc not in travel_times or t not in travel_times[arc]:
                     raise KeyError(f"Missing travel_times for itinerary {it_id}, arc={arc}, t={t}")
                 tt += float(travel_times[arc][t]) * float(seg.get("frac", 1.0))
+            for seg in (it.get("access_arcs", []) or []):
+                if seg.get("t") != t:
+                    continue
+                arc = seg.get("arc")
+                if arc in travel_times and t in travel_times[arc]:
+                    access_travel_time_applied += float(travel_times[arc][t]) * float(seg.get("frac", 1.0))
 
             # EV component (pure EV or multimodal access)
-            for stop in _ev_stops(it):
-                if stop.get("t") != t:
-                    continue
+            ev_stops_t = _ev_stops_at_time(it, t)
+            has_implicit_access_fallback = any(bool(st.get("implicit_access_fallback", False)) for st in ev_stops_t)
+            for stop in ev_stops_t:
                 station = stop.get("station")
                 if station not in ev_station_waits or t not in ev_station_waits[station]:
                     raise KeyError(f"Missing ev_station_waits for itinerary {it_id}, station={station}, t={t}")
                 if station not in electricity_price or t not in electricity_price[station]:
                     raise KeyError(f"Missing electricity_price for itinerary {it_id}, station={station}, t={t}")
-                tt += float(ev_station_waits[station][t])
+                wait_val = float(ev_station_waits[station][t])
+                tt += wait_val
+                if is_multimodal_evtol(it):
+                    ev_access_wait_applied += wait_val
                 charge_cost += float(stop.get("energy", 0.0)) * float(electricity_price[station][t])
 
             transfer_time_applied = 0.0
             transfer_time_source = "none"
             access_energy_price_source = "none"
+            multimodal_extra_penalty = 0.0
+            vt_wait_applied = 0.0
+            multimodal_penalty_components = {
+                "base_transfer_fragility_penalty": 0.0,
+                "ev_unreliability_term": 0.0,
+                "vt_unreliability_term": 0.0,
+                "joint_unreliability_term": 0.0,
+                "transfer_overrun_term": 0.0,
+                "ev_prob_used": 1.0,
+                "vt_prob_used": 1.0,
+            }
 
             # Optional scalar access energy (multimodal).
             # If access_stations already provide per-station energy for this time, scalar access_energy_kwh
             # is treated as redundant metadata and not re-charged to avoid double counting.
             explicit_access_energy, scalar_access_energy = _access_energy_for_time(it, t)
-            access_energy_kwh = scalar_access_energy if explicit_access_energy <= 1.0e-12 else 0.0
+            access_energy_kwh = scalar_access_energy if explicit_access_energy <= 1.0e-12 and not has_implicit_access_fallback else 0.0
             access_energy_consistency = "ok"
             if explicit_access_energy > 1.0e-12 and scalar_access_energy > 1.0e-12:
                 rel_gap = abs(explicit_access_energy - scalar_access_energy) / max(1.0e-6, max(explicit_access_energy, scalar_access_energy))
@@ -228,11 +275,19 @@ def compute_itinerary_costs(
                         "TT": float("inf"),
                         "Money": float("inf"),
                         "ChargeCost": 0.0,
+                        "ContinuityPenalty": 0.0,
                         "cost_breakdown": {
                             "transfer_time_applied": 0.0,
                             "transfer_time_source": "none",
                             "access_energy_price_source": access_energy_price_source,
-                        "access_energy_consistency": access_energy_consistency,
+                            "access_energy_consistency": access_energy_consistency,
+                            "access_travel_time_applied": access_travel_time_applied,
+                            "ev_access_wait_applied": ev_access_wait_applied,
+                            "transfer_processing_time_applied": 0.0,
+                            "vt_departure_wait_applied": 0.0,
+                            "flight_time_applied": 0.0,
+                            "continuity_penalty": 0.0,
+                            "continuity_penalty_components": multimodal_penalty_components,
                         },
                     }
                     continue
@@ -248,24 +303,77 @@ def compute_itinerary_costs(
                         transfer_time_source = "global_default"
                     tt += transfer_time_applied
                 tt += flight_time
+                flight_time_applied = flight_time
                 svc_class = get_evtol_service_class(it)
                 if vt_departure_waits is not None:
                     if dep_station not in vt_departure_waits or svc_class not in vt_departure_waits[dep_station] or t not in vt_departure_waits[dep_station][svc_class]:
                         raise KeyError(f"Missing vt_departure_waits for itinerary {it_id}, dep_station={dep_station}, class={svc_class}, t={t}")
-                    tt += float(vt_departure_waits[dep_station][svc_class][t])
+                    vt_wait_applied = float(vt_departure_waits[dep_station][svc_class][t])
+                    tt += vt_wait_applied
                 e_per_pax = _value_by_time(it.get("e_per_pax", 0.0), t, 0.0)
                 if dep_station not in electricity_price or t not in electricity_price[dep_station]:
                     raise KeyError(f"Missing electricity_price for itinerary {it_id}, dep_station={dep_station}, t={t}")
                 money_t += phi_markup * e_per_pax * float(electricity_price[dep_station][t])
+                if is_multimodal_evtol(it) and multimodal_penalty_cfg:
+                    base_penalty = float(multimodal_penalty_cfg.get("base_transfer_fragility_penalty", 0.0) or 0.0)
+                    coeff_ev_unrel = float(multimodal_penalty_cfg.get("coeff_ev_unreliability", 0.0) or 0.0)
+                    coeff_vt_unrel = float(multimodal_penalty_cfg.get("coeff_vt_unreliability", 0.0) or 0.0)
+                    coeff_joint_unrel = float(multimodal_penalty_cfg.get("coeff_joint_unreliability", 0.0) or 0.0)
+                    vt_prob = 1.0
+                    if vt_service_prob and dep_station in vt_service_prob:
+                        vt_prob = min(1.0, max(0.0, float(vt_service_prob[dep_station].get(t, 1.0))))
+                    ev_prob = 1.0
+                    if ev_service_prob is not None:
+                        ev_candidates = []
+                        for stop in _ev_stops_at_time(it, t):
+                            station = stop.get("station")
+                            if station in ev_service_prob:
+                                ev_candidates.append(float(ev_service_prob[station].get(t, 1.0)))
+                        if ev_candidates:
+                            ev_prob = min(1.0, max(0.0, min(ev_candidates)))
+                    ev_unrel = 1.0 - ev_prob
+                    vt_unrel = 1.0 - vt_prob
+                    ev_term = coeff_ev_unrel * ev_unrel
+                    vt_term = coeff_vt_unrel * vt_unrel
+                    joint_term = coeff_joint_unrel * ev_unrel * vt_unrel
+                    coeff_transfer_overrun = float(multimodal_penalty_cfg.get("coeff_transfer_overrun", 0.0) or 0.0)
+                    transfer_buffer_threshold = float(multimodal_penalty_cfg.get("transfer_buffer_threshold", 0.0) or 0.0)
+                    preflight_transfer_burden = ev_access_wait_applied + transfer_time_applied + vt_wait_applied
+                    transfer_overrun = coeff_transfer_overrun * max(0.0, preflight_transfer_burden - transfer_buffer_threshold)
+                    multimodal_extra_penalty = (
+                        base_penalty
+                        + ev_term
+                        + vt_term
+                        + joint_term
+                        + transfer_overrun
+                    )
+                    multimodal_penalty_components = {
+                        "base_transfer_fragility_penalty": base_penalty,
+                        "ev_unreliability_term": ev_term,
+                        "vt_unreliability_term": vt_term,
+                        "joint_unreliability_term": joint_term,
+                        "transfer_overrun_term": transfer_overrun,
+                        "ev_prob_used": ev_prob,
+                        "vt_prob_used": vt_prob,
+                    }
 
             costs[it_id][t] = {
                 "TT": tt,
                 "Money": money_t,
                 "ChargeCost": charge_cost,
+                "ContinuityPenalty": multimodal_extra_penalty,
                 "cost_breakdown": {
                     "transfer_time_applied": transfer_time_applied,
                     "transfer_time_source": transfer_time_source,
                     "access_energy_price_source": access_energy_price_source,
+                    "access_energy_consistency": access_energy_consistency,
+                    "access_travel_time_applied": access_travel_time_applied,
+                    "ev_access_wait_applied": ev_access_wait_applied,
+                    "transfer_processing_time_applied": transfer_time_applied,
+                    "continuity_penalty": multimodal_extra_penalty,
+                    "vt_departure_wait_applied": vt_wait_applied,
+                    "flight_time_applied": flight_time_applied,
+                    "continuity_penalty_components": multimodal_penalty_components,
                 },
             }
     return costs
@@ -349,7 +457,7 @@ def logit_assignment(
                 total_demand = float(time_map.get(t, 0.0))
                 for it in available_alts:
                     comp = costs[it["id"]][t]
-                    raw_cost = float(vot[group][t]) * comp["TT"] + comp["Money"] + comp["ChargeCost"]
+                    raw_cost = float(vot[group][t]) * comp["TT"] + comp["Money"] + comp["ChargeCost"] + float(comp.get("ContinuityPenalty", 0.0))
                     generalized_costs_raw[it["id"]][group][t] = raw_cost
                     if math.isinf(raw_cost):
                         generalized_costs_perceived[it["id"]][group][t] = float("inf")
@@ -368,9 +476,7 @@ def logit_assignment(
                     ev_prob = 1.0
                     if ev_service_prob is not None:
                         ev_candidates = []
-                        for stop in _ev_stops(it):
-                            if stop.get("t") != t:
-                                continue
+                        for stop in _ev_stops_at_time(it, t):
                             station = stop.get("station")
                             if station in ev_service_prob:
                                 ev_candidates.append(float(ev_service_prob[station].get(t, 1.0)))
@@ -448,17 +554,20 @@ def aggregate_ev_station_utilization(
     itineraries: List[Dict[str, Any]],
     flows: Dict[str, Dict[str, Dict[int, float]]],
     times: List[int],
+    multimodal_access_utilization_factor: float = 1.0,
 ) -> Dict[str, Dict[int, float]]:
     utilization: Dict[str, Dict[int, float]] = {}
     for it in itineraries:
-        for stop in _ev_stops(it):
-            utilization.setdefault(stop["station"], {t: 0.0 for t in times})
+        for t in times:
+            for stop in _ev_stops_at_time(it, t):
+                utilization.setdefault(stop["station"], {tt: 0.0 for tt in times})
     for it in itineraries:
         for _, time_map in flows.get(it.get("id"), {}).items():
-            for stop in _ev_stops(it):
-                station = stop["station"]
-                t = stop["t"]
-                utilization[station][t] += float(time_map.get(t, 0.0))
+            for t in times:
+                for stop in _ev_stops_at_time(it, t):
+                    station = stop["station"]
+                    factor = float(multimodal_access_utilization_factor) if is_multimodal_evtol(it) else 1.0
+                    utilization[station][t] += factor * float(time_map.get(t, 0.0))
     return utilization
 
 
@@ -509,36 +618,64 @@ def aggregate_ev_energy_demand(
     flows: Dict[str, Dict[str, Dict[int, float]]],
     times: List[int],
 ) -> Dict[str, Dict[int, float]]:
-    energy: Dict[str, Dict[int, float]] = {}
+    components = aggregate_ev_energy_demand_components(itineraries, flows, times)
+    return components["total"]
+
+
+def aggregate_ev_energy_demand_components(
+    itineraries: List[Dict[str, Any]],
+    flows: Dict[str, Dict[str, Dict[int, float]]],
+    times: List[int],
+) -> Dict[str, Dict[str, Dict[int, float]]]:
+    pure_ev: Dict[str, Dict[int, float]] = {}
+    access_ev: Dict[str, Dict[int, float]] = {}
     for it in itineraries:
-        for stop in _ev_stops(it):
-            energy.setdefault(stop["station"], {t: 0.0 for t in times})
+        if str(it.get("mode", "")) == "EV":
+            for t in times:
+                for stop in _ev_stops_at_time(it, t):
+                    pure_ev.setdefault(stop["station"], {tt: 0.0 for tt in times})
+        elif is_multimodal_evtol(it):
+            for t in times:
+                for stop in _ev_stops_at_time(it, t):
+                    access_ev.setdefault(stop["station"], {tt: 0.0 for tt in times})
     for it in itineraries:
         for _, time_map in flows.get(it.get("id"), {}).items():
-            for stop in _ev_stops(it):
-                station = stop["station"]
-                t = stop["t"]
-                energy[station][t] += float(stop.get("energy", 0.0)) * float(time_map.get(t, 0.0))
-            for t in times:
-                explicit_access_energy, scalar_access_energy = _access_energy_for_time(it, t)
-                access_energy = scalar_access_energy if explicit_access_energy <= 1.0e-12 else 0.0
-                if access_energy <= 0.0:
-                    continue
-                allocated = False
-                access_station_ids = _access_station_ids(it, t)
-                if access_station_ids:
-                    share = access_energy / max(1, len(access_station_ids))
-                    for sid in access_station_ids:
-                        energy.setdefault(sid, {tt: 0.0 for tt in times})
-                        energy[sid][t] += share * float(time_map.get(t, 0.0))
-                    allocated = True
-                if not allocated:
-                    dep_station = it.get("dep_station")
-                    if dep_station is None:
+            if str(it.get("mode", "")) == "EV":
+                for t in times:
+                    for stop in _ev_stops_at_time(it, t):
+                        station = stop["station"]
+                        pure_ev[station][t] += float(stop.get("energy", 0.0)) * float(time_map.get(t, 0.0))
+            elif is_multimodal_evtol(it):
+                for t in times:
+                    for stop in _ev_stops_at_time(it, t):
+                        station = stop["station"]
+                        access_ev[station][t] += float(stop.get("energy", 0.0)) * float(time_map.get(t, 0.0))
+                for t in times:
+                    explicit_access_energy, scalar_access_energy = _access_energy_for_time(it, t)
+                    has_implicit = any(bool(st.get("implicit_access_fallback", False)) for st in _ev_stops_at_time(it, t))
+                    access_energy = scalar_access_energy if explicit_access_energy <= 1.0e-12 and not has_implicit else 0.0
+                    if access_energy <= 0.0:
                         continue
-                    energy.setdefault(dep_station, {tt: 0.0 for tt in times})
-                    energy[dep_station][t] += access_energy * float(time_map.get(t, 0.0))
-    return energy
+                    allocated = False
+                    access_station_ids = _access_station_ids(it, t)
+                    if access_station_ids:
+                        share = access_energy / max(1, len(access_station_ids))
+                        for sid in access_station_ids:
+                            access_ev.setdefault(sid, {tt: 0.0 for tt in times})
+                            access_ev[sid][t] += share * float(time_map.get(t, 0.0))
+                        allocated = True
+                    if not allocated:
+                        dep_station = it.get("dep_station")
+                        if dep_station is None:
+                            continue
+                        access_ev.setdefault(dep_station, {tt: 0.0 for tt in times})
+                        access_ev[dep_station][t] += access_energy * float(time_map.get(t, 0.0))
+
+    total: Dict[str, Dict[int, float]] = {}
+    stations = set(pure_ev.keys()) | set(access_ev.keys())
+    for s in stations:
+        total[s] = {t: float(pure_ev.get(s, {}).get(t, 0.0)) + float(access_ev.get(s, {}).get(t, 0.0)) for t in times}
+    return {"pure_ev": pure_ev, "access_ev": access_ev, "total": total}
 
 
 def aggregate_evtol_demand(
