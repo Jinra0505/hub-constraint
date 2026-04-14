@@ -311,14 +311,15 @@ def _compute_group_time_supermode_metrics(
                 agg[sm]["flow"] += f
                 tt = float(comp.get("TT", 0.0))
                 money_charge = float(comp.get("Money", 0.0) + comp.get("ChargeCost", 0.0))
-                agg[sm]["gen_cost"] += f * (float(vot[g][t]) * tt + money_charge)
+                continuity_penalty = float(comp.get("ContinuityPenalty", 0.0))
+                agg[sm]["gen_cost"] += f * (float(vot[g][t]) * tt + money_charge + continuity_penalty)
                 if generalized_costs is not None:
-                    agg[sm]["perceived_cost"] += f * float(generalized_costs.get(it_id, {}).get(g, {}).get(t, float(vot[g][t]) * tt + money_charge))
+                    agg[sm]["perceived_cost"] += f * float(generalized_costs.get(it_id, {}).get(g, {}).get(t, float(vot[g][t]) * tt + money_charge + continuity_penalty))
                 else:
-                    agg[sm]["perceived_cost"] += f * (float(vot[g][t]) * tt + money_charge)
+                    agg[sm]["perceived_cost"] += f * (float(vot[g][t]) * tt + money_charge + continuity_penalty)
                 agg[sm]["travel_time"] += f * tt
                 agg[sm]["money_plus_charge"] += f * money_charge
-                agg[sm]["transfer_burden"] += f * float(cb.get("multimodal_extra_penalty", 0.0) + cb.get("transfer_time_applied", 0.0))
+                agg[sm]["transfer_burden"] += f * float(cb.get("continuity_penalty", 0.0) + cb.get("transfer_time_applied", 0.0))
                 agg[sm]["vt_wait"] += f * float(cb.get("vt_departure_wait_applied", 0.0))
             metrics[g][t] = {}
             for sm, vals in agg.items():
@@ -350,6 +351,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     cfg.setdefault("tol_flow", cfg.get("tol", 1e-3))
     cfg.setdefault("tol_service_prob", cfg.get("tol", 1e-3))
     cfg.setdefault("reroute_logit_temperature", 1.0)
+    cfg.setdefault("aircraft_inner_recheck_max_rounds", 2)
     _apply_hub_power_scenario(data)
 
     times = [int(t) for t in data["sets"]["time"]]
@@ -419,19 +421,28 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         vt_pax_slow = float(data.get("parameters", {}).get("vt_pax_per_departure_slow", 4.0) or 4.0)
         vt_turn_lag = int(data.get("parameters", {}).get("vt_turnaround_lag", 1) or 1)
         vt_init = {str(k): float(v) for k, v in data.get("parameters", {}).get("vt_aircraft_init_by_station", {}).items()}
-        flows_target, aircraft_diag = _enforce_aircraft_inventory(
-            flows_target,
-            itineraries,
-            times,
-            float(data["meta"]["delta_t"]),
-            details.get("utilities", {}),
-            details.get("unserved_demand", {}),
-            vt_pax_fast,
-            vt_pax_slow,
-            vt_turn_lag,
-            vt_init,
-            reroute_logit_temperature=float(cfg.get("reroute_logit_temperature", 1.0) or 1.0),
-        )
+        max_aircraft_rounds = max(1, int(cfg.get("aircraft_inner_recheck_max_rounds", 2) or 2))
+        rounds_used = 0
+        aircraft_diag = {}
+        for _ in range(max_aircraft_rounds):
+            rounds_used += 1
+            flows_target, aircraft_diag = _enforce_aircraft_inventory(
+                flows_target,
+                itineraries,
+                times,
+                float(data["meta"]["delta_t"]),
+                details.get("utilities", {}),
+                details.get("unserved_demand", {}),
+                vt_pax_fast,
+                vt_pax_slow,
+                vt_turn_lag,
+                vt_init,
+                reroute_logit_temperature=float(cfg.get("reroute_logit_temperature", 1.0) or 1.0),
+            )
+            if float(aircraft_diag.get("aircraft_binding_count", 0.0)) <= 1.0e-9:
+                break
+        aircraft_diag["aircraft_inner_recheck_rounds"] = rounds_used
+        aircraft_diag["aircraft_post_reroute_binding_count"] = float(aircraft_diag.get("aircraft_binding_count", 0.0))
         aircraft_diag_last = aircraft_diag
 
         max_flow_delta = 0.0
@@ -510,6 +521,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 "lp_solver": lp_diag.get("solver") if isinstance(lp_diag, dict) else "unknown",
                 "unserved_demand_total": float(details.get("unserved_demand_total", 0.0)),
                 "aircraft_binding_count": float(aircraft_diag_last.get("aircraft_binding_count", 0.0)),
+                "aircraft_inner_recheck_rounds": float(aircraft_diag_last.get("aircraft_inner_recheck_rounds", 1.0)),
+                "aircraft_post_reroute_binding_count": float(aircraft_diag_last.get("aircraft_post_reroute_binding_count", 0.0)),
             }
         )
         if (
@@ -553,6 +566,22 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         mode_totals_by_group[g] = {k: v / max(1, len(times)) for k, v in sums.items()}
 
     shift_group = max(groups, key=lambda gg: mode_totals_by_group[gg]["EV_to_eVTOL"]) if groups else None
+    avg_evtol_share = sum(v["eVTOL"] for v in mode_totals_by_group.values()) / max(1, len(mode_totals_by_group))
+    avg_mm_share = sum(v["EV_to_eVTOL"] for v in mode_totals_by_group.values()) / max(1, len(mode_totals_by_group))
+    mm_gc_vals = []
+    ev_gc_vals = []
+    for g in groups:
+        for t in times:
+            mm_gc_vals.append(float(group_time_super[g][t]["EV_to_eVTOL"]["avg_generalized_cost"]))
+            ev_gc_vals.append(float(group_time_super[g][t]["eVTOL"]["avg_generalized_cost"]))
+    avg_mm_gc = sum(mm_gc_vals) / max(1, len(mm_gc_vals))
+    avg_ev_gc = sum(ev_gc_vals) / max(1, len(ev_gc_vals))
+    if avg_mm_gc > avg_ev_gc + 1.0e-6 and avg_mm_share <= avg_evtol_share + 1.0e-6:
+        inference = "In this run, EV_to_eVTOL appears more constrained than pure eVTOL (higher average generalized cost and no higher average share)."
+    elif avg_mm_gc < avg_ev_gc - 1.0e-6 and avg_mm_share >= avg_evtol_share - 1.0e-6:
+        inference = "In this run, EV_to_eVTOL does not appear more constrained than pure eVTOL under current parameters."
+    else:
+        inference = "In this run, EV_to_eVTOL vs pure eVTOL sensitivity is mixed; cost/share indicators do not point to a single dominant effect."
 
     return {
         "flows": flows,
@@ -569,6 +598,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "aircraft_departures_by_station_time": aircraft_diag_last.get("aircraft_departures_by_station_time", {}),
         "aircraft_returns_by_station_time": aircraft_diag_last.get("aircraft_returns_by_station_time", {}),
         "aircraft_binding_count": aircraft_diag_last.get("aircraft_binding_count", 0.0),
+        "aircraft_inner_recheck_rounds": aircraft_diag_last.get("aircraft_inner_recheck_rounds", 1),
+        "aircraft_post_reroute_binding_count": aircraft_diag_last.get("aircraft_post_reroute_binding_count", 0.0),
         "aircraft_curtailment_summary": {
             "rerouted_to_evtol": aircraft_diag_last.get("aircraft_rerouted_to_evtol", 0.0),
             "rerouted_to_multimodal": aircraft_diag_last.get("aircraft_rerouted_to_multimodal", 0.0),
@@ -592,7 +623,11 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "total_evtol_charging_kwh": total_vt,
             "avg_vt_service_probability": vt_prob_avg,
             "avg_ev_service_probability": ev_prob_avg,
-            "inference": "EV_to_eVTOL is expected to be more sensitive than pure eVTOL under tighter hub caps because it consumes both access-EV and eVTOL hub resources.",
+            "inference": inference,
+            "avg_ev_to_evtol_share": avg_mm_share,
+            "avg_pure_evtol_share": avg_evtol_share,
+            "avg_ev_to_evtol_generalized_cost": avg_mm_gc,
+            "avg_pure_evtol_generalized_cost": avg_ev_gc,
             "group_with_highest_avg_ev_to_evtol_share": shift_group,
             "group_average_mode_share": mode_totals_by_group,
         },
