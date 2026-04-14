@@ -137,9 +137,9 @@
       "coeff_vt_unreliability": 0.14,
       "coeff_joint_unreliability": 0.2,
       "coeff_transfer_overrun": 0.1,
-      "transfer_buffer_threshold": 0.6
+      "transfer_buffer_threshold": 0.5
     },
-    "voll_ev_per_kwh": 4.0,
+    "voll_ev_per_kwh": 20.0,
     "voll_vt_per_kwh": 16.0,
     "terminal_soc_policy": "at_least_min",
     "ev_reliability_gamma": 0.12,
