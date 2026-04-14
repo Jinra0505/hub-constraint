@@ -1,6 +1,6 @@
 from typing import Any, Dict, Tuple
 
-from .assignment import aggregate_ev_energy_demand, aggregate_evtol_demand, aggregate_vt_departure_flow_by_class, compute_evtol_energy_demand
+from .assignment import aggregate_ev_energy_demand, aggregate_ev_energy_demand_components, aggregate_evtol_demand, aggregate_vt_departure_flow_by_class, compute_evtol_energy_demand
 
 HAS_GUROBI = False
 try:
@@ -147,6 +147,8 @@ def compute_station_loads_from_flows(
 
     Returns a dictionary with:
     - E_ev_req[s][t], P_ev_req_kw[s][t]
+    - E_ev_pure_req[s][t], E_ev_access_req[s][t]
+    - P_ev_pure_req_kw[s][t], P_ev_access_req_kw[s][t]
     - E_vt_req[s][t], P_vt_req_kw_energy[s][t], P_vt_req_kw_grid[s][t]
     - P_total_req[s][t]
     """
@@ -156,12 +158,19 @@ def compute_station_loads_from_flows(
 
     d_vt_route = aggregate_evtol_demand(flows, itineraries, times)
     e_vt_dep = compute_evtol_energy_demand(d_vt_route, itineraries, times)
-    e_ev_station = aggregate_ev_energy_demand(itineraries, flows, times)
+    e_ev_components = aggregate_ev_energy_demand_components(itineraries, flows, times)
+    e_ev_station = e_ev_components["total"]
+    e_ev_pure = e_ev_components["pure_ev"]
+    e_ev_access = e_ev_components["access_ev"]
     vt_departure_flow_by_class = aggregate_vt_departure_flow_by_class(itineraries, flows, times)
 
     E_ev_req = {s: {t: 0.0 for t in times} for s in ev_stations}
+    E_ev_pure_req = {s: {t: 0.0 for t in times} for s in ev_stations}
+    E_ev_access_req = {s: {t: 0.0 for t in times} for s in ev_stations}
     E_vt_req = {s: {t: 0.0 for t in times} for s in hybrid_stations}
     P_ev_req = {s: {t: 0.0 for t in times} for s in ev_stations}
+    P_ev_pure_req = {s: {t: 0.0 for t in times} for s in ev_stations}
+    P_ev_access_req = {s: {t: 0.0 for t in times} for s in ev_stations}
     P_vt_req_energy = {s: {t: 0.0 for t in times} for s in hybrid_stations}
     P_vt_req_grid = {s: {t: 0.0 for t in times} for s in hybrid_stations}
     P_total_req = {s: {t: 0.0 for t in times} for s in ev_stations}
@@ -169,7 +178,11 @@ def compute_station_loads_from_flows(
     for s in ev_stations:
         for t in times:
             E_ev_req[s][t] = float(e_ev_station.get(s, {}).get(t, 0.0))
+            E_ev_pure_req[s][t] = float(e_ev_pure.get(s, {}).get(t, 0.0))
+            E_ev_access_req[s][t] = float(e_ev_access.get(s, {}).get(t, 0.0))
             P_ev_req[s][t] = E_ev_req[s][t] / delta_t if delta_t > 0 else 0.0
+            P_ev_pure_req[s][t] = E_ev_pure_req[s][t] / delta_t if delta_t > 0 else 0.0
+            P_ev_access_req[s][t] = E_ev_access_req[s][t] / delta_t if delta_t > 0 else 0.0
             P_total_req[s][t] = P_ev_req[s][t]
 
     for s in hybrid_stations:
@@ -184,9 +197,13 @@ def compute_station_loads_from_flows(
 
     return {
         "E_ev_req": E_ev_req,
+        "E_ev_pure_req": E_ev_pure_req,
+        "E_ev_access_req": E_ev_access_req,
         "E_vt_req": E_vt_req,
         "P_ev_req": P_ev_req,
         "P_ev_req_kw": P_ev_req,
+        "P_ev_pure_req_kw": P_ev_pure_req,
+        "P_ev_access_req_kw": P_ev_access_req,
         "P_vt_req": P_vt_req_grid,
         "P_vt_req_kw_energy": P_vt_req_energy,
         "P_vt_req_kw_grid": P_vt_req_grid,
