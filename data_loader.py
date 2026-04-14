@@ -112,16 +112,42 @@ def _normalize_od_structures(data: Dict[str, Any]) -> None:
                 it["od"] = [a, b]
 
 
+def _apply_parameter_aliases(data: Dict[str, Any]) -> None:
+    """Backward-compatible parameter aliases (canonical keys remain lowercase/new names).
+
+    Supported aliases:
+    - parameters.VOT -> parameters.vot
+    - parameters.arcs -> parameters.arc_params (only when arc_params is absent)
+    """
+    params = data.setdefault("parameters", {})
+    if "vot" not in params and "VOT" in params:
+        if not isinstance(params["VOT"], dict):
+            raise ValueError("Invalid field: parameters.VOT must be a dict when used as alias for parameters.vot")
+        params["vot"] = params["VOT"]
+    if "arc_params" not in params and "arcs" in params:
+        arcs = params["arcs"]
+        if not isinstance(arcs, dict):
+            raise ValueError("Invalid field: parameters.arcs must be a dict when used as alias for parameters.arc_params")
+        # lightweight structure sanity check
+        for arc, cfg in arcs.items():
+            if not isinstance(cfg, dict):
+                raise ValueError(f"Invalid field: parameters.arcs.{arc} must be a dict of arc parameters")
+        params["arc_params"] = arcs
+
+
 def _harmonize_access_energy_fields(data: Dict[str, Any]) -> None:
-    """Use explicit access_stations energy as canonical source for EV_to_eVTOL itineraries."""
+    """Normalize multimodal access-energy fields without forcing one format.
+
+    If explicit ``access_stations`` energy exists for a period, scalar ``access_energy_kwh``
+    can remain as metadata and is ignored by downstream aggregation to prevent double-counting.
+    """
     its = data.get("itineraries", [])
     for it in its if isinstance(its, list) else []:
         mode = str(it.get("mode", "")).lower()
         if not mode.startswith("ev_to_evtol"):
             continue
-        if "access_energy_kwh" in it:
-            # Keep one canonical field to avoid overlap/conflict.
-            it.pop("access_energy_kwh", None)
+        if "access_stations" not in it:
+            it["access_stations"] = []
 
 
 def _validate_basic_shapes(data: Dict[str, Any]) -> None:
@@ -260,6 +286,11 @@ def _validate_station_facility_consistency(data: Dict[str, Any]) -> None:
             s = str(stop.get("station"))
             if s not in ev_stations:
                 raise ValueError(f"Itinerary {it_id}: access station {s} not in ev_stations")
+            # Scheme A hub-coupled story: multimodal access charging must be on hybrid hubs.
+            if mode.startswith("ev_to_evtol") and s not in hybrid_stations:
+                raise ValueError(
+                    f"Itinerary {it_id}: access station {s} must be in hybrid_stations for EV_to_eVTOL hub-side coupling"
+                )
 
         if is_evtol_itinerary(it) or mode.startswith("ev_to_evtol"):
             dep = str(it.get("dep_station")) if it.get("dep_station") is not None else None
@@ -280,6 +311,14 @@ def _validate_station_facility_consistency(data: Dict[str, Any]) -> None:
                 raise ValueError(
                     f"Invalid itinerary field: itineraries[{it_id}].arr_station={arr} is not allowed for VT arrivals"
                 )
+            if mode.startswith("ev_to_evtol"):
+                has_access_stations = bool(it.get("access_stations"))
+                has_scalar_access_energy = "access_energy_kwh" in it
+                # Scalar access-energy fallback is allowed only via dep_station (handled in assignment logic).
+                if has_scalar_access_energy and not has_access_stations and dep not in hybrid_stations:
+                    raise ValueError(
+                        f"Itinerary {it_id}: scalar access_energy_kwh fallback requires dep_station in hybrid_stations"
+                    )
 
 
 def load_data(data_path: str, schema_path: str) -> Dict[str, Any]:
@@ -297,6 +336,7 @@ def load_data(data_path: str, schema_path: str) -> Dict[str, Any]:
 
     data = _coerce_numeric_keys(data)
     data = _coerce_numeric_values(data)
+    _apply_parameter_aliases(data)
     _normalize_od_structures(data)
     _harmonize_access_energy_fields(data)
     data.setdefault("config", {}).setdefault("use_distribution_grid", False)
