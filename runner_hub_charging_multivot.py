@@ -399,6 +399,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             transfer_time_default=float(cfg.get("transfer_time_default", 0.0) or 0.0),
             multimodal_penalty_cfg=cfg.get("multimodal_continuity_penalty", {}),
             vt_service_prob=vt_service_prob,
+            ev_service_prob=ev_service_prob,
         )
         flows_target, details = logit_assignment(
             itineraries,

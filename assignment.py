@@ -165,6 +165,7 @@ def compute_itinerary_costs(
     transfer_time_default: float = 0.0,
     multimodal_penalty_cfg: Dict[str, Any] | None = None,
     vt_service_prob: Dict[str, Dict[int, float]] | None = None,
+    ev_service_prob: Dict[str, Dict[int, float]] | None = None,
 ) -> Dict[str, Dict[int, Dict[str, float]]]:
     costs: Dict[str, Dict[int, Dict[str, float]]] = {it["id"]: {} for it in itineraries}
     for it in itineraries:
@@ -200,6 +201,14 @@ def compute_itinerary_costs(
             access_energy_price_source = "none"
             multimodal_extra_penalty = 0.0
             vt_wait_applied = 0.0
+            multimodal_penalty_components = {
+                "base_transfer_fragility_penalty": 0.0,
+                "ev_unreliability_term": 0.0,
+                "vt_unreliability_term": 0.0,
+                "joint_unreliability_term": 0.0,
+                "ev_prob_used": 1.0,
+                "vt_prob_used": 1.0,
+            }
 
             # Optional scalar access energy (multimodal).
             # If access_stations already provide per-station energy for this time, scalar access_energy_kwh
@@ -264,16 +273,48 @@ def compute_itinerary_costs(
                 money_t += phi_markup * e_per_pax * float(electricity_price[dep_station][t])
                 if is_multimodal_evtol(it) and multimodal_penalty_cfg:
                     base_penalty = float(multimodal_penalty_cfg.get("base_transfer_fragility_penalty", 0.0) or 0.0)
-                    coeff_vt_wait = float(multimodal_penalty_cfg.get("coeff_vt_wait", 0.0) or 0.0)
+                    coeff_ev_unrel = float(multimodal_penalty_cfg.get("coeff_ev_unreliability", 0.0) or 0.0)
                     coeff_vt_unrel = float(multimodal_penalty_cfg.get("coeff_vt_unreliability", 0.0) or 0.0)
+                    coeff_joint_unrel = float(multimodal_penalty_cfg.get("coeff_joint_unreliability", 0.0) or 0.0)
                     vt_prob = 1.0
                     if vt_service_prob and dep_station in vt_service_prob:
                         vt_prob = min(1.0, max(0.0, float(vt_service_prob[dep_station].get(t, 1.0))))
+                    ev_prob = 1.0
+                    if ev_service_prob is not None:
+                        ev_candidates = []
+                        for stop in _ev_stops(it):
+                            if stop.get("t") != t:
+                                continue
+                            station = stop.get("station")
+                            if station in ev_service_prob:
+                                ev_candidates.append(float(ev_service_prob[station].get(t, 1.0)))
+                        if not ev_candidates:
+                            explicit_access_energy, scalar_access_energy = _access_energy_for_time(it, t)
+                            if scalar_access_energy > 1.0e-12 and explicit_access_energy <= 1.0e-12:
+                                dep = it.get("dep_station")
+                                if dep in ev_service_prob:
+                                    ev_candidates.append(float(ev_service_prob[dep].get(t, 1.0)))
+                        if ev_candidates:
+                            ev_prob = min(1.0, max(0.0, min(ev_candidates)))
+                    ev_unrel = 1.0 - ev_prob
+                    vt_unrel = 1.0 - vt_prob
+                    ev_term = coeff_ev_unrel * ev_unrel
+                    vt_term = coeff_vt_unrel * vt_unrel
+                    joint_term = coeff_joint_unrel * ev_unrel * vt_unrel
                     multimodal_extra_penalty = (
                         base_penalty
-                        + coeff_vt_wait * vt_wait_applied
-                        + coeff_vt_unrel * (1.0 - vt_prob)
+                        + ev_term
+                        + vt_term
+                        + joint_term
                     )
+                    multimodal_penalty_components = {
+                        "base_transfer_fragility_penalty": base_penalty,
+                        "ev_unreliability_term": ev_term,
+                        "vt_unreliability_term": vt_term,
+                        "joint_unreliability_term": joint_term,
+                        "ev_prob_used": ev_prob,
+                        "vt_prob_used": vt_prob,
+                    }
                     money_t += multimodal_extra_penalty
 
             costs[it_id][t] = {
@@ -284,8 +325,10 @@ def compute_itinerary_costs(
                     "transfer_time_applied": transfer_time_applied,
                     "transfer_time_source": transfer_time_source,
                     "access_energy_price_source": access_energy_price_source,
+                    "access_energy_consistency": access_energy_consistency,
                     "multimodal_extra_penalty": multimodal_extra_penalty,
                     "vt_departure_wait_applied": vt_wait_applied,
+                    "multimodal_penalty_components": multimodal_penalty_components,
                 },
             }
     return costs
@@ -394,6 +437,15 @@ def logit_assignment(
                             station = stop.get("station")
                             if station in ev_service_prob:
                                 ev_candidates.append(float(ev_service_prob[station].get(t, 1.0)))
+                        # Scalar access-energy fallback: if multimodal itinerary has access energy
+                        # but no explicit access_stations, dep_station is the implicit EV stop for
+                        # EV-side reliability accounting.
+                        if not ev_candidates and is_multimodal_evtol(it):
+                            explicit_access_energy, scalar_access_energy = _access_energy_for_time(it, t)
+                            if scalar_access_energy > 1.0e-12 and explicit_access_energy <= 1.0e-12:
+                                dep_station = it.get("dep_station")
+                                if dep_station in ev_service_prob:
+                                    ev_candidates.append(float(ev_service_prob[dep_station].get(t, 1.0)))
                         if ev_candidates:
                             ev_prob = min(ev_candidates)
                     ev_prob = min(1.0, max(ev_service_prob_floor, ev_prob))

@@ -286,6 +286,11 @@ def _validate_station_facility_consistency(data: Dict[str, Any]) -> None:
             s = str(stop.get("station"))
             if s not in ev_stations:
                 raise ValueError(f"Itinerary {it_id}: access station {s} not in ev_stations")
+            # Scheme A hub-coupled story: multimodal access charging must be on hybrid hubs.
+            if mode.startswith("ev_to_evtol") and s not in hybrid_stations:
+                raise ValueError(
+                    f"Itinerary {it_id}: access station {s} must be in hybrid_stations for EV_to_eVTOL hub-side coupling"
+                )
 
         if is_evtol_itinerary(it) or mode.startswith("ev_to_evtol"):
             dep = str(it.get("dep_station")) if it.get("dep_station") is not None else None
@@ -306,6 +311,14 @@ def _validate_station_facility_consistency(data: Dict[str, Any]) -> None:
                 raise ValueError(
                     f"Invalid itinerary field: itineraries[{it_id}].arr_station={arr} is not allowed for VT arrivals"
                 )
+            if mode.startswith("ev_to_evtol"):
+                has_access_stations = bool(it.get("access_stations"))
+                has_scalar_access_energy = "access_energy_kwh" in it
+                # Scalar access-energy fallback is allowed only via dep_station (handled in assignment logic).
+                if has_scalar_access_energy and not has_access_stations and dep not in hybrid_stations:
+                    raise ValueError(
+                        f"Itinerary {it_id}: scalar access_energy_kwh fallback requires dep_station in hybrid_stations"
+                    )
 
 
 def load_data(data_path: str, schema_path: str) -> Dict[str, Any]:
