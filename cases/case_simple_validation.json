@@ -1,0 +1,148 @@
+{
+  "meta": {"delta_t": 1.0},
+  "sets": {
+    "time": [0, 1, 2],
+    "groups": ["mid"],
+    "ev_stations": ["H1", "H2"],
+    "hybrid_stations": ["H1", "H2"],
+    "stations": ["H1", "H2"]
+  },
+  "parameters": {
+    "q": {"O-D": {"mid": {"0": 68, "1": 72, "2": 58}}},
+    "vot": {"mid": {"0": 19.0, "1": 19.0, "2": 19.0}},
+    "lambda": {"mid": 0.085},
+    "stations": {
+      "H1": {"cap_stall": 90.0, "w0": 0.03, "P_site": {"0": 30.0, "1": 24.0, "2": 36.0}},
+      "H2": {"cap_stall": 90.0, "w0": 0.02, "P_site": {"0": 75.0, "1": 75.0, "2": 75.0}}
+    },
+    "electricity_price": {
+      "H1": {"0": 0.22, "1": 0.22, "2": 0.22},
+      "H2": {"0": 0.22, "1": 0.22, "2": 0.22}
+    },
+    "vertiport_storage": {
+      "H1": {"B_min": 0.0, "B_max": 1200.0, "B_init": 180.0, "eta_ch": 1.0},
+      "H2": {"B_min": 0.0, "B_max": 1200.0, "B_init": 250.0, "eta_ch": 1.0}
+    },
+    "vt_aircraft_init_by_station": {"H1": 60.0, "H2": 22.0},
+    "vertiport_cap_pax": {
+      "H1": {"0": 180.0, "1": 180.0, "2": 180.0},
+      "H2": {"0": 180.0, "1": 180.0, "2": 180.0}
+    },
+    "vt_departure_capacity_total": {
+      "H1": {"0": 55.0, "1": 50.0, "2": 55.0},
+      "H2": {"0": 55.0, "1": 50.0, "2": 55.0}
+    },
+    "vt_departure_capacity_fast": {
+      "H1": {"0": 38.0, "1": 34.0, "2": 38.0},
+      "H2": {"0": 38.0, "1": 34.0, "2": 38.0}
+    },
+    "transfer_base_time": {
+      "H1": {"0": 0.12, "1": 0.12, "2": 0.12},
+      "H2": {"0": 0.10, "1": 0.10, "2": 0.10}
+    },
+    "transfer_capacity": {
+      "H1": {"0": 5.0, "1": 5.0, "2": 5.0},
+      "H2": {"0": 50.0, "1": 50.0, "2": 50.0}
+    },
+    "transfer_alpha": {
+      "H1": {"0": 0.8, "1": 0.8, "2": 0.8},
+      "H2": {"0": 0.3, "1": 0.3, "2": 0.3}
+    },
+    "transfer_beta": {
+      "H1": {"0": 2.0, "1": 2.0, "2": 2.0},
+      "H2": {"0": 2.0, "1": 2.0, "2": 2.0}
+    },
+    "arc_params": {
+      "arc_ev_main": {"tau0": 1.42, "cap": 450.0, "alpha": 0.15, "beta": 4.0, "type": "R", "use_bpr": false},
+      "arc_vt_access": {"tau0": 0.24, "cap": 450.0, "alpha": 0.15, "beta": 4.0, "type": "R", "use_bpr": false},
+      "arc_vt_egress": {"tau0": 0.25, "cap": 450.0, "alpha": 0.15, "beta": 4.0, "type": "R", "use_bpr": false},
+      "arc_mm_access": {"tau0": 0.27, "cap": 450.0, "alpha": 0.15, "beta": 4.0, "type": "R", "use_bpr": false},
+      "arc_mm_egress": {"tau0": 0.25, "cap": 450.0, "alpha": 0.15, "beta": 4.0, "type": "R", "use_bpr": false}
+    }
+  },
+  "itineraries": [
+    {
+      "id": "it_ev",
+      "od": ["O", "D"],
+      "mode": "EV",
+      "money": {"0": 2.8, "1": 2.8, "2": 4.1},
+      "road_arcs": [
+        {"arc": "arc_ev_main", "t": 0, "frac": 1.0},
+        {"arc": "arc_ev_main", "t": 1, "frac": 1.0},
+        {"arc": "arc_ev_main", "t": 2, "frac": 1.0}
+      ],
+      "stations": [
+        {"station": "H1", "t": 0, "energy": 2.0},
+        {"station": "H1", "t": 1, "energy": 2.1},
+        {"station": "H1", "t": 2, "energy": 2.0}
+      ]
+    },
+    {
+      "id": "it_vt",
+      "od": ["O", "D"],
+      "mode": "eVTOL_fast",
+      "money": {"0": 12.8, "1": 12.8, "2": 12.4},
+      "dep_station": "H1",
+      "arr_station": "H2",
+      "access_arcs": [
+        {"arc": "arc_vt_access", "t": 0, "frac": 1.0},
+        {"arc": "arc_vt_access", "t": 1, "frac": 1.0},
+        {"arc": "arc_vt_access", "t": 2, "frac": 1.0}
+      ],
+      "egress_arcs": [
+        {"arc": "arc_vt_egress", "t": 0, "frac": 1.0},
+        {"arc": "arc_vt_egress", "t": 1, "frac": 1.0},
+        {"arc": "arc_vt_egress", "t": 2, "frac": 1.0}
+      ],
+      "flight_time": {"0": 0.28, "1": 0.28, "2": 0.28},
+      "e_per_pax": {"0": 2.25, "1": 2.35, "2": 2.25}
+    },
+    {
+      "id": "it_mm",
+      "od": ["O", "D"],
+      "mode": "EV_to_eVTOL_fast",
+      "money": {"0": 7.0, "1": 7.0, "2": 6.6},
+      "dep_station": "H1",
+      "arr_station": "H2",
+      "access_arcs": [
+        {"arc": "arc_mm_access", "t": 0, "frac": 1.0},
+        {"arc": "arc_mm_access", "t": 1, "frac": 1.0},
+        {"arc": "arc_mm_access", "t": 2, "frac": 1.0}
+      ],
+      "egress_arcs": [
+        {"arc": "arc_mm_egress", "t": 0, "frac": 1.0},
+        {"arc": "arc_mm_egress", "t": 1, "frac": 1.0},
+        {"arc": "arc_mm_egress", "t": 2, "frac": 1.0}
+      ],
+      "access_stations": [
+        {"station": "H1", "t": 0, "energy": 1.0},
+        {"station": "H1", "t": 1, "energy": 1.1},
+        {"station": "H1", "t": 2, "energy": 1.0}
+      ],
+      "transfer_time": {"0": 0.16, "1": 0.16, "2": 0.16},
+      "flight_time": {"0": 0.28, "1": 0.28, "2": 0.28},
+      "e_per_pax": {"0": 2.25, "1": 2.35, "2": 2.25}
+    }
+  ],
+  "config": {
+    "max_iter": 500,
+    "tol": 0.001,
+    "tol_flow": 0.003,
+    "use_distribution_grid": false,
+    "shared_power_solver": "highs",
+    "multimodal_access_utilization_factor": 1.0,
+    "multimodal_continuity_penalty": {
+      "base_transfer_fragility_penalty": 0.04,
+      "coeff_ev_unreliability": 0.18,
+      "coeff_vt_unreliability": 0.14,
+      "coeff_joint_unreliability": 0.2,
+      "coeff_transfer_overrun": 0.1,
+      "transfer_buffer_threshold": 0.5
+    },
+    "voll_ev_per_kwh": 20.0,
+    "voll_vt_per_kwh": 16.0,
+    "terminal_soc_policy": "at_least_min",
+    "ev_reliability_gamma": 0.12,
+    "vt_reliability_gamma": 0.12
+  }
+}
