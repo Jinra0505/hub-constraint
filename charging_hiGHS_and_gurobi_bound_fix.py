@@ -387,10 +387,13 @@ def solve_shared_power_inventory_highs(
     t_terminal = times[-1] + 1
     times_ext = list(times) + [t_terminal]
 
-    voll_ev_cfg = data.get("config", {}).get("voll_ev_per_kwh")
-    voll_vt_cfg = data.get("config", {}).get("voll_vt_per_kwh")
+    cfg = data.get("config", {})
+    voll_ev_cfg = cfg.get("voll_ev_per_kwh")
+    voll_vt_cfg = cfg.get("voll_vt_per_kwh")
     voll_ev_per_kwh = float(voll_ev_cfg) if voll_ev_cfg is not None else 50.0
     voll_vt_per_kwh = float(voll_vt_cfg) if voll_vt_cfg is not None else 200.0
+    ev_shed_penalty_multiplier_cfg = cfg.get("ev_shed_penalty_multiplier", 1.0)
+    vt_shed_penalty_multiplier_cfg = cfg.get("vt_shed_penalty_multiplier", 1.0)
 
     var_idx: Dict[tuple[str, str, int], int] = {}
     bounds = []
@@ -411,11 +414,13 @@ def solve_shared_power_inventory_highs(
             add_var("B", dep, tau, storage_params[dep]["B_min"], storage_params[dep]["B_max"], 0.0)
         for t in times:
             add_var("P", dep, t, 0.0, _vt_charge_power_upper_bound(data, dep, t, e_dep), prices[dep][t] * delta_t)
-            add_var("SVT", dep, t, 0.0, float(e_dep.get(dep, {}).get(t, 0.0)), voll_vt_per_kwh)
+            vt_penalty_mult = max(0.0, float(_resolve_time_value(vt_shed_penalty_multiplier_cfg.get(dep) if isinstance(vt_shed_penalty_multiplier_cfg, dict) else vt_shed_penalty_multiplier_cfg, t, 1.0) or 1.0))
+            add_var("SVT", dep, t, 0.0, float(e_dep.get(dep, {}).get(t, 0.0)), voll_vt_per_kwh * vt_penalty_mult)
 
     for s in stations:
         for t in times:
-            add_var("SEV", s, t, 0.0, p_ev_req_kw[s][t], (voll_ev_per_kwh - prices[s][t]) * delta_t)
+            ev_penalty_mult = max(0.0, float(_resolve_time_value(ev_shed_penalty_multiplier_cfg.get(s) if isinstance(ev_shed_penalty_multiplier_cfg, dict) else ev_shed_penalty_multiplier_cfg, t, 1.0) or 1.0))
+            add_var("SEV", s, t, 0.0, p_ev_req_kw[s][t], (voll_ev_per_kwh * ev_penalty_mult - prices[s][t]) * delta_t)
 
     n = len(c)
     A_eq = []
@@ -565,8 +570,10 @@ def solve_shared_power_inventory_highs(
             p_vt_sum = sum(P_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
             p_ev_served = max(0.0, p_ev_req_kw[s][t] - shed_ev_out[s][t])
             energy_cost_term = float(prices[s][t]) * (p_ev_served + p_vt_sum) * delta_t
-            ev_pen = voll_ev_per_kwh * shed_ev_out[s][t] * delta_t
-            vt_pen = voll_vt_per_kwh * sum(shed_vt_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
+            ev_penalty_mult = max(0.0, float(_resolve_time_value(ev_shed_penalty_multiplier_cfg.get(s) if isinstance(ev_shed_penalty_multiplier_cfg, dict) else ev_shed_penalty_multiplier_cfg, t, 1.0) or 1.0))
+            vt_penalty_mult = max(0.0, float(_resolve_time_value(vt_shed_penalty_multiplier_cfg.get(s) if isinstance(vt_shed_penalty_multiplier_cfg, dict) else vt_shed_penalty_multiplier_cfg, t, 1.0) or 1.0))
+            ev_pen = voll_ev_per_kwh * ev_penalty_mult * shed_ev_out[s][t] * delta_t
+            vt_pen = voll_vt_per_kwh * vt_penalty_mult * sum(shed_vt_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
             objective_components[s][t] = {
                 "energy_cost_term": energy_cost_term,
                 "ev_shed_penalty": ev_pen,

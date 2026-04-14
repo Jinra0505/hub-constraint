@@ -627,19 +627,23 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 ev_req = float(station_loads["E_ev_req"].get(s, {}).get(t, 0.0))
                 ev_shed = float(shed_ev_out.get(s, {}).get(t, 0.0)) * float(data["meta"]["delta_t"])
                 ev_prob = 1.0 if ev_req <= 1e-9 else max(0.0, min(1.0, (ev_req - ev_shed) / ev_req))
+                ev_prob_smoothed = (1.0 - alpha) * ev_service_prob[s][t] + alpha * ev_prob
                 ev_prob_gap = abs(ev_service_prob[s][t] - ev_prob)
                 max_ev_prob_gap_to_target = max(max_ev_prob_gap_to_target, ev_prob_gap)
                 max_ev_prob_delta = max(max_ev_prob_delta, alpha * ev_prob_gap)
-                ev_service_prob[s][t] = (1.0 - alpha) * ev_service_prob[s][t] + alpha * ev_prob
+                ev_service_prob[s][t] = ev_prob_smoothed
 
                 vt_req = float(station_loads["E_vt_req"].get(s, {}).get(t, 0.0))
                 vt_shed = float(shed_vt_out.get(s, {}).get(t, 0.0))
                 vt_prob = 1.0 if vt_req <= 1e-9 else max(0.0, min(1.0, (vt_req - vt_shed) / vt_req))
                 if s in vt_service_prob:
+                    vt_prob_smoothed = (1.0 - alpha) * vt_service_prob[s][t] + alpha * vt_prob
                     vt_prob_gap = abs(vt_service_prob[s][t] - vt_prob)
                     max_vt_prob_gap_to_target = max(max_vt_prob_gap_to_target, vt_prob_gap)
                     max_vt_prob_delta = max(max_vt_prob_delta, alpha * vt_prob_gap)
-                    vt_service_prob[s][t] = (1.0 - alpha) * vt_service_prob[s][t] + alpha * vt_prob
+                    vt_service_prob[s][t] = vt_prob_smoothed
+                else:
+                    vt_prob_smoothed = vt_prob
 
                 diagnostics["hub_time"].setdefault(s, {})[t] = {
                     "pure_ev_charging_kwh": float(station_loads["E_ev_pure_req"].get(s, {}).get(t, 0.0)),
@@ -657,8 +661,11 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "shed_vt_kwh": vt_shed,
                     "scarcity_price_adder_applied": scarcity_adder_used,
                     "effective_electricity_price": float(electricity_price[s][t]),
-                    "vt_service_probability": float(vt_service_prob.get(s, {}).get(t, 1.0)),
-                    "ev_service_probability": float(ev_service_prob.get(s, {}).get(t, 1.0)),
+                    "vt_service_probability": float(vt_prob),
+                    "ev_service_probability": float(ev_prob),
+                    "vt_service_probability_msa_state": float(vt_prob_smoothed),
+                    "ev_service_probability_msa_state": float(ev_prob_smoothed),
+                    "service_probability_note": "service_probability uses current-iteration shed; *_msa_state reports smoothed state used in next-iteration costs.",
                 }
 
         diagnostics["iteration_history"].append(
