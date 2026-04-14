@@ -113,15 +113,18 @@ def _normalize_od_structures(data: Dict[str, Any]) -> None:
 
 
 def _harmonize_access_energy_fields(data: Dict[str, Any]) -> None:
-    """Use explicit access_stations energy as canonical source for EV_to_eVTOL itineraries."""
+    """Normalize multimodal access-energy fields without forcing one format.
+
+    If explicit ``access_stations`` energy exists for a period, scalar ``access_energy_kwh``
+    can remain as metadata and is ignored by downstream aggregation to prevent double-counting.
+    """
     its = data.get("itineraries", [])
     for it in its if isinstance(its, list) else []:
         mode = str(it.get("mode", "")).lower()
         if not mode.startswith("ev_to_evtol"):
             continue
-        if "access_energy_kwh" in it:
-            # Keep one canonical field to avoid overlap/conflict.
-            it.pop("access_energy_kwh", None)
+        if "access_stations" not in it:
+            it["access_stations"] = []
 
 
 def _validate_basic_shapes(data: Dict[str, Any]) -> None:
