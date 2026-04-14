@@ -526,8 +526,15 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         for s in ev_stations:
             for t in times:
                 base_price = float(data["parameters"]["electricity_price"][s][t])
-                local_mu = float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0)
-                eff_price_new = max(0.0, base_price + local_mu)
+                raw_mu = shadow_prices.get(s, {}).get(t, None)
+                local_mu = float(raw_mu) if raw_mu is not None else None
+                local_proxy_mu = (
+                    float(lp_diag.get("local_shadow_price_proxy", {}).get(s, {}).get(t, 0.0))
+                    if isinstance(lp_diag, dict)
+                    else 0.0
+                )
+                scarcity_adder_used = float(local_mu) if local_mu is not None else 0.0
+                eff_price_new = max(0.0, base_price + scarcity_adder_used)
                 max_price_delta = max(max_price_delta, abs(electricity_price[s][t] - eff_price_new))
                 electricity_price[s][t] = (1.0 - alpha) * electricity_price[s][t] + alpha * eff_price_new
 
@@ -551,11 +558,15 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "total_requested_power_kw": float(station_loads["P_total_req"].get(s, {}).get(t, 0.0)),
                     "effective_power_cap_kw": float(data["parameters"]["stations"][s]["P_site"][t]),
                     "local_shadow_price": local_mu,
+                    "local_shadow_price_proxy": local_proxy_mu,
+                    "local_shadow_price_is_lp_dual": bool(local_mu is not None),
                     "lp_dual_available": bool(lp_diag.get("dual_available", False)) if isinstance(lp_diag, dict) else False,
                     "solver_used": lp_diag.get("solver", "unknown") if isinstance(lp_diag, dict) else "unknown",
+                    "shared_power_fallback_used": bool(lp_diag.get("fallback_used", False)) if isinstance(lp_diag, dict) else False,
                     "cap_binding_flag": bool(lp_diag.get("cap_binding_flags", {}).get(s, {}).get(t, False)) if isinstance(lp_diag, dict) else False,
                     "shed_ev_kwh": ev_shed,
                     "shed_vt_kwh": vt_shed,
+                    "scarcity_price_adder_applied": scarcity_adder_used,
                     "effective_electricity_price": float(electricity_price[s][t]),
                     "vt_service_probability": float(vt_service_prob.get(s, {}).get(t, 1.0)),
                     "ev_service_probability": float(ev_service_prob.get(s, {}).get(t, 1.0)),
@@ -666,6 +677,17 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     else:
         inference = "In this run, EV_to_eVTOL vs pure eVTOL indicators are mixed under the current parameterization; this is a single-run descriptive readout, not a sensitivity proof."
 
+    price_mechanism_validated = bool(
+        shared_power_signal_last.get("dual_available", False)
+        and int(shared_power_signal_last.get("binding_cap_with_positive_dual_count", 0)) > 0
+    )
+    moderate_stress_not_collapsed = bool(
+        ev_prob_avg < 0.999
+        and avg_evtol_share > 1.0e-4
+        and avg_mm_share > 1.0e-4
+    )
+    continuity_not_dominant = bool(avg_mm_cont <= (avg_mm_access + avg_mm_vt_wait + 1.0e-9))
+
     return {
         "flows": flows,
         "costs": costs,
@@ -738,6 +760,10 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "implicit_access_stop_consistent": True,
             "multimodal_access_utilization_factor_affects_wait_only": True,
             "transfer_representation": "reduced_form",
+            "simple_case_moderate_stress_not_collapsed": moderate_stress_not_collapsed,
+            "continuity_penalty_present_but_not_dominant": continuity_not_dominant,
+            "price_mechanism_validated_with_lp_duals": price_mechanism_validated,
+            "price_mechanism_validation_limited": not price_mechanism_validated,
             "summary_is_not_sensitivity_proof": True,
         },
         "unused_legacy_paths": [

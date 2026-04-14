@@ -520,6 +520,8 @@ def solve_shared_power_inventory_highs(
 
     # HiGHS dual (marginal) of station power constraint is converted to nonnegative scarcity value mu_kw ($/kW).
     shadow_prices = {s: {t: None for t in times} for s in stations}
+    scarcity_price_proxy = {s: {t: 0.0 for t in times} for s in stations}
+    cap_binding_flags = {s: {t: False for t in times} for s in stations}
     dual_trace = {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": None} for t in times} for s in stations}
     marg = getattr(getattr(res, "ineqlin", None), "marginals", None)
     if marg is not None:
@@ -604,6 +606,10 @@ def solve_shared_power_inventory_highs(
                 if mu is not None and float(mu) > 1.0e-9:
                     binding_cap_with_positive_dual_count += 1
     lp_diag["cap_binding_flags"] = cap_binding_flags
+    lp_diag["local_shadow_price_proxy"] = {
+        s: {t: float(shadow_prices.get(s, {}).get(t) or 0.0) for t in times}
+        for s in stations
+    }
     lp_diag["binding_cap_total_count"] = binding_cap_total_count
     lp_diag["binding_cap_with_positive_dual_count"] = binding_cap_with_positive_dual_count
     lp_diag["shared_power_price_signal_check"] = {
@@ -683,6 +689,8 @@ def _solve_shared_power_core_heuristic(
     shed_ev_out = {s: {t: 0.0 for t in times} for s in stations}
     shed_vt_out = {s: {t: 0.0 for t in times} for s in stations}
     shadow_prices = {s: {t: None for t in times} for s in stations}
+    scarcity_price_proxy = {s: {t: 0.0 for t in times} for s in stations}
+    cap_binding_flags = {s: {t: False for t in times} for s in stations}
 
     objective_components = {s: {t: {"energy_cost_term": 0.0, "ev_shed_penalty": 0.0, "vt_shed_penalty": 0.0} for t in times} for s in stations}
 
@@ -718,6 +726,18 @@ def _solve_shared_power_core_heuristic(
             B_out[s][times_ext[idx + 1]] = b_next
             b = b_next
 
+            p_total_served = p_ev_served + p_vt
+            cap_binding_flags[s][t] = bool((p_site - p_total_served) <= 1.0e-9 and (p_ev_req + p_req_grid) >= p_site - 1.0e-9)
+
+            # Heuristic scarcity proxy (NOT an LP dual):
+            # objective penalty sensitivity to +1 kW site power for one period.
+            mu_proxy = 0.0
+            if shed_ev_out[s][t] > 1.0e-12:
+                mu_proxy = max(mu_proxy, voll_ev_per_kwh * delta_t)
+            if shed_vt_out[s][t] > 1.0e-12:
+                mu_proxy = max(mu_proxy, voll_vt_per_kwh * eta * delta_t)
+            scarcity_price_proxy[s][t] = mu_proxy
+
             objective_components[s][t] = {
                 "energy_cost_term": float(prices.get(s, {}).get(t, 0.0)) * (p_ev_served + p_vt) * delta_t,
                 "ev_shed_penalty": voll_ev_per_kwh * shed_ev_out[s][t] * delta_t,
@@ -741,15 +761,17 @@ def _solve_shared_power_core_heuristic(
             "total_objective": total_energy + total_ev_pen + total_vt_pen,
         },
         "dual_trace": {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": None} for t in times} for s in stations},
-        "cap_binding_flags": {s: {t: False for t in times} for s in stations},
-        "binding_cap_total_count": 0,
+        "cap_binding_flags": cap_binding_flags,
+        "local_shadow_price_proxy": scarcity_price_proxy,
+        "binding_cap_total_count": int(sum(1 for s in stations for t in times if cap_binding_flags[s][t])),
         "binding_cap_with_positive_dual_count": 0,
         "shared_power_price_signal_check": {
             "solver_used": "heuristic",
             "dual_available": False,
-            "binding_cap_total_count": 0,
+            "binding_cap_total_count": int(sum(1 for s in stations for t in times if cap_binding_flags[s][t])),
             "binding_cap_with_positive_dual_count": 0,
-            "note": "Heuristic fallback does not provide LP dual prices.",
+            "proxy_positive_count": int(sum(1 for s in stations for t in times if scarcity_price_proxy[s][t] > 0.0)),
+            "note": "Heuristic fallback does not provide LP dual prices; local_shadow_price_proxy is a non-dual scarcity proxy from shedding penalties.",
         },
     }
     return B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag

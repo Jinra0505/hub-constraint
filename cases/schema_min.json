@@ -16,7 +16,10 @@
     "parameters.vertiport_cap_pax",
     "parameters.vt_departure_capacity_total",
     "parameters.vt_departure_capacity_fast",
+    "parameters.arc_params",
     "itineraries",
-    "config"
+    "config",
+    "config.shared_power_solver",
+    "config.multimodal_continuity_penalty"
   ]
 }
