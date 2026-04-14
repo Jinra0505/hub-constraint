@@ -472,6 +472,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     ev_waits = _initialize_by_station(ev_stations, times, 0.0)
     vt_waits = {s: {"fast": {t: 0.0 for t in times}, "slow": {t: 0.0 for t in times}} for s in hybrid_stations}
     electricity_price = copy.deepcopy(data["parameters"]["electricity_price"])
+    electricity_price_exact = copy.deepcopy(data["parameters"]["electricity_price"])
     vt_service_prob = _initialize_by_station(hybrid_stations, times, 1.0)
     ev_service_prob = _initialize_by_station(ev_stations, times, 1.0)
 
@@ -618,11 +619,14 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 if local_mu < -1.0e-9:
                     raise RuntimeError(f"Invalid negative LP-dual scarcity adder at station={s}, time={t}: {local_mu}")
                 scarcity_adder_used = local_mu
-                eff_price_new = max(0.0, base_price + scarcity_adder_used)
+                explicit_other_price_adder = 0.0
+                eff_price_exact = max(0.0, base_price + scarcity_adder_used + explicit_other_price_adder)
+                eff_price_new = eff_price_exact
                 price_gap = abs(electricity_price[s][t] - eff_price_new)
                 max_price_gap_to_target = max(max_price_gap_to_target, price_gap)
                 max_price_delta = max(max_price_delta, alpha * price_gap)
                 electricity_price[s][t] = (1.0 - alpha) * electricity_price[s][t] + alpha * eff_price_new
+                electricity_price_exact[s][t] = eff_price_exact
 
                 ev_req = float(station_loads["E_ev_req"].get(s, {}).get(t, 0.0))
                 ev_shed = float(shed_ev_out.get(s, {}).get(t, 0.0)) * float(data["meta"]["delta_t"])
@@ -660,7 +664,11 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "shed_ev_kwh": ev_shed,
                     "shed_vt_kwh": vt_shed,
                     "scarcity_price_adder_applied": scarcity_adder_used,
-                    "effective_electricity_price": float(electricity_price[s][t]),
+                    "base_electricity_price": base_price,
+                    "lp_shadow_price_adder": scarcity_adder_used,
+                    "other_explicit_price_adder": explicit_other_price_adder,
+                    "effective_electricity_price": float(eff_price_exact),
+                    "effective_electricity_price_msa_state": float(electricity_price[s][t]),
                     "vt_service_probability": float(vt_prob),
                     "ev_service_probability": float(ev_prob),
                     "vt_service_probability_msa_state": float(vt_prob_smoothed),
@@ -803,7 +811,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "costs": costs,
         "mode_share_by_group_time": mode_share,
         "group_time_supermode_metrics": group_time_super,
-        "effective_electricity_price": electricity_price,
+        "effective_electricity_price": electricity_price_exact,
+        "effective_electricity_price_msa_state": electricity_price,
         "vt_service_prob": vt_service_prob,
         "ev_service_prob": ev_service_prob,
         "hub_diagnostics": diagnostics["hub_time"],
@@ -870,6 +879,19 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "access_travel_reporting_note": access_travel_reporting_note,
             "group_with_highest_avg_ev_to_evtol_share": shift_group,
             "group_average_mode_share": mode_totals_by_group,
+            "access_mode_assumptions": {
+                it["id"]: str(
+                    it.get(
+                        "access_mode",
+                        (
+                            "private_ev_hub_charging_access"
+                            if classify_supermode(it) == "EV_to_eVTOL"
+                            else ("external_noncharging_access" if classify_supermode(it) == "eVTOL" else "no_access")
+                        ),
+                    )
+                )
+                for it in itineraries
+            },
         },
         "model_validation_notes": {
             "continuity_penalty_separate_from_money": True,

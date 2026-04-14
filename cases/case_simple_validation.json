@@ -9,7 +9,9 @@
       2
     ],
     "groups": [
-      "mid"
+      "low",
+      "mid",
+      "high"
     ],
     "ev_stations": [
       "H1",
@@ -27,36 +29,68 @@
   "parameters": {
     "q": {
       "O1-D1": {
+        "low": {
+          "0": 21.6,
+          "1": 27.68,
+          "2": 24.72
+        },
         "mid": {
-          "0": 62,
-          "1": 66,
-          "2": 60
+          "0": 19.8,
+          "1": 24.54,
+          "2": 21.66
+        },
+        "high": {
+          "0": 14.4,
+          "1": 18.12,
+          "2": 15.48
         }
       },
       "O2-D2": {
+        "low": {
+          "0": 18.9,
+          "1": 23.47,
+          "2": 20.63
+        },
         "mid": {
-          "0": 52,
-          "1": 56,
-          "2": 50
+          "0": 16.2,
+          "1": 21.26,
+          "2": 18.54
+        },
+        "high": {
+          "0": 11.7,
+          "1": 14.91,
+          "2": 12.39
         }
       }
     },
     "vot": {
+      "low": {
+        "0": 12.0,
+        "1": 12.0,
+        "2": 12.0
+      },
       "mid": {
         "0": 19.0,
         "1": 19.0,
         "2": 19.0
+      },
+      "high": {
+        "0": 30.0,
+        "1": 30.0,
+        "2": 30.0
       }
     },
     "lambda": {
-      "mid": 0.085
+      "low": 0.095,
+      "mid": 0.085,
+      "high": 0.07
     },
     "stations": {
       "H1": {
         "cap_stall": 90.0,
         "w0": 0.03,
         "P_site": {
-          "0": 70.0,
+          "0": 80.0,
           "1": 45.0,
           "2": 60.0
         }
@@ -65,7 +99,7 @@
         "cap_stall": 90.0,
         "w0": 0.025,
         "P_site": {
-          "0": 65.0,
+          "0": 70.0,
           "1": 55.0,
           "2": 40.0
         }
@@ -188,27 +222,27 @@
     "arc_params": {
       "arc_ev_A": {
         "tau0": 1.45,
-        "cap": 450.0,
-        "alpha": 0.15,
+        "cap": 380.0,
+        "alpha": 0.08,
         "beta": 4.0,
         "type": "R",
-        "use_bpr": false
+        "use_bpr": true
       },
       "arc_ev_B": {
         "tau0": 1.35,
-        "cap": 430.0,
-        "alpha": 0.15,
+        "cap": 380.0,
+        "alpha": 0.08,
         "beta": 4.0,
         "type": "R",
-        "use_bpr": false
+        "use_bpr": true
       },
       "arc_vt_access_A": {
         "tau0": 0.24,
-        "cap": 430.0,
-        "alpha": 0.15,
+        "cap": 380.0,
+        "alpha": 0.08,
         "beta": 4.0,
         "type": "R",
-        "use_bpr": false
+        "use_bpr": true
       },
       "arc_vt_egress_A": {
         "tau0": 0.25,
@@ -220,11 +254,11 @@
       },
       "arc_mm_access_A": {
         "tau0": 0.27,
-        "cap": 430.0,
-        "alpha": 0.15,
+        "cap": 380.0,
+        "alpha": 0.08,
         "beta": 4.0,
         "type": "R",
-        "use_bpr": false
+        "use_bpr": true
       },
       "arc_mm_egress_A": {
         "tau0": 0.25,
@@ -236,11 +270,11 @@
       },
       "arc_vt_access_B": {
         "tau0": 0.26,
-        "cap": 430.0,
-        "alpha": 0.15,
+        "cap": 380.0,
+        "alpha": 0.08,
         "beta": 4.0,
         "type": "R",
-        "use_bpr": false
+        "use_bpr": true
       },
       "arc_vt_egress_B": {
         "tau0": 0.24,
@@ -252,11 +286,11 @@
       },
       "arc_mm_access_B": {
         "tau0": 0.23,
-        "cap": 430.0,
-        "alpha": 0.15,
+        "cap": 380.0,
+        "alpha": 0.08,
         "beta": 4.0,
         "type": "R",
-        "use_bpr": false
+        "use_bpr": true
       },
       "arc_mm_egress_B": {
         "tau0": 0.24,
@@ -314,7 +348,8 @@
           "t": 2,
           "energy": 1.8
         }
-      ]
+      ],
+      "access_mode": "no_access"
     },
     {
       "id": "it_vt_A",
@@ -373,7 +408,8 @@
         "0": 2.0,
         "1": 2.1,
         "2": 2.0
-      }
+      },
+      "access_mode": "external_noncharging_access"
     },
     {
       "id": "it_mm_A",
@@ -454,7 +490,8 @@
         "0": 2.0,
         "1": 2.1,
         "2": 2.0
-      }
+      },
+      "access_mode": "private_ev_hub_charging_access"
     },
     {
       "id": "it_ev_B",
@@ -501,7 +538,8 @@
           "t": 2,
           "energy": 1.7
         }
-      ]
+      ],
+      "access_mode": "no_access"
     },
     {
       "id": "it_vt_B",
@@ -560,7 +598,8 @@
         "0": 2.1,
         "1": 2.2,
         "2": 2.1
-      }
+      },
+      "access_mode": "external_noncharging_access"
     },
     {
       "id": "it_mm_B",
@@ -641,7 +680,8 @@
         "0": 2.1,
         "1": 2.2,
         "2": 2.1
-      }
+      },
+      "access_mode": "private_ev_hub_charging_access"
     }
   ],
   "config": {

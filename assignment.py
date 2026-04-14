@@ -139,6 +139,17 @@ def _access_station_ids(it: Dict[str, Any], t: int | None = None) -> List[str]:
     return out
 
 
+def _access_mode(it: Dict[str, Any]) -> str:
+    raw = it.get("access_mode")
+    if raw is not None:
+        return str(raw)
+    if is_multimodal_evtol(it):
+        return "private_ev_hub_charging_access"
+    if is_evtol_itinerary(it):
+        return "external_noncharging_access"
+    return "no_access"
+
+
 def build_incidence(
     itineraries: List[Dict[str, Any]],
     arcs: List[str],
@@ -195,6 +206,7 @@ def compute_itinerary_costs(
         it_id = it.get("id", "<unknown>")
         phi_markup = float(it.get("phi_energy_markup", 1.0))
         dep_station = it.get("dep_station")
+        access_mode = _access_mode(it)
         for t in times:
             money_t = _value_by_time(it.get("money", 0.0), t, 0.0)
             tt = 0.0
@@ -217,7 +229,7 @@ def compute_itinerary_costs(
                     access_travel_time_applied += float(travel_times[arc][t]) * float(seg.get("frac", 1.0))
 
             # EV component (pure EV or multimodal access)
-            ev_stops_t = _ev_stops_at_time(it, t)
+            ev_stops_t = _ev_stops_at_time(it, t) if access_mode == "private_ev_hub_charging_access" else []
             has_implicit_access_fallback = any(bool(st.get("implicit_access_fallback", False)) for st in ev_stops_t)
             for stop in ev_stops_t:
                 station = stop.get("station")
@@ -252,7 +264,7 @@ def compute_itinerary_costs(
             # Optional scalar access energy (multimodal).
             # If access_stations already provide per-station energy for this time, scalar access_energy_kwh
             # is treated as redundant metadata and not re-charged to avoid double counting.
-            explicit_access_energy, scalar_access_energy = _access_energy_for_time(it, t)
+            explicit_access_energy, scalar_access_energy = _access_energy_for_time(it, t) if access_mode == "private_ev_hub_charging_access" else (0.0, 0.0)
             access_energy_kwh = scalar_access_energy if explicit_access_energy <= 1.0e-12 and not has_implicit_access_fallback else 0.0
             access_energy_consistency = "ok"
             if explicit_access_energy > 1.0e-12 and scalar_access_energy > 1.0e-12:
@@ -282,6 +294,8 @@ def compute_itinerary_costs(
                         "ChargeCost": 0.0,
                         "ContinuityPenalty": 0.0,
                         "cost_breakdown": {
+                            "access_mode": access_mode,
+                            "access_charging_accounted": bool(access_mode == "private_ev_hub_charging_access"),
                             "transfer_time_applied": 0.0,
                             "transfer_time_source": "none",
                             "access_energy_price_source": access_energy_price_source,
@@ -376,6 +390,8 @@ def compute_itinerary_costs(
                 "ChargeCost": charge_cost,
                 "ContinuityPenalty": multimodal_extra_penalty,
                 "cost_breakdown": {
+                    "access_mode": access_mode,
+                    "access_charging_accounted": bool(access_mode == "private_ev_hub_charging_access"),
                     "transfer_time_applied": transfer_time_applied,
                     "transfer_time_source": transfer_time_source,
                     "access_energy_price_source": access_energy_price_source,
