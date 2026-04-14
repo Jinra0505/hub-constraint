@@ -599,6 +599,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             station_loads["E_ev_req"],
         )
         shared_power_signal_last = dict(lp_diag.get("shared_power_price_signal_check", {})) if isinstance(lp_diag, dict) else {}
+        if not bool(lp_diag.get("dual_available", False)):
+            raise RuntimeError("Shared-power LP solved without dual availability; LP-dual scarcity pricing cannot proceed.")
 
         max_price_delta = 0.0
         max_vt_prob_delta = 0.0
@@ -610,13 +612,12 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             for t in times:
                 base_price = float(data["parameters"]["electricity_price"][s][t])
                 raw_mu = shadow_prices.get(s, {}).get(t, None)
-                local_mu = float(raw_mu) if raw_mu is not None else None
-                local_proxy_mu = (
-                    float(lp_diag.get("local_shadow_price_proxy", {}).get(s, {}).get(t, 0.0))
-                    if isinstance(lp_diag, dict)
-                    else 0.0
-                )
-                scarcity_adder_used = float(local_mu) if local_mu is not None else 0.0
+                if raw_mu is None:
+                    raise RuntimeError(f"Missing LP dual shadow price for shared-power cap at station={s}, time={t}.")
+                local_mu = float(raw_mu)
+                if local_mu < -1.0e-9:
+                    raise RuntimeError(f"Invalid negative LP-dual scarcity adder at station={s}, time={t}: {local_mu}")
+                scarcity_adder_used = local_mu
                 eff_price_new = max(0.0, base_price + scarcity_adder_used)
                 price_gap = abs(electricity_price[s][t] - eff_price_new)
                 max_price_gap_to_target = max(max_price_gap_to_target, price_gap)
@@ -647,8 +648,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "total_requested_power_kw": float(station_loads["P_total_req"].get(s, {}).get(t, 0.0)),
                     "effective_power_cap_kw": float(data["parameters"]["stations"][s]["P_site"][t]),
                     "local_shadow_price": local_mu,
-                    "local_shadow_price_proxy": local_proxy_mu,
-                    "local_shadow_price_is_lp_dual": bool(local_mu is not None),
+                    "local_shadow_price_is_lp_dual": True,
                     "lp_dual_available": bool(lp_diag.get("dual_available", False)) if isinstance(lp_diag, dict) else False,
                     "solver_used": lp_diag.get("solver", "unknown") if isinstance(lp_diag, dict) else "unknown",
                     "shared_power_fallback_used": bool(lp_diag.get("fallback_used", False)) if isinstance(lp_diag, dict) else False,
@@ -779,7 +779,9 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         inference = "In this run, EV_to_eVTOL vs pure eVTOL indicators are mixed under the current parameterization; this is a single-run descriptive readout, not a sensitivity proof."
 
     price_mechanism_validated = bool(
-        shared_power_signal_last.get("dual_available", False)
+        (
+            shared_power_signal_last.get("lp_dual_available", shared_power_signal_last.get("dual_available", False))
+        )
         and int(shared_power_signal_last.get("binding_cap_with_positive_dual_count", 0)) > 0
     )
     moderate_stress_not_collapsed = bool(

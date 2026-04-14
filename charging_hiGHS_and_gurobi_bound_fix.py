@@ -368,7 +368,7 @@ def solve_shared_power_inventory_highs(
 ]:
     global LAST_SHARED_SOLVER_USED, LAST_SHARED_POWER_SOLVER_USED
     if not HAS_SCIPY:
-        raise RuntimeError("SciPy is required for HiGHS shared-power solver")
+        raise RuntimeError(f"SciPy/HiGHS is required for LP-dual shared-power pricing, import failed: {SCIPY_IMPORT_ERROR}")
     LAST_SHARED_SOLVER_USED = "highs"
     LAST_SHARED_POWER_SOLVER_USED = "highs"
 
@@ -522,22 +522,39 @@ def solve_shared_power_inventory_highs(
     shed_vt_out = {dep: {t: float(x[var_idx[("SVT", dep, t)]]) for t in times} for dep in deps}
     shed_ev_out = {s: {t: float(x[var_idx[("SEV", s, t)]]) for t in times} for s in stations}
 
-    # HiGHS dual (marginal) of station power constraint is converted to nonnegative scarcity value mu_kw ($/kW).
+    # For scipy.optimize.linprog(method="highs"), "ineqlin.marginals" are derivatives of
+    # objective value with respect to RHS b in A_ub x <= b. For a binding capacity row,
+    # relaxing b by +1 kW should weakly decrease objective, so marginal is typically <= 0.
+    # Scarcity adder (nonnegative, $/kW) is therefore -marginal.
     shadow_prices = {s: {t: None for t in times} for s in stations}
-    scarcity_price_proxy = {s: {t: 0.0 for t in times} for s in stations}
     cap_binding_flags = {s: {t: False for t in times} for s in stations}
     dual_trace = {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": None} for t in times} for s in stations}
     marg = getattr(getattr(res, "ineqlin", None), "marginals", None)
-    if marg is not None:
-        for s, t, ridx in cap_rows:
-            m = float(marg[ridx])
-            mu = -m if m < 0.0 else m
-            shadow_prices[s][t] = mu
-            dual_trace[s][t] = {
-                "label": f"cap_constraint[{s},{t}]",
-                "dual_raw": m,
-                "mu_kw": mu,
-            }
+    if marg is None:
+        raise LPFailed({
+            "status": getattr(res, "status", None),
+            "message": "HiGHS solved shared-power LP but did not return inequality marginals; cannot build LP-dual scarcity prices.",
+            "fun": getattr(res, "fun", None),
+            "nit": getattr(res, "nit", None),
+            **shape_payload,
+        })
+    if len(marg) < len(A_ub):
+        raise LPFailed({
+            "status": getattr(res, "status", None),
+            "message": f"HiGHS returned insufficient marginals ({len(marg)}) for A_ub rows ({len(A_ub)}).",
+            "fun": getattr(res, "fun", None),
+            "nit": getattr(res, "nit", None),
+            **shape_payload,
+        })
+    for s, t, ridx in cap_rows:
+        m = float(marg[ridx])
+        mu = max(0.0, -m)
+        shadow_prices[s][t] = mu
+        dual_trace[s][t] = {
+            "label": f"cap_constraint[{s},{t}]",
+            "dual_raw": m,
+            "mu_kw": mu,
+        }
 
     objective_components = {s: {t: {"energy_cost_term": 0.0, "ev_shed_penalty": 0.0, "vt_shed_penalty": 0.0} for t in times} for s in stations}
     total_energy_cost = 0.0
@@ -584,7 +601,7 @@ def solve_shared_power_inventory_highs(
     lp_diag = {
         "solver": "highs",
         "fallback_used": False,
-        "dual_available": marg is not None,
+        "dual_available": True,
         "objective_components": objective_components,
         "objective_totals": {
             "energy_cost_term": total_energy_cost,
@@ -610,18 +627,34 @@ def solve_shared_power_inventory_highs(
                 if mu is not None and float(mu) > 1.0e-9:
                     binding_cap_with_positive_dual_count += 1
     lp_diag["cap_binding_flags"] = cap_binding_flags
-    lp_diag["local_shadow_price_proxy"] = {
-        s: {t: float(shadow_prices.get(s, {}).get(t) or 0.0) for t in times}
-        for s in stations
-    }
     lp_diag["binding_cap_total_count"] = binding_cap_total_count
     lp_diag["binding_cap_with_positive_dual_count"] = binding_cap_with_positive_dual_count
+    zero_dual_binding_rows: list[dict[str, Any]] = []
+    for s in stations:
+        for t in times:
+            if cap_binding_flags[s][t] and float(shadow_prices[s][t] or 0.0) <= 1.0e-9:
+                zero_dual_binding_rows.append({
+                    "station": s,
+                    "time": int(t),
+                    "dual_raw": dual_trace[s][t]["dual_raw"],
+                    "mu_kw": float(shadow_prices[s][t] or 0.0),
+                })
+    if zero_dual_binding_rows:
+        raise LPFailed({
+            "status": getattr(res, "status", None),
+            "message": "Binding shared-power cap rows had zero/nonpositive LP dual; cannot validate scarcity pricing channel.",
+            "fun": getattr(res, "fun", None),
+            "nit": getattr(res, "nit", None),
+            "binding_rows_without_positive_dual": zero_dual_binding_rows,
+            **shape_payload,
+        })
     lp_diag["shared_power_price_signal_check"] = {
         "solver_used": "highs",
-        "dual_available": bool(marg is not None),
+        "lp_dual_available": True,
+        "shared_power_fallback_used": False,
         "binding_cap_total_count": binding_cap_total_count,
         "binding_cap_with_positive_dual_count": binding_cap_with_positive_dual_count,
-        "note": "If binding>0 but positive_dual=0, scarcity can still be reflected via shedding penalties/degeneracy rather than positive cap duals.",
+        "note": "LP-dual-only mode: scarcity adders are derived strictly from HiGHS cap-row marginals.",
     }
 
     return B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag
@@ -660,126 +693,6 @@ def _solve_shared_power_core(
             "n_bounds": None,
         })
     return solve_shared_power_inventory_highs(data, times, e_dep, ev_energy)
-
-def _solve_shared_power_core_heuristic(
-    data: Dict[str, Any],
-    times: list[int],
-    e_dep: Dict[str, Dict[int, float]],
-    ev_energy: Dict[str, Dict[int, float]],
-) -> Tuple[
-    Dict[str, Dict[int, float]],
-    Dict[str, Dict[int, float]],
-    Dict[str, Dict[int, float]],
-    Dict[str, Dict[int, float]],
-    Dict[str, Dict[int, float]],
-    Dict[str, float],
-    Dict[str, Any],
-]:
-    global LAST_SHARED_SOLVER_USED, LAST_SHARED_POWER_SOLVER_USED
-    LAST_SHARED_SOLVER_USED = "heuristic"
-    LAST_SHARED_POWER_SOLVER_USED = "heuristic"
-    stations = _hybrid_station_list(data)
-    delta_t = float(data["meta"]["delta_t"])
-    station_params = data["parameters"]["stations"]
-    storage_params = data["parameters"].get("vertiport_storage", {})
-    prices = data["parameters"].get("electricity_price", {})
-    voll_ev_per_kwh = float(data.get("config", {}).get("voll_ev_per_kwh", 50.0))
-    voll_vt_per_kwh = float(data.get("config", {}).get("voll_vt_per_kwh", 200.0))
-
-    t_terminal = times[-1] + 1
-    times_ext = list(times) + [t_terminal]
-    B_out = {s: {tau: 0.0 for tau in times_ext} for s in stations}
-    P_out = {s: {t: 0.0 for t in times} for s in stations}
-    shed_ev_out = {s: {t: 0.0 for t in times} for s in stations}
-    shed_vt_out = {s: {t: 0.0 for t in times} for s in stations}
-    shadow_prices = {s: {t: None for t in times} for s in stations}
-    scarcity_price_proxy = {s: {t: 0.0 for t in times} for s in stations}
-    cap_binding_flags = {s: {t: False for t in times} for s in stations}
-
-    objective_components = {s: {t: {"energy_cost_term": 0.0, "ev_shed_penalty": 0.0, "vt_shed_penalty": 0.0} for t in times} for s in stations}
-
-    for s in stations:
-        eta = float(storage_params.get(s, {}).get("eta_ch", 1.0))
-        b_min = float(storage_params.get(s, {}).get("B_min", 0.0))
-        b_max = float(storage_params.get(s, {}).get("B_max", 1.0e12))
-        b = float(storage_params.get(s, {}).get("B_init", b_min))
-        B_out[s][times_ext[0]] = b
-        for idx, t in enumerate(times):
-            p_site = float(_effective_station_power_cap(data, s, t))
-            p_ev_req = float(ev_energy.get(s, {}).get(t, 0.0)) / max(1.0e-9, delta_t)
-            if p_ev_req > p_site:
-                shed_ev_out[s][t] = p_ev_req - p_site
-            p_ev_served = p_ev_req - shed_ev_out[s][t]
-            p_avail_vt = max(0.0, p_site - p_ev_served)
-            e_req = float(e_dep.get(s, {}).get(t, 0.0))
-            p_req_grid = e_req / max(1.0e-9, eta * delta_t)
-            p_vt = min(p_avail_vt, p_req_grid)
-            P_out[s][t] = p_vt
-            shed_vt = max(0.0, e_req - (b + eta * p_vt * delta_t - b_min))
-            shed_vt = min(e_req, shed_vt)
-            shed_vt_out[s][t] = shed_vt
-            b_next = b + eta * p_vt * delta_t - (e_req - shed_vt)
-            b_next = min(b_max, max(b_min, b_next))
-            if idx == len(times) - 1:
-                b_target = _terminal_soc_target(storage_params.get(s, {}), data.get("config", {}), s)
-                if b_next < b_target:
-                    extra_shed = min(e_req - shed_vt, max(0.0, b_target - b_next))
-                    shed_vt += extra_shed
-                    shed_vt_out[s][t] = shed_vt
-                    b_next = min(b_max, max(b_min, b + eta * p_vt * delta_t - (e_req - shed_vt)))
-            B_out[s][times_ext[idx + 1]] = b_next
-            b = b_next
-
-            p_total_served = p_ev_served + p_vt
-            cap_binding_flags[s][t] = bool((p_site - p_total_served) <= 1.0e-9 and (p_ev_req + p_req_grid) >= p_site - 1.0e-9)
-
-            # Heuristic scarcity proxy (NOT an LP dual):
-            # objective penalty sensitivity to +1 kW site power for one period.
-            mu_proxy = 0.0
-            if shed_ev_out[s][t] > 1.0e-12:
-                mu_proxy = max(mu_proxy, voll_ev_per_kwh * delta_t)
-            if shed_vt_out[s][t] > 1.0e-12:
-                mu_proxy = max(mu_proxy, voll_vt_per_kwh * eta * delta_t)
-            scarcity_price_proxy[s][t] = mu_proxy
-
-            objective_components[s][t] = {
-                "energy_cost_term": float(prices.get(s, {}).get(t, 0.0)) * (p_ev_served + p_vt) * delta_t,
-                "ev_shed_penalty": voll_ev_per_kwh * shed_ev_out[s][t] * delta_t,
-                "vt_shed_penalty": voll_vt_per_kwh * shed_vt,
-            }
-
-    total_energy = sum(v["energy_cost_term"] for st in objective_components.values() for v in st.values())
-    total_ev_pen = sum(v["ev_shed_penalty"] for st in objective_components.values() for v in st.values())
-    total_vt_pen = sum(v["vt_shed_penalty"] for st in objective_components.values() for v in st.values())
-
-    residuals = {"INV1": 0.0, "INV2": 0.0, "INV3": 0.0, "INV4": 0.0}
-    lp_diag = {
-        "solver": "heuristic",
-        "fallback_used": True,
-        "dual_available": False,
-        "objective_components": objective_components,
-        "objective_totals": {
-            "energy_cost_term": total_energy,
-            "ev_shed_penalty": total_ev_pen,
-            "vt_shed_penalty": total_vt_pen,
-            "total_objective": total_energy + total_ev_pen + total_vt_pen,
-        },
-        "dual_trace": {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": None} for t in times} for s in stations},
-        "cap_binding_flags": cap_binding_flags,
-        "local_shadow_price_proxy": scarcity_price_proxy,
-        "binding_cap_total_count": int(sum(1 for s in stations for t in times if cap_binding_flags[s][t])),
-        "binding_cap_with_positive_dual_count": 0,
-        "shared_power_price_signal_check": {
-            "solver_used": "heuristic",
-            "dual_available": False,
-            "binding_cap_total_count": int(sum(1 for s in stations for t in times if cap_binding_flags[s][t])),
-            "binding_cap_with_positive_dual_count": 0,
-            "proxy_positive_count": int(sum(1 for s in stations for t in times if scarcity_price_proxy[s][t] > 0.0)),
-            "note": "Heuristic fallback does not provide LP dual prices; local_shadow_price_proxy is a non-dual scarcity proxy from shedding penalties.",
-        },
-    }
-    return B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag
-
 
 def solve_shared_power_lp(
     data: Dict[str, Any],
@@ -826,18 +739,9 @@ def solve_shared_power_inventory_lp(
     e_dep_full = {s: {t: float(e_dep.get(s, {}).get(t, 0.0)) for t in times} for s in stations}
     ev_energy_full = {s: {t: float(ev_energy.get(s, {}).get(t, 0.0)) for t in times} for s in stations}
     diagnostics_ref = data.setdefault("diagnostics_runtime", {})
-    try:
-        B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag = _solve_shared_power_core(data, times, e_dep_full, ev_energy_full)
-        diagnostics_ref["lp_ok"] = True
-        diagnostics_ref["lp_failure"] = None
-    except LPFailed as exc:
-        diagnostics_ref["lp_ok"] = False
-        diagnostics_ref["lp_failure"] = {**exc.payload, "fallback_solver": "heuristic"}
-        B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag = _solve_shared_power_core_heuristic(data, times, e_dep, ev_energy)
-    except Exception as exc:
-        diagnostics_ref["lp_ok"] = False
-        diagnostics_ref["lp_failure"] = {"status": None, "message": repr(exc), "fun": None, "nit": None, "max_ub_violation": None, "max_eq_violation": None, "n_vars": None, "A_ub_shape": None, "A_eq_shape": None, "n_bounds": None, "fallback_solver": "heuristic"}
-        B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag = _solve_shared_power_core_heuristic(data, times, e_dep, ev_energy)
+    B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag = _solve_shared_power_core(data, times, e_dep_full, ev_energy_full)
+    diagnostics_ref["lp_ok"] = True
+    diagnostics_ref["lp_failure"] = None
 
     key_mismatch = 0.0
     for dep in B_out.keys():
