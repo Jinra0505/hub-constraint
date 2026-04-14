@@ -211,7 +211,15 @@ def _enforce_aircraft_inventory(
     ret_out = {s: {t: 0.0 for t in times} for s in stations}
     avail = {s: float(vt_aircraft_init_by_station.get(s, 0.0)) for s in stations}
 
-    stats = {"binding_count": 0.0, "to_evtol": 0.0, "to_multimodal": 0.0, "to_ev": 0.0, "unserved": 0.0}
+    stats = {
+        "binding_count": 0.0,
+        "to_evtol": 0.0,
+        "to_multimodal": 0.0,
+        "to_ev": 0.0,
+        "unserved": 0.0,
+        "curtailed_pure_evtol": 0.0,
+        "curtailed_multimodal": 0.0,
+    }
     for t in times:
         reductions: Dict[Tuple[str, str, str], float] = {}
         for s in stations:
@@ -241,6 +249,10 @@ def _enforce_aircraft_inventory(
                     delta = original - served
                     if delta > 0.0:
                         reductions[(od_key, g, s)] = reductions.get((od_key, g, s), 0.0) + delta
+                        if is_multimodal_evtol(it):
+                            stats["curtailed_multimodal"] += delta
+                        else:
+                            stats["curtailed_pure_evtol"] += delta
                     flows[it["id"]].setdefault(g, {})[t] = served
                     flights = served / pax_per_dep
                     served_dep += flights
@@ -278,6 +290,10 @@ def _enforce_aircraft_inventory(
         "aircraft_rerouted_to_multimodal": stats["to_multimodal"],
         "aircraft_rerouted_to_ev": stats["to_ev"],
         "aircraft_unserved": stats["unserved"],
+        "aircraft_curtailed_pure_evtol_pax": stats["curtailed_pure_evtol"],
+        "aircraft_curtailed_multimodal_pax": stats["curtailed_multimodal"],
+        "aircraft_rerouted_pure_evtol_pax": stats["to_evtol"],
+        "aircraft_rerouted_multimodal_pax": stats["to_multimodal"],
     }
 
 
@@ -298,7 +314,11 @@ def _compute_group_time_supermode_metrics(
             agg: Dict[str, Dict[str, float]] = {
                 "EV": {"flow": 0.0, "gen_cost": 0.0, "perceived_cost": 0.0, "travel_time": 0.0, "money_plus_charge": 0.0, "transfer_burden": 0.0, "vt_wait": 0.0},
                 "eVTOL": {"flow": 0.0, "gen_cost": 0.0, "perceived_cost": 0.0, "travel_time": 0.0, "money_plus_charge": 0.0, "transfer_burden": 0.0, "vt_wait": 0.0},
-                "EV_to_eVTOL": {"flow": 0.0, "gen_cost": 0.0, "perceived_cost": 0.0, "travel_time": 0.0, "money_plus_charge": 0.0, "transfer_burden": 0.0, "vt_wait": 0.0},
+                "EV_to_eVTOL": {
+                    "flow": 0.0, "gen_cost": 0.0, "perceived_cost": 0.0, "travel_time": 0.0, "money_plus_charge": 0.0,
+                    "transfer_burden": 0.0, "vt_wait": 0.0, "access_travel": 0.0, "ev_access_wait": 0.0,
+                    "transfer_processing": 0.0, "vt_departure_wait_component": 0.0, "continuity_penalty_component": 0.0,
+                },
             }
             for it_id, g_map in flows.items():
                 f = float(g_map.get(g, {}).get(t, 0.0))
@@ -321,6 +341,12 @@ def _compute_group_time_supermode_metrics(
                 agg[sm]["money_plus_charge"] += f * money_charge
                 agg[sm]["transfer_burden"] += f * float(cb.get("continuity_penalty", 0.0) + cb.get("transfer_time_applied", 0.0))
                 agg[sm]["vt_wait"] += f * float(cb.get("vt_departure_wait_applied", 0.0))
+                if sm == "EV_to_eVTOL":
+                    agg[sm]["access_travel"] += f * float(cb.get("access_travel_time_applied", 0.0))
+                    agg[sm]["ev_access_wait"] += f * float(cb.get("ev_access_wait_applied", 0.0))
+                    agg[sm]["transfer_processing"] += f * float(cb.get("transfer_processing_time_applied", 0.0))
+                    agg[sm]["vt_departure_wait_component"] += f * float(cb.get("vt_departure_wait_applied", 0.0))
+                    agg[sm]["continuity_penalty_component"] += f * float(cb.get("continuity_penalty", 0.0))
             metrics[g][t] = {}
             for sm, vals in agg.items():
                 den = max(1e-9, vals["flow"])
@@ -333,6 +359,14 @@ def _compute_group_time_supermode_metrics(
                     "avg_transfer_related_burden": vals["transfer_burden"] / den,
                     "avg_evtol_departure_wait_exposure": vals["vt_wait"] / den,
                 }
+                if sm == "EV_to_eVTOL":
+                    metrics[g][t][sm].update({
+                        "avg_access_travel_component": vals["access_travel"] / den,
+                        "avg_ev_access_wait_component": vals["ev_access_wait"] / den,
+                        "avg_transfer_processing_component": vals["transfer_processing"] / den,
+                        "avg_vt_departure_wait_component": vals["vt_departure_wait_component"] / den,
+                        "avg_continuity_penalty_component": vals["continuity_penalty_component"] / den,
+                    })
     return metrics
 
 
@@ -352,6 +386,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     cfg.setdefault("tol_service_prob", cfg.get("tol", 1e-3))
     cfg.setdefault("reroute_logit_temperature", 1.0)
     cfg.setdefault("aircraft_inner_recheck_max_rounds", 2)
+    cfg.setdefault("multimodal_access_utilization_factor", 1.0)
     _apply_hub_power_scenario(data)
 
     times = [int(t) for t in data["sets"]["time"]]
@@ -460,7 +495,12 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             travel_times_new = compute_road_times(arc_flows, data["parameters"]["arc_params"], {t: 1.0 for t in times}, times)
             travel_times = _msa_update(travel_times, travel_times_new, alpha)
 
-        ev_util = aggregate_ev_station_utilization(itineraries, flows, times)
+        ev_util = aggregate_ev_station_utilization(
+            itineraries,
+            flows,
+            times,
+            multimodal_access_utilization_factor=float(cfg.get("multimodal_access_utilization_factor", 1.0) or 1.0),
+        )
         ev_waits = compute_station_waits(ev_util, data["parameters"]["stations"], times)
         vt_waits, _ = compute_vt_departure_waits(data, itineraries, flows, times, cfg)
 
@@ -576,6 +616,24 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             ev_gc_vals.append(float(group_time_super[g][t]["eVTOL"]["avg_generalized_cost"]))
     avg_mm_gc = sum(mm_gc_vals) / max(1, len(mm_gc_vals))
     avg_ev_gc = sum(ev_gc_vals) / max(1, len(ev_gc_vals))
+    mm_access_vals = []
+    mm_vt_wait_vals = []
+    mm_cont_vals = []
+    for g in groups:
+        for t in times:
+            mm_entry = group_time_super[g][t]["EV_to_eVTOL"]
+            mm_access_vals.append(float(mm_entry.get("avg_ev_access_wait_component", 0.0) + mm_entry.get("avg_access_travel_component", 0.0)))
+            mm_vt_wait_vals.append(float(mm_entry.get("avg_vt_departure_wait_component", 0.0)))
+            mm_cont_vals.append(float(mm_entry.get("avg_continuity_penalty_component", 0.0)))
+    avg_mm_access = sum(mm_access_vals) / max(1, len(mm_access_vals))
+    avg_mm_vt_wait = sum(mm_vt_wait_vals) / max(1, len(mm_vt_wait_vals))
+    avg_mm_cont = sum(mm_cont_vals) / max(1, len(mm_cont_vals))
+    burden_components = {
+        "ev_side_access": avg_mm_access,
+        "vt_side_wait": avg_mm_vt_wait,
+        "continuity_penalty": avg_mm_cont,
+    }
+    dominant_burden = max(burden_components, key=burden_components.get) if burden_components else "undetermined"
     if avg_mm_gc > avg_ev_gc + 1.0e-6 and avg_mm_share <= avg_evtol_share + 1.0e-6:
         inference = "In this run, EV_to_eVTOL appears more constrained than pure eVTOL (higher average generalized cost and no higher average share)."
     elif avg_mm_gc < avg_ev_gc - 1.0e-6 and avg_mm_share >= avg_evtol_share - 1.0e-6:
@@ -628,6 +686,10 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "avg_pure_evtol_share": avg_evtol_share,
             "avg_ev_to_evtol_generalized_cost": avg_mm_gc,
             "avg_pure_evtol_generalized_cost": avg_ev_gc,
+            "ev_to_evtol_higher_avg_generalized_cost_than_pure_evtol": bool(avg_mm_gc > avg_ev_gc + 1.0e-6),
+            "ev_to_evtol_lower_avg_share_than_pure_evtol": bool(avg_mm_share < avg_evtol_share - 1.0e-6),
+            "dominant_ev_to_evtol_burden_component": dominant_burden,
+            "ev_to_evtol_burden_component_averages": burden_components,
             "group_with_highest_avg_ev_to_evtol_share": shift_group,
             "group_average_mode_share": mode_totals_by_group,
         },

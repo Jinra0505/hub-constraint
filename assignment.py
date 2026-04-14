@@ -197,6 +197,9 @@ def compute_itinerary_costs(
             money_t = _value_by_time(it.get("money", 0.0), t, 0.0)
             tt = 0.0
             charge_cost = 0.0
+            access_travel_time_applied = 0.0
+            ev_access_wait_applied = 0.0
+            flight_time_applied = 0.0
             for seg in _road_segments(it):
                 if seg["t"] != t:
                     continue
@@ -204,6 +207,12 @@ def compute_itinerary_costs(
                 if arc not in travel_times or t not in travel_times[arc]:
                     raise KeyError(f"Missing travel_times for itinerary {it_id}, arc={arc}, t={t}")
                 tt += float(travel_times[arc][t]) * float(seg.get("frac", 1.0))
+            for seg in (it.get("access_arcs", []) or []):
+                if seg.get("t") != t:
+                    continue
+                arc = seg.get("arc")
+                if arc in travel_times and t in travel_times[arc]:
+                    access_travel_time_applied += float(travel_times[arc][t]) * float(seg.get("frac", 1.0))
 
             # EV component (pure EV or multimodal access)
             ev_stops_t = _ev_stops_at_time(it, t)
@@ -214,7 +223,10 @@ def compute_itinerary_costs(
                     raise KeyError(f"Missing ev_station_waits for itinerary {it_id}, station={station}, t={t}")
                 if station not in electricity_price or t not in electricity_price[station]:
                     raise KeyError(f"Missing electricity_price for itinerary {it_id}, station={station}, t={t}")
-                tt += float(ev_station_waits[station][t])
+                wait_val = float(ev_station_waits[station][t])
+                tt += wait_val
+                if is_multimodal_evtol(it):
+                    ev_access_wait_applied += wait_val
                 charge_cost += float(stop.get("energy", 0.0)) * float(electricity_price[station][t])
 
             transfer_time_applied = 0.0
@@ -227,6 +239,7 @@ def compute_itinerary_costs(
                 "ev_unreliability_term": 0.0,
                 "vt_unreliability_term": 0.0,
                 "joint_unreliability_term": 0.0,
+                "transfer_overrun_term": 0.0,
                 "ev_prob_used": 1.0,
                 "vt_prob_used": 1.0,
             }
@@ -262,11 +275,19 @@ def compute_itinerary_costs(
                         "TT": float("inf"),
                         "Money": float("inf"),
                         "ChargeCost": 0.0,
+                        "ContinuityPenalty": 0.0,
                         "cost_breakdown": {
                             "transfer_time_applied": 0.0,
                             "transfer_time_source": "none",
                             "access_energy_price_source": access_energy_price_source,
-                        "access_energy_consistency": access_energy_consistency,
+                            "access_energy_consistency": access_energy_consistency,
+                            "access_travel_time_applied": access_travel_time_applied,
+                            "ev_access_wait_applied": ev_access_wait_applied,
+                            "transfer_processing_time_applied": 0.0,
+                            "vt_departure_wait_applied": 0.0,
+                            "flight_time_applied": 0.0,
+                            "continuity_penalty": 0.0,
+                            "continuity_penalty_components": multimodal_penalty_components,
                         },
                     }
                     continue
@@ -282,6 +303,7 @@ def compute_itinerary_costs(
                         transfer_time_source = "global_default"
                     tt += transfer_time_applied
                 tt += flight_time
+                flight_time_applied = flight_time
                 svc_class = get_evtol_service_class(it)
                 if vt_departure_waits is not None:
                     if dep_station not in vt_departure_waits or svc_class not in vt_departure_waits[dep_station] or t not in vt_departure_waits[dep_station][svc_class]:
@@ -314,17 +336,23 @@ def compute_itinerary_costs(
                     ev_term = coeff_ev_unrel * ev_unrel
                     vt_term = coeff_vt_unrel * vt_unrel
                     joint_term = coeff_joint_unrel * ev_unrel * vt_unrel
+                    coeff_transfer_overrun = float(multimodal_penalty_cfg.get("coeff_transfer_overrun", 0.0) or 0.0)
+                    transfer_buffer_threshold = float(multimodal_penalty_cfg.get("transfer_buffer_threshold", 0.0) or 0.0)
+                    preflight_transfer_burden = ev_access_wait_applied + transfer_time_applied + vt_wait_applied
+                    transfer_overrun = coeff_transfer_overrun * max(0.0, preflight_transfer_burden - transfer_buffer_threshold)
                     multimodal_extra_penalty = (
                         base_penalty
                         + ev_term
                         + vt_term
                         + joint_term
+                        + transfer_overrun
                     )
                     multimodal_penalty_components = {
                         "base_transfer_fragility_penalty": base_penalty,
                         "ev_unreliability_term": ev_term,
                         "vt_unreliability_term": vt_term,
                         "joint_unreliability_term": joint_term,
+                        "transfer_overrun_term": transfer_overrun,
                         "ev_prob_used": ev_prob,
                         "vt_prob_used": vt_prob,
                     }
@@ -339,9 +367,13 @@ def compute_itinerary_costs(
                     "transfer_time_source": transfer_time_source,
                     "access_energy_price_source": access_energy_price_source,
                     "access_energy_consistency": access_energy_consistency,
+                    "access_travel_time_applied": access_travel_time_applied,
+                    "ev_access_wait_applied": ev_access_wait_applied,
+                    "transfer_processing_time_applied": transfer_time_applied,
                     "continuity_penalty": multimodal_extra_penalty,
                     "vt_departure_wait_applied": vt_wait_applied,
-                    "multimodal_penalty_components": multimodal_penalty_components,
+                    "flight_time_applied": flight_time_applied,
+                    "continuity_penalty_components": multimodal_penalty_components,
                 },
             }
     return costs
@@ -522,6 +554,7 @@ def aggregate_ev_station_utilization(
     itineraries: List[Dict[str, Any]],
     flows: Dict[str, Dict[str, Dict[int, float]]],
     times: List[int],
+    multimodal_access_utilization_factor: float = 1.0,
 ) -> Dict[str, Dict[int, float]]:
     utilization: Dict[str, Dict[int, float]] = {}
     for it in itineraries:
@@ -533,7 +566,8 @@ def aggregate_ev_station_utilization(
             for t in times:
                 for stop in _ev_stops_at_time(it, t):
                     station = stop["station"]
-                    utilization[station][t] += float(time_map.get(t, 0.0))
+                    factor = float(multimodal_access_utilization_factor) if is_multimodal_evtol(it) else 1.0
+                    utilization[station][t] += factor * float(time_map.get(t, 0.0))
     return utilization
 
 
