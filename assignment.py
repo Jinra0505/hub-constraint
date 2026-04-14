@@ -164,14 +164,15 @@ def build_incidence(
                 raise KeyError(f"Unknown time in itinerary {it_id}: t={t}")
             frac = seg.get("frac", 1.0)
             inc_road[arc][it["id"]][t] += frac
-        for stop in _ev_stops(it):
-            station = stop["station"]
-            t = stop["t"]
-            if station not in station_set:
-                raise KeyError(f"Unknown station in itinerary {it_id}: station={station}")
-            if t not in time_set:
-                raise KeyError(f"Unknown time in itinerary {it_id}: t={t}")
-            inc_station[station][it["id"]][t] += 1.0
+        # Keep incidence consistent with implicit-access-stop semantics.
+        for t in times:
+            for stop in _ev_stops_at_time(it, t):
+                station = stop["station"]
+                if station not in station_set:
+                    raise KeyError(f"Unknown station in itinerary {it_id}: station={station}")
+                if t not in time_set:
+                    raise KeyError(f"Unknown time in itinerary {it_id}: t={t}")
+                inc_station[station][it["id"]][t] += 1.0
     return inc_road, inc_station
 
 

@@ -1,0 +1,1193 @@
+{
+  "flows": {
+    "it_ev": {
+      "low": {
+        "0": 166.12606748297364,
+        "1": 239.99999999999994,
+        "2": 165.57691109205672
+      },
+      "mid": {
+        "0": 135.97178870435852,
+        "1": 170.0,
+        "2": 136.52559641838832
+      },
+      "high": {
+        "0": 97.9021438126679,
+        "1": 110.00000000000001,
+        "2": 97.89749248955495
+      }
+    },
+    "it_vt": {
+      "low": {
+        "0": 34.341462068841665,
+        "1": 1.1161168559329216e-15,
+        "2": 37.659466885951005
+      },
+      "mid": {
+        "0": 19.675880381473466,
+        "1": 1.1388047232123268e-15,
+        "2": 21.239746681590987
+      },
+      "high": {
+        "0": 10.014012687024415,
+        "1": 1.6219777427609053e-15,
+        "2": 10.454160614247828
+      }
+    },
+    "it_mm": {
+      "low": {
+        "0": 39.532470448184796,
+        "1": 1.2945575350405667e-15,
+        "2": 36.763622021992255
+      },
+      "mid": {
+        "0": 14.352330914167977,
+        "1": 7.999625342261415e-16,
+        "2": 12.234656900020687
+      },
+      "high": {
+        "0": 2.0838435003076965,
+        "1": 2.813566835160191e-16,
+        "2": 1.6483468961972434
+      }
+    }
+  },
+  "costs": {
+    "it_ev": {
+      "0": {
+        "TT": 1.3015739038639715,
+        "Money": 2.5,
+        "ChargeCost": 2.0,
+        "ContinuityPenalty": 0.0,
+        "cost_breakdown": {
+          "transfer_time_applied": 0.0,
+          "transfer_time_source": "none",
+          "access_energy_price_source": "none",
+          "access_energy_consistency": "ok",
+          "access_travel_time_applied": 0.0,
+          "ev_access_wait_applied": 0.0,
+          "transfer_processing_time_applied": 0.0,
+          "continuity_penalty": 0.0,
+          "vt_departure_wait_applied": 0.0,
+          "flight_time_applied": 0.0,
+          "continuity_penalty_components": {
+            "base_transfer_fragility_penalty": 0.0,
+            "ev_unreliability_term": 0.0,
+            "vt_unreliability_term": 0.0,
+            "joint_unreliability_term": 0.0,
+            "transfer_overrun_term": 0.0,
+            "ev_prob_used": 1.0,
+            "vt_prob_used": 1.0
+          }
+        }
+      },
+      "1": {
+        "TT": 1.3856392,
+        "Money": 2.5,
+        "ChargeCost": 2.0,
+        "ContinuityPenalty": 0.0,
+        "cost_breakdown": {
+          "transfer_time_applied": 0.0,
+          "transfer_time_source": "none",
+          "access_energy_price_source": "none",
+          "access_energy_consistency": "ok",
+          "access_travel_time_applied": 0.0,
+          "ev_access_wait_applied": 0.0,
+          "transfer_processing_time_applied": 0.0,
+          "continuity_penalty": 0.0,
+          "vt_departure_wait_applied": 0.0,
+          "flight_time_applied": 0.0,
+          "continuity_penalty_components": {
+            "base_transfer_fragility_penalty": 0.0,
+            "ev_unreliability_term": 0.0,
+            "vt_unreliability_term": 0.0,
+            "joint_unreliability_term": 0.0,
+            "transfer_overrun_term": 0.0,
+            "ev_prob_used": 1.0,
+            "vt_prob_used": 1.0
+          }
+        }
+      },
+      "2": {
+        "TT": 1.2960049598294574,
+        "Money": 2.5,
+        "ChargeCost": 2.0,
+        "ContinuityPenalty": 0.0,
+        "cost_breakdown": {
+          "transfer_time_applied": 0.0,
+          "transfer_time_source": "none",
+          "access_energy_price_source": "none",
+          "access_energy_consistency": "ok",
+          "access_travel_time_applied": 0.0,
+          "ev_access_wait_applied": 0.0,
+          "transfer_processing_time_applied": 0.0,
+          "continuity_penalty": 0.0,
+          "vt_departure_wait_applied": 0.0,
+          "flight_time_applied": 0.0,
+          "continuity_penalty_components": {
+            "base_transfer_fragility_penalty": 0.0,
+            "ev_unreliability_term": 0.0,
+            "vt_unreliability_term": 0.0,
+            "joint_unreliability_term": 0.0,
+            "transfer_overrun_term": 0.0,
+            "ev_prob_used": 1.0,
+            "vt_prob_used": 1.0
+          }
+        }
+      }
+    },
+    "it_vt": {
+      "0": {
+        "TT": 1.1746938775510205,
+        "Money": 28.5,
+        "ChargeCost": 0.0,
+        "ContinuityPenalty": 0.0,
+        "cost_breakdown": {
+          "transfer_time_applied": 0.0,
+          "transfer_time_source": "none",
+          "access_energy_price_source": "none",
+          "access_energy_consistency": "ok",
+          "access_travel_time_applied": 0.0,
+          "ev_access_wait_applied": 0.0,
+          "transfer_processing_time_applied": 0.0,
+          "continuity_penalty": 0.0,
+          "vt_departure_wait_applied": 0.8346938775510205,
+          "flight_time_applied": 0.34,
+          "continuity_penalty_components": {
+            "base_transfer_fragility_penalty": 0.0,
+            "ev_unreliability_term": 0.0,
+            "vt_unreliability_term": 0.0,
+            "joint_unreliability_term": 0.0,
+            "transfer_overrun_term": 0.0,
+            "ev_prob_used": 1.0,
+            "vt_prob_used": 1.0
+          }
+        }
+      },
+      "1": {
+        "TT": 0.44000000000000006,
+        "Money": 28.5,
+        "ChargeCost": 0.0,
+        "ContinuityPenalty": 0.0,
+        "cost_breakdown": {
+          "transfer_time_applied": 0.0,
+          "transfer_time_source": "none",
+          "access_energy_price_source": "none",
+          "access_energy_consistency": "ok",
+          "access_travel_time_applied": 0.0,
+          "ev_access_wait_applied": 0.0,
+          "transfer_processing_time_applied": 0.0,
+          "continuity_penalty": 0.0,
+          "vt_departure_wait_applied": 0.1,
+          "flight_time_applied": 0.34,
+          "continuity_penalty_components": {
+            "base_transfer_fragility_penalty": 0.0,
+            "ev_unreliability_term": 0.0,
+            "vt_unreliability_term": 0.0,
+            "joint_unreliability_term": 0.0,
+            "transfer_overrun_term": 0.0,
+            "ev_prob_used": 1.0,
+            "vt_prob_used": 1.0
+          }
+        }
+      },
+      "2": {
+        "TT": 1.1746938775510203,
+        "Money": 28.5,
+        "ChargeCost": 0.0,
+        "ContinuityPenalty": 0.0,
+        "cost_breakdown": {
+          "transfer_time_applied": 0.0,
+          "transfer_time_source": "none",
+          "access_energy_price_source": "none",
+          "access_energy_consistency": "ok",
+          "access_travel_time_applied": 0.0,
+          "ev_access_wait_applied": 0.0,
+          "transfer_processing_time_applied": 0.0,
+          "continuity_penalty": 0.0,
+          "vt_departure_wait_applied": 0.8346938775510203,
+          "flight_time_applied": 0.34,
+          "continuity_penalty_components": {
+            "base_transfer_fragility_penalty": 0.0,
+            "ev_unreliability_term": 0.0,
+            "vt_unreliability_term": 0.0,
+            "joint_unreliability_term": 0.0,
+            "transfer_overrun_term": 0.0,
+            "ev_prob_used": 1.0,
+            "vt_prob_used": 1.0
+          }
+        }
+      }
+    },
+    "it_mm": {
+      "0": {
+        "TT": 1.7262677814149923,
+        "Money": 18.0,
+        "ChargeCost": 0.875,
+        "ContinuityPenalty": 1.9251373080043763,
+        "cost_breakdown": {
+          "transfer_time_applied": 0.12,
+          "transfer_time_source": "itinerary",
+          "access_energy_price_source": "none",
+          "access_energy_consistency": "ok",
+          "access_travel_time_applied": 0.2800000000000001,
+          "ev_access_wait_applied": 0.15157390386397157,
+          "transfer_processing_time_applied": 0.12,
+          "continuity_penalty": 1.9251373080043763,
+          "vt_departure_wait_applied": 0.8346938775510205,
+          "flight_time_applied": 0.34,
+          "continuity_penalty_components": {
+            "base_transfer_fragility_penalty": 0.1,
+            "ev_unreliability_term": 1.4470034172968802,
+            "vt_unreliability_term": 0.0,
+            "joint_unreliability_term": 0.0,
+            "transfer_overrun_term": 0.3781338907074961,
+            "ev_prob_used": 0.03533105513541315,
+            "vt_prob_used": 1.0
+          }
+        }
+      },
+      "1": {
+        "TT": 1.0756392000000001,
+        "Money": 18.0,
+        "ChargeCost": 0.875,
+        "ContinuityPenalty": 1.6095503692307693,
+        "cost_breakdown": {
+          "transfer_time_applied": 0.12,
+          "transfer_time_source": "itinerary",
+          "access_energy_price_source": "none",
+          "access_energy_consistency": "ok",
+          "access_travel_time_applied": 0.2800000000000001,
+          "ev_access_wait_applied": 0.23563920000000002,
+          "transfer_processing_time_applied": 0.12,
+          "continuity_penalty": 1.6095503692307693,
+          "vt_departure_wait_applied": 0.1,
+          "flight_time_applied": 0.34,
+          "continuity_penalty_components": {
+            "base_transfer_fragility_penalty": 0.1,
+            "ev_unreliability_term": 1.4567307692307692,
+            "vt_unreliability_term": 0.0,
+            "joint_unreliability_term": 0.0,
+            "transfer_overrun_term": 0.05281960000000002,
+            "ev_prob_used": 0.028846153846153848,
+            "vt_prob_used": 1.0
+          }
+        }
+      },
+      "2": {
+        "TT": 1.720698837380478,
+        "Money": 18.0,
+        "ChargeCost": 0.875,
+        "ContinuityPenalty": 5.351088469343965,
+        "cost_breakdown": {
+          "transfer_time_applied": 0.12,
+          "transfer_time_source": "itinerary",
+          "access_energy_price_source": "none",
+          "access_energy_consistency": "ok",
+          "access_travel_time_applied": 0.2800000000000001,
+          "ev_access_wait_applied": 0.14600495982945755,
+          "transfer_processing_time_applied": 0.12,
+          "continuity_penalty": 5.351088469343965,
+          "vt_departure_wait_applied": 0.8346938775510203,
+          "flight_time_applied": 0.34,
+          "continuity_penalty_components": {
+            "base_transfer_fragility_penalty": 0.1,
+            "ev_unreliability_term": 1.4467453074230257,
+            "vt_unreliability_term": 1.5,
+            "joint_unreliability_term": 1.9289937432307007,
+            "transfer_overrun_term": 0.3753494186902389,
+            "ev_prob_used": 0.03550312838464969,
+            "vt_prob_used": 0.0
+          }
+        }
+      }
+    }
+  },
+  "mode_share_by_group_time": {
+    "low": {
+      "0": {
+        "EV": 0.6921919478457231,
+        "eVTOL": 0.1430894252868402,
+        "EV_to_eVTOL": 0.16471862686743657
+      },
+      "1": {
+        "EV": 1.0,
+        "eVTOL": 4.650486899720507e-18,
+        "EV_to_eVTOL": 5.393989729335696e-18
+      },
+      "2": {
+        "EV": 0.6899037962169031,
+        "eVTOL": 0.1569144453581292,
+        "EV_to_eVTOL": 0.15318175842496776
+      }
+    },
+    "mid": {
+      "0": {
+        "EV": 0.799834051202109,
+        "eVTOL": 0.11574047283219688,
+        "EV_to_eVTOL": 0.084425475965694
+      },
+      "1": {
+        "EV": 1.0,
+        "eVTOL": 6.698851313013687e-18,
+        "EV_to_eVTOL": 4.7056619660361264e-18
+      },
+      "2": {
+        "EV": 0.8030917436375783,
+        "eVTOL": 0.12493968636229992,
+        "EV_to_eVTOL": 0.07196857000012169
+      }
+    },
+    "high": {
+      "0": {
+        "EV": 0.8900194892060718,
+        "eVTOL": 0.09103647897294921,
+        "EV_to_eVTOL": 0.018944031820979056
+      },
+      "1": {
+        "EV": 1.0,
+        "eVTOL": 1.474525220691732e-17,
+        "EV_to_eVTOL": 2.5577880319638096e-18
+      },
+      "2": {
+        "EV": 0.8899772044504994,
+        "eVTOL": 0.09503782376588933,
+        "EV_to_eVTOL": 0.014984971783611302
+      }
+    }
+  },
+  "group_time_supermode_metrics": {
+    "low": {
+      "0": {
+        "EV": {
+          "flow": 166.12606748297364,
+          "avg_generalized_cost": 16.214165134775744,
+          "avg_perceived_cost": 16.214165134775744,
+          "avg_travel_time": 1.3015739038639715,
+          "avg_money_plus_charge_cost": 4.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.0
+        },
+        "eVTOL": {
+          "flow": 34.341462068841665,
+          "avg_generalized_cost": 39.07224489795918,
+          "avg_perceived_cost": 39.07224489795918,
+          "avg_travel_time": 1.1746938775510205,
+          "avg_money_plus_charge_cost": 28.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510205
+        },
+        "EV_to_eVTOL": {
+          "flow": 39.532470448184796,
+          "avg_generalized_cost": 36.33654734073931,
+          "avg_perceived_cost": 36.33654734073931,
+          "avg_travel_time": 1.7262677814149923,
+          "avg_money_plus_charge_cost": 18.875,
+          "avg_transfer_related_burden": 2.045137308004376,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510205,
+          "avg_access_travel_component": 0.2800000000000001,
+          "avg_ev_access_wait_component": 0.15157390386397157,
+          "avg_transfer_processing_component": 0.12000000000000001,
+          "avg_vt_departure_wait_component": 0.8346938775510205,
+          "avg_continuity_penalty_component": 1.9251373080043763
+        }
+      },
+      "1": {
+        "EV": {
+          "flow": 239.99999999999994,
+          "avg_generalized_cost": 16.9707528,
+          "avg_perceived_cost": 16.9707528,
+          "avg_travel_time": 1.3856392,
+          "avg_money_plus_charge_cost": 4.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.0
+        },
+        "eVTOL": {
+          "flow": 1.1161168559329216e-15,
+          "avg_generalized_cost": 3.622915314358263e-05,
+          "avg_perceived_cost": 3.622915314358263e-05,
+          "avg_travel_time": 4.910914166104856e-07,
+          "avg_money_plus_charge_cost": 3.180933039408826e-05,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 1.1161168559329215e-07
+        },
+        "EV_to_eVTOL": {
+          "flow": 1.2945575350405667e-15,
+          "avg_generalized_cost": 3.905072051451078e-05,
+          "avg_perceived_cost": 3.905072051451078e-05,
+          "avg_travel_time": 1.3924768313450072e-06,
+          "avg_money_plus_charge_cost": 2.4434773473890697e-05,
+          "avg_transfer_related_burden": 2.2390024627198864e-06,
+          "avg_evtol_departure_wait_exposure": 1.2945575350405668e-07,
+          "avg_access_travel_component": 3.6247610981135875e-07,
+          "avg_ev_access_wait_component": 3.050485019109311e-07,
+          "avg_transfer_processing_component": 1.55346904204868e-07,
+          "avg_vt_departure_wait_component": 1.2945575350405668e-07,
+          "avg_continuity_penalty_component": 2.0836555585150185e-06
+        }
+      },
+      "2": {
+        "EV": {
+          "flow": 165.57691109205672,
+          "avg_generalized_cost": 16.164044638465114,
+          "avg_perceived_cost": 16.164044638465114,
+          "avg_travel_time": 1.2960049598294574,
+          "avg_money_plus_charge_cost": 4.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.0
+        },
+        "eVTOL": {
+          "flow": 37.659466885951005,
+          "avg_generalized_cost": 39.07224489795918,
+          "avg_perceived_cost": 39.07224489795918,
+          "avg_travel_time": 1.1746938775510203,
+          "avg_money_plus_charge_cost": 28.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510203
+        },
+        "EV_to_eVTOL": {
+          "flow": 36.763622021992255,
+          "avg_generalized_cost": 39.712378005768265,
+          "avg_perceived_cost": 39.712378005768265,
+          "avg_travel_time": 1.720698837380478,
+          "avg_money_plus_charge_cost": 18.875,
+          "avg_transfer_related_burden": 5.471088469343965,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510203,
+          "avg_access_travel_component": 0.2800000000000001,
+          "avg_ev_access_wait_component": 0.14600495982945755,
+          "avg_transfer_processing_component": 0.12,
+          "avg_vt_departure_wait_component": 0.8346938775510203,
+          "avg_continuity_penalty_component": 5.351088469343965
+        }
+      }
+    },
+    "mid": {
+      "0": {
+        "EV": {
+          "flow": 135.97178870435852,
+          "avg_generalized_cost": 33.134625885007374,
+          "avg_perceived_cost": 33.134625885007374,
+          "avg_travel_time": 1.3015739038639715,
+          "avg_money_plus_charge_cost": 4.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.0
+        },
+        "eVTOL": {
+          "flow": 19.675880381473466,
+          "avg_generalized_cost": 54.34326530612245,
+          "avg_perceived_cost": 54.34326530612245,
+          "avg_travel_time": 1.1746938775510205,
+          "avg_money_plus_charge_cost": 28.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510205
+        },
+        "EV_to_eVTOL": {
+          "flow": 14.352330914167977,
+          "avg_generalized_cost": 58.7780284991342,
+          "avg_perceived_cost": 58.7780284991342,
+          "avg_travel_time": 1.7262677814149923,
+          "avg_money_plus_charge_cost": 18.875,
+          "avg_transfer_related_burden": 2.045137308004376,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510205,
+          "avg_access_travel_component": 0.2800000000000001,
+          "avg_ev_access_wait_component": 0.15157390386397157,
+          "avg_transfer_processing_component": 0.12,
+          "avg_vt_departure_wait_component": 0.8346938775510205,
+          "avg_continuity_penalty_component": 1.9251373080043763
+        }
+      },
+      "1": {
+        "EV": {
+          "flow": 170.0,
+          "avg_generalized_cost": 34.9840624,
+          "avg_perceived_cost": 34.9840624,
+          "avg_travel_time": 1.3856392,
+          "avg_money_plus_charge_cost": 4.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.0
+        },
+        "eVTOL": {
+          "flow": 1.1388047232123268e-15,
+          "avg_generalized_cost": 4.347956433224664e-05,
+          "avg_perceived_cost": 4.347956433224664e-05,
+          "avg_travel_time": 5.010740782134238e-07,
+          "avg_money_plus_charge_cost": 3.245593461155131e-05,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 1.1388047232123268e-07
+        },
+        "EV_to_eVTOL": {
+          "flow": 7.999625342261415e-16,
+          "avg_generalized_cost": 3.531723615344244e-05,
+          "avg_perceived_cost": 3.531723615344244e-05,
+          "avg_travel_time": 8.604710603449795e-07,
+          "avg_money_plus_charge_cost": 1.5099292833518419e-05,
+          "avg_transfer_related_burden": 1.3835754964416047e-06,
+          "avg_evtol_departure_wait_exposure": 7.999625342261415e-08,
+          "avg_access_travel_component": 2.2398950958331967e-07,
+          "avg_ev_access_wait_component": 1.885025315950206e-07,
+          "avg_transfer_processing_component": 9.599550410713696e-08,
+          "avg_vt_departure_wait_component": 7.999625342261415e-08,
+          "avg_continuity_penalty_component": 1.287579992334468e-06
+        }
+      },
+      "2": {
+        "EV": {
+          "flow": 136.52559641838832,
+          "avg_generalized_cost": 33.01210911624806,
+          "avg_perceived_cost": 33.01210911624806,
+          "avg_travel_time": 1.2960049598294574,
+          "avg_money_plus_charge_cost": 4.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.0
+        },
+        "eVTOL": {
+          "flow": 21.239746681590987,
+          "avg_generalized_cost": 54.34326530612244,
+          "avg_perceived_cost": 54.34326530612244,
+          "avg_travel_time": 1.1746938775510203,
+          "avg_money_plus_charge_cost": 28.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510204
+        },
+        "EV_to_eVTOL": {
+          "flow": 12.234656900020687,
+          "avg_generalized_cost": 62.08146289171447,
+          "avg_perceived_cost": 62.08146289171447,
+          "avg_travel_time": 1.720698837380478,
+          "avg_money_plus_charge_cost": 18.875,
+          "avg_transfer_related_burden": 5.471088469343965,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510204,
+          "avg_access_travel_component": 0.2800000000000001,
+          "avg_ev_access_wait_component": 0.14600495982945755,
+          "avg_transfer_processing_component": 0.12000000000000001,
+          "avg_vt_departure_wait_component": 0.8346938775510204,
+          "avg_continuity_penalty_component": 5.351088469343965
+        }
+      }
+    },
+    "high": {
+      "0": {
+        "EV": {
+          "flow": 97.9021438126679,
+          "avg_generalized_cost": 59.166103962286805,
+          "avg_perceived_cost": 59.166103962286805,
+          "avg_travel_time": 1.3015739038639715,
+          "avg_money_plus_charge_cost": 4.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.0
+        },
+        "eVTOL": {
+          "flow": 10.014012687024415,
+          "avg_generalized_cost": 77.83714285714285,
+          "avg_perceived_cost": 77.83714285714285,
+          "avg_travel_time": 1.1746938775510205,
+          "avg_money_plus_charge_cost": 28.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510204
+        },
+        "EV_to_eVTOL": {
+          "flow": 2.0838435003076965,
+          "avg_generalized_cost": 93.30338412743406,
+          "avg_perceived_cost": 93.30338412743406,
+          "avg_travel_time": 1.7262677814149923,
+          "avg_money_plus_charge_cost": 18.875,
+          "avg_transfer_related_burden": 2.045137308004376,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510205,
+          "avg_access_travel_component": 0.2800000000000001,
+          "avg_ev_access_wait_component": 0.15157390386397157,
+          "avg_transfer_processing_component": 0.11999999999999998,
+          "avg_vt_departure_wait_component": 0.8346938775510205,
+          "avg_continuity_penalty_component": 1.925137308004376
+        }
+      },
+      "1": {
+        "EV": {
+          "flow": 110.00000000000001,
+          "avg_generalized_cost": 62.6968464,
+          "avg_perceived_cost": 62.6968464,
+          "avg_travel_time": 1.3856392,
+          "avg_money_plus_charge_cost": 4.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.0
+        },
+        "eVTOL": {
+          "flow": 1.6219777427609053e-15,
+          "avg_generalized_cost": 7.620051435490734e-05,
+          "avg_perceived_cost": 7.620051435490734e-05,
+          "avg_travel_time": 7.136702068147984e-07,
+          "avg_money_plus_charge_cost": 4.62263656686858e-05,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 1.6219777427609053e-07
+        },
+        "EV_to_eVTOL": {
+          "flow": 2.813566835160191e-16,
+          "avg_generalized_cost": 1.847427283002022e-05,
+          "avg_perceived_cost": 1.847427283002022e-05,
+          "avg_travel_time": 3.02638277971824e-07,
+          "avg_money_plus_charge_cost": 5.310607401364859e-06,
+          "avg_transfer_related_burden": 4.866205558606754e-07,
+          "avg_evtol_departure_wait_exposure": 2.8135668351601905e-08,
+          "avg_access_travel_component": 7.877987138448537e-08,
+          "avg_ev_access_wait_component": 6.629866381836792e-08,
+          "avg_transfer_processing_component": 3.3762802021922284e-08,
+          "avg_vt_departure_wait_component": 2.8135668351601905e-08,
+          "avg_continuity_penalty_component": 4.528577538387532e-07
+        }
+      },
+      "2": {
+        "EV": {
+          "flow": 97.89749248955495,
+          "avg_generalized_cost": 58.93220831283721,
+          "avg_perceived_cost": 58.93220831283721,
+          "avg_travel_time": 1.2960049598294574,
+          "avg_money_plus_charge_cost": 4.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.0
+        },
+        "eVTOL": {
+          "flow": 10.454160614247828,
+          "avg_generalized_cost": 77.83714285714285,
+          "avg_perceived_cost": 77.83714285714285,
+          "avg_travel_time": 1.1746938775510203,
+          "avg_money_plus_charge_cost": 28.5,
+          "avg_transfer_related_burden": 0.0,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510203
+        },
+        "EV_to_eVTOL": {
+          "flow": 1.6483468961972434,
+          "avg_generalized_cost": 96.49543963932403,
+          "avg_perceived_cost": 96.49543963932403,
+          "avg_travel_time": 1.720698837380478,
+          "avg_money_plus_charge_cost": 18.875,
+          "avg_transfer_related_burden": 5.471088469343965,
+          "avg_evtol_departure_wait_exposure": 0.8346938775510203,
+          "avg_access_travel_component": 0.2800000000000001,
+          "avg_ev_access_wait_component": 0.14600495982945755,
+          "avg_transfer_processing_component": 0.12,
+          "avg_vt_departure_wait_component": 0.8346938775510203,
+          "avg_continuity_penalty_component": 5.351088469343965
+        }
+      }
+    }
+  },
+  "effective_electricity_price": {
+    "H1": {
+      "0": 0.25,
+      "1": 0.25,
+      "2": 0.25
+    }
+  },
+  "vt_service_prob": {
+    "H1": {
+      "0": 1.0,
+      "1": 1.0,
+      "2": 0.0
+    }
+  },
+  "ev_service_prob": {
+    "H1": {
+      "0": 0.03533128616873819,
+      "1": 0.028846153846153848,
+      "2": 0.035504272404032484
+    }
+  },
+  "hub_diagnostics": {
+    "H1": {
+      "0": {
+        "pure_ev_charging_kwh": 3200.0,
+        "access_ev_charging_kwh": 195.89025701931166,
+        "evtol_charging_kwh": 720.0,
+        "total_requested_power_kw": 4115.890257019311,
+        "effective_power_cap_kw": 120.0,
+        "local_shadow_price": 0.0,
+        "shed_ev_kwh": 3275.890257019312,
+        "shed_vt_kwh": 0.0,
+        "effective_electricity_price": 0.25,
+        "vt_service_probability": 1.0,
+        "ev_service_probability": 0.03533128616873819
+      },
+      "1": {
+        "pure_ev_charging_kwh": 4160.0,
+        "access_ev_charging_kwh": 8.315568634739545e-15,
+        "evtol_charging_kwh": 3.7516656448133285e-14,
+        "total_requested_power_kw": 4160.0,
+        "effective_power_cap_kw": 120.0,
+        "local_shadow_price": 0.0,
+        "shed_ev_kwh": 4040.0,
+        "shed_vt_kwh": 0.0,
+        "effective_electricity_price": 0.25,
+        "vt_service_probability": 1.0,
+        "ev_service_probability": 0.028846153846153848
+      },
+      "2": {
+        "pure_ev_charging_kwh": 3200.0,
+        "access_ev_charging_kwh": 177.26319036373565,
+        "evtol_charging_kwh": 720.0,
+        "total_requested_power_kw": 4097.263190363736,
+        "effective_power_cap_kw": 120.0,
+        "local_shadow_price": 0.0,
+        "shed_ev_kwh": 3257.2631903637357,
+        "shed_vt_kwh": 720.0,
+        "effective_electricity_price": 0.25,
+        "vt_service_probability": 0.0,
+        "ev_service_probability": 0.035504272404032484
+      }
+    }
+  },
+  "iteration_history": [
+    {
+      "iteration": 1,
+      "alpha": 1.0,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 239.99999999999997,
+      "max_vt_service_prob_delta": 1.0,
+      "max_ev_service_prob_delta": 0.9711538461538461,
+      "max_joint_delta": 239.99999999999997,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 2,
+      "alpha": 0.5,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 27.915498773590173,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 0.00013156892850700597,
+      "max_joint_delta": 27.915498773590173,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 3,
+      "alpha": 0.3333333333333333,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 14.104885199742824,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 0.00010795916584874915,
+      "max_joint_delta": 14.104885199742824,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 4,
+      "alpha": 0.25,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 9.449269344006666,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 9.264989401845669e-05,
+      "max_joint_delta": 9.449269344006666,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 5,
+      "alpha": 0.2,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 7.109309599014807,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 8.1730647619703e-05,
+      "max_joint_delta": 7.109309599014807,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 6,
+      "alpha": 0.16666666666666666,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 5.700623773312884,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 7.346543273287903e-05,
+      "max_joint_delta": 5.700623773312884,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 7,
+      "alpha": 0.14285714285714285,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 4.75919110766165,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 6.694698057727738e-05,
+      "max_joint_delta": 4.75919110766165,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 8,
+      "alpha": 0.125,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 4.085438549248352,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 6.164860138178213e-05,
+      "max_joint_delta": 4.085438549248352,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 9,
+      "alpha": 0.1111111111111111,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 3.5793201266510266,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 5.7240918079161374e-05,
+      "max_joint_delta": 3.5793201266510266,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 10,
+      "alpha": 0.1,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 3.1851412309024454,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 5.350611828595225e-05,
+      "max_joint_delta": 3.1851412309024454,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 11,
+      "alpha": 0.09090909090909091,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 2.8694290269454825,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 5.029374719841412e-05,
+      "max_joint_delta": 2.8694290269454825,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 12,
+      "alpha": 0.08333333333333333,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 2.6108523373164587,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 4.749616951943425e-05,
+      "max_joint_delta": 2.6108523373164587,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 13,
+      "alpha": 0.07692307692307693,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 2.3951728581122325,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 4.503412981168159e-05,
+      "max_joint_delta": 2.3951728581122325,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 14,
+      "alpha": 0.07142857142857142,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 2.2125225975192677,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 4.2847842149820736e-05,
+      "max_joint_delta": 2.2125225975192677,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 15,
+      "alpha": 0.06666666666666667,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 2.055846151094272,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 4.0891270611402575e-05,
+      "max_joint_delta": 2.055846151094272,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 16,
+      "alpha": 0.0625,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.9199650213507482,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 3.912833358648421e-05,
+      "max_joint_delta": 1.9199650213507482,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 17,
+      "alpha": 0.058823529411764705,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.8009922332260544,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 3.753031187747613e-05,
+      "max_joint_delta": 1.8009922332260544,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 18,
+      "alpha": 0.05555555555555555,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.6959532141655131,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 3.6074034473372596e-05,
+      "max_joint_delta": 1.6959532141655131,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 19,
+      "alpha": 0.05263157894736842,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.6025328397926444,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 3.474058085085191e-05,
+      "max_joint_delta": 1.6025328397926444,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 20,
+      "alpha": 0.05,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.5189022293239702,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 3.351433480722199e-05,
+      "max_joint_delta": 1.5189022293239702,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 21,
+      "alpha": 0.047619047619047616,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.4435974178538231,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 3.2382282748939784e-05,
+      "max_joint_delta": 1.4435974178538231,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 22,
+      "alpha": 0.045454545454545456,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.3754326375879202,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 3.1333485274231965e-05,
+      "max_joint_delta": 1.3754326375879202,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 23,
+      "alpha": 0.043478260869565216,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.3134372115302142,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 3.0358673742847397e-05,
+      "max_joint_delta": 1.3134372115302142,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 24,
+      "alpha": 0.041666666666666664,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.2568088832585431,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 2.9449938406637954e-05,
+      "max_joint_delta": 1.2568088832585431,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    },
+    {
+      "iteration": 25,
+      "alpha": 0.04,
+      "max_price_delta": 0.0,
+      "max_flow_delta": 1.2048787955966134,
+      "max_vt_service_prob_delta": 0.0,
+      "max_ev_service_prob_delta": 2.860048456995723e-05,
+      "max_joint_delta": 1.2048787955966134,
+      "lp_solver": null,
+      "unserved_demand_total": 0.0,
+      "aircraft_binding_count": 0.0,
+      "aircraft_inner_recheck_rounds": 2.0,
+      "aircraft_post_reroute_binding_count": 0.0
+    }
+  ],
+  "travel_times_fallback_used": false,
+  "aircraft_inventory_by_station_time": {
+    "H1": {
+      "0": 60.0,
+      "1": 0.0,
+      "2": 60.0
+    }
+  },
+  "aircraft_departures_by_station_time": {
+    "H1": {
+      "0": 60.0,
+      "1": 0.0,
+      "2": 60.0
+    }
+  },
+  "aircraft_returns_by_station_time": {
+    "H1": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 60.0
+    }
+  },
+  "aircraft_binding_count": 0.0,
+  "aircraft_inner_recheck_rounds": 2,
+  "aircraft_post_reroute_binding_count": 0.0,
+  "aircraft_curtailment_summary": {
+    "rerouted_to_evtol": 0.0,
+    "rerouted_to_multimodal": 0.0,
+    "rerouted_to_ev": 0.0,
+    "unserved": 0.0,
+    "curtailed_pure_evtol_pax": 0.0,
+    "curtailed_multimodal_pax": 0.0,
+    "rerouted_to_pure_evtol_pax": 0.0,
+    "rerouted_to_multimodal_pax": 0.0,
+    "rerouted_to_ev_pax": 0.0,
+    "unserved_after_aircraft_check": 0.0
+  },
+  "ev_charging_consistency_check": {
+    "H1": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0
+    }
+  },
+  "summary": {
+    "scheme": "A_shared_hub_access_ev_and_evtol",
+    "transfer_model_type": "reduced_form",
+    "summary_scope": "single_run_descriptive",
+    "scenario_sensitivity_proved": false,
+    "use_distribution_grid": false,
+    "ev_to_evtol_dual_exposure_enabled": true,
+    "multimodal_access_utilization_factor": 1.0,
+    "multimodal_access_utilization_factor_affects_wait_only": true,
+    "total_access_ev_charging_kwh": 373.1534473830473,
+    "total_evtol_charging_kwh": 1440.0,
+    "avg_vt_service_probability": 0.6666666666666666,
+    "avg_ev_service_probability": 0.03322723747297484,
+    "inference": "In this run, EV_to_eVTOL appears more constrained than pure eVTOL (higher average generalized cost and no higher average share); this is descriptive for the current parameterization only.",
+    "avg_ev_to_evtol_share": 0.05646927054031226,
+    "avg_pure_evtol_share": 0.08075092584203387,
+    "avg_ev_to_evtol_generalized_cost": 42.96748148292709,
+    "avg_pure_evtol_generalized_cost": 38.05616244796453,
+    "ev_to_evtol_higher_avg_generalized_cost_than_pure_evtol": true,
+    "ev_to_evtol_lower_avg_share_than_pure_evtol": true,
+    "dominant_ev_to_evtol_burden_component": "continuity_penalty",
+    "ev_to_evtol_burden_component_averages": {
+      "ev_side_access": 0.2858597573528307,
+      "vt_side_wait": 0.5564626114326443,
+      "continuity_penalty": 2.4254090173487035
+    },
+    "access_travel_reporting_exact": true,
+    "access_arcs_present_for_all_multimodal": true,
+    "access_travel_reporting_note": "exact_from_access_arcs",
+    "group_with_highest_avg_ev_to_evtol_share": "low",
+    "group_average_mode_share": {
+      "low": {
+        "EV": 0.7940319146875421,
+        "eVTOL": 0.10000129021498981,
+        "EV_to_eVTOL": 0.1059667950974681
+      },
+      "mid": {
+        "EV": 0.8676419316132291,
+        "eVTOL": 0.08022671973149893,
+        "EV_to_eVTOL": 0.05213134865527189
+      },
+      "high": {
+        "EV": 0.9266655645521903,
+        "eVTOL": 0.06202476757961286,
+        "EV_to_eVTOL": 0.011309667868196788
+      }
+    }
+  },
+  "model_validation_notes": {
+    "continuity_penalty_separate_from_money": true,
+    "implicit_access_stop_consistent": true,
+    "multimodal_access_utilization_factor_affects_wait_only": true,
+    "transfer_representation": "reduced_form",
+    "summary_is_not_sensitivity_proof": true
+  },
+  "unused_legacy_paths": [
+    "mfd.py",
+    "runner_new_background_boundary_flow.py MFD and boundary-flow logic",
+    "CBD accumulation states n_t/g_t"
+  ]
+}

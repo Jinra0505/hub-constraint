@@ -294,6 +294,13 @@ def _enforce_aircraft_inventory(
         "aircraft_curtailed_multimodal_pax": stats["curtailed_multimodal"],
         "aircraft_rerouted_pure_evtol_pax": stats["to_evtol"],
         "aircraft_rerouted_multimodal_pax": stats["to_multimodal"],
+        # Clear naming (source-side vs destination-side) while keeping legacy keys above.
+        "curtailed_pure_evtol_pax": stats["curtailed_pure_evtol"],
+        "curtailed_multimodal_pax": stats["curtailed_multimodal"],
+        "rerouted_to_pure_evtol_pax": stats["to_evtol"],
+        "rerouted_to_multimodal_pax": stats["to_multimodal"],
+        "rerouted_to_ev_pax": stats["to_ev"],
+        "unserved_after_aircraft_check": stats["unserved"],
     }
 
 
@@ -628,6 +635,15 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     avg_mm_access = sum(mm_access_vals) / max(1, len(mm_access_vals))
     avg_mm_vt_wait = sum(mm_vt_wait_vals) / max(1, len(mm_vt_wait_vals))
     avg_mm_cont = sum(mm_cont_vals) / max(1, len(mm_cont_vals))
+    multimodal_its = [it for it in itineraries if classify_supermode(it) == "EV_to_eVTOL"]
+    multimodal_with_access_arcs = sum(1 for it in multimodal_its if len(it.get("access_arcs", []) or []) > 0)
+    access_arcs_present_for_all_multimodal = (multimodal_with_access_arcs == len(multimodal_its)) if multimodal_its else True
+    access_travel_reporting_exact = access_arcs_present_for_all_multimodal
+    access_travel_reporting_note = (
+        "exact_from_access_arcs"
+        if access_travel_reporting_exact
+        else "approximate_or_partial_access_arc_coverage"
+    )
     burden_components = {
         "ev_side_access": avg_mm_access,
         "vt_side_wait": avg_mm_vt_wait,
@@ -635,11 +651,11 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     }
     dominant_burden = max(burden_components, key=burden_components.get) if burden_components else "undetermined"
     if avg_mm_gc > avg_ev_gc + 1.0e-6 and avg_mm_share <= avg_evtol_share + 1.0e-6:
-        inference = "In this run, EV_to_eVTOL appears more constrained than pure eVTOL (higher average generalized cost and no higher average share)."
+        inference = "In this run, EV_to_eVTOL appears more constrained than pure eVTOL (higher average generalized cost and no higher average share); this is descriptive for the current parameterization only."
     elif avg_mm_gc < avg_ev_gc - 1.0e-6 and avg_mm_share >= avg_evtol_share - 1.0e-6:
-        inference = "In this run, EV_to_eVTOL does not appear more constrained than pure eVTOL under current parameters."
+        inference = "In this run, EV_to_eVTOL does not appear more constrained than pure eVTOL under the current parameterization; this does not by itself establish cross-scenario sensitivity."
     else:
-        inference = "In this run, EV_to_eVTOL vs pure eVTOL sensitivity is mixed; cost/share indicators do not point to a single dominant effect."
+        inference = "In this run, EV_to_eVTOL vs pure eVTOL indicators are mixed under the current parameterization; this is a single-run descriptive readout, not a sensitivity proof."
 
     return {
         "flows": flows,
@@ -663,6 +679,12 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "rerouted_to_multimodal": aircraft_diag_last.get("aircraft_rerouted_to_multimodal", 0.0),
             "rerouted_to_ev": aircraft_diag_last.get("aircraft_rerouted_to_ev", 0.0),
             "unserved": aircraft_diag_last.get("aircraft_unserved", 0.0),
+            "curtailed_pure_evtol_pax": aircraft_diag_last.get("curtailed_pure_evtol_pax", 0.0),
+            "curtailed_multimodal_pax": aircraft_diag_last.get("curtailed_multimodal_pax", 0.0),
+            "rerouted_to_pure_evtol_pax": aircraft_diag_last.get("rerouted_to_pure_evtol_pax", 0.0),
+            "rerouted_to_multimodal_pax": aircraft_diag_last.get("rerouted_to_multimodal_pax", 0.0),
+            "rerouted_to_ev_pax": aircraft_diag_last.get("rerouted_to_ev_pax", 0.0),
+            "unserved_after_aircraft_check": aircraft_diag_last.get("unserved_after_aircraft_check", aircraft_diag_last.get("aircraft_unserved", 0.0)),
         },
         "ev_charging_consistency_check": {
             s: {
@@ -675,8 +697,13 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         },
         "summary": {
             "scheme": "A_shared_hub_access_ev_and_evtol",
+            "transfer_model_type": "reduced_form",
+            "summary_scope": "single_run_descriptive",
+            "scenario_sensitivity_proved": False,
             "use_distribution_grid": bool(cfg.get("use_distribution_grid", False)),
             "ev_to_evtol_dual_exposure_enabled": True,
+            "multimodal_access_utilization_factor": float(cfg.get("multimodal_access_utilization_factor", 1.0) or 1.0),
+            "multimodal_access_utilization_factor_affects_wait_only": True,
             "total_access_ev_charging_kwh": total_access,
             "total_evtol_charging_kwh": total_vt,
             "avg_vt_service_probability": vt_prob_avg,
@@ -690,8 +717,18 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "ev_to_evtol_lower_avg_share_than_pure_evtol": bool(avg_mm_share < avg_evtol_share - 1.0e-6),
             "dominant_ev_to_evtol_burden_component": dominant_burden,
             "ev_to_evtol_burden_component_averages": burden_components,
+            "access_travel_reporting_exact": access_travel_reporting_exact,
+            "access_arcs_present_for_all_multimodal": access_arcs_present_for_all_multimodal,
+            "access_travel_reporting_note": access_travel_reporting_note,
             "group_with_highest_avg_ev_to_evtol_share": shift_group,
             "group_average_mode_share": mode_totals_by_group,
+        },
+        "model_validation_notes": {
+            "continuity_penalty_separate_from_money": True,
+            "implicit_access_stop_consistent": True,
+            "multimodal_access_utilization_factor_affects_wait_only": True,
+            "transfer_representation": "reduced_form",
+            "summary_is_not_sensitivity_proof": True,
         },
         "unused_legacy_paths": [
             "mfd.py",
