@@ -130,6 +130,57 @@ def _build_itineraries_by_od(itineraries: List[Dict[str, Any]]) -> Dict[str, Lis
     return out
 
 
+def _aggregate_transfer_flow_by_hub_time(
+    itineraries: List[Dict[str, Any]],
+    flows: Dict[str, Dict[str, Dict[int, float]]],
+    times: List[int],
+) -> Dict[str, Dict[int, float]]:
+    hubs = sorted({str(it.get("dep_station")) for it in itineraries if is_multimodal_evtol(it) and it.get("dep_station") is not None})
+    out: Dict[str, Dict[int, float]] = {h: {t: 0.0 for t in times} for h in hubs}
+    for it in itineraries:
+        if not is_multimodal_evtol(it):
+            continue
+        dep = it.get("dep_station")
+        if dep is None:
+            continue
+        dep = str(dep)
+        for g_map in flows.get(it["id"], {}).values():
+            for t in times:
+                out.setdefault(dep, {tt: 0.0 for tt in times})[t] += float(g_map.get(t, 0.0))
+    return out
+
+
+def _compute_transfer_processing_time_by_hub_time(
+    data: Dict[str, Any],
+    transfer_flow_by_hub_time: Dict[str, Dict[int, float]],
+    times: List[int],
+) -> Tuple[Dict[str, Dict[int, float]], bool]:
+    params = data.get("parameters", {})
+    base_cfg = params.get("transfer_base_time")
+    cap_cfg = params.get("transfer_capacity")
+    if not isinstance(base_cfg, dict) or not isinstance(cap_cfg, dict):
+        return {}, False
+
+    alpha_cfg = params.get("transfer_alpha", {})
+    beta_cfg = params.get("transfer_beta", {})
+    out: Dict[str, Dict[int, float]] = {}
+    for h, f_by_t in transfer_flow_by_hub_time.items():
+        base_h = _value_by_time(base_cfg.get(h, 0.0), times[0], 0.0)
+        cap_h = max(1.0e-6, _value_by_time(cap_cfg.get(h, 1.0e12), times[0], 1.0e12))
+        alpha_h = _value_by_time(alpha_cfg.get(h, 0.0) if isinstance(alpha_cfg, dict) else alpha_cfg, times[0], 0.0)
+        beta_h = max(1.0, _value_by_time(beta_cfg.get(h, 1.0) if isinstance(beta_cfg, dict) else beta_cfg, times[0], 1.0))
+        out[h] = {}
+        for t in times:
+            flow = float(f_by_t.get(t, 0.0))
+            base_t = _value_by_time(base_cfg.get(h, base_h), t, base_h)
+            cap_t = max(1.0e-6, _value_by_time(cap_cfg.get(h, cap_h), t, cap_h))
+            alpha_t = _value_by_time(alpha_cfg.get(h, alpha_h) if isinstance(alpha_cfg, dict) else alpha_h, t, alpha_h)
+            beta_t = max(1.0, _value_by_time(beta_cfg.get(h, beta_h) if isinstance(beta_cfg, dict) else beta_h, t, beta_h))
+            ratio = max(0.0, flow) / cap_t
+            out[h][t] = max(0.0, float(base_t) * (1.0 + float(alpha_t) * (ratio ** float(beta_t))))
+    return out, True
+
+
 def _utility_for_alt(utilities: Dict[str, Dict[str, Dict[int, float]]], it_id: str, group: str, t: int) -> float:
     return float(utilities.get(it_id, {}).get(group, {}).get(t, -float("inf")))
 
@@ -431,6 +482,18 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "mode_share_by_group_time": {},
     }
     shared_power_signal_last: Dict[str, Any] = {}
+    transfer_flow_by_hub_time_last: Dict[str, Dict[int, float]] = {}
+    transfer_processing_time_by_hub_time_last: Dict[str, Dict[int, float]] = {}
+    transfer_capacity_active_last = False
+    transfer_processing_time_for_costs: Dict[str, Dict[int, float]] = {}
+    converged = False
+    termination_reason = "max_iter_reached"
+    final_residuals = {
+        "final_max_price_delta": float("inf"),
+        "final_max_flow_delta": float("inf"),
+        "final_max_vt_service_prob_delta": float("inf"),
+        "final_max_ev_service_prob_delta": float("inf"),
+    }
 
     aircraft_diag_last: Dict[str, Any] = {}
     for itn in range(1, int(cfg["max_iter"]) + 1):
@@ -441,7 +504,9 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             electricity_price,
             times,
             vt_departure_waits=vt_waits,
+            transfer_time_by_station=transfer_processing_time_for_costs if transfer_processing_time_for_costs else None,
             transfer_time_default=float(cfg.get("transfer_time_default", 0.0) or 0.0),
+            prefer_transfer_time_by_station=bool(transfer_processing_time_for_costs),
             multimodal_penalty_cfg=cfg.get("multimodal_continuity_penalty", {}),
             vt_service_prob=vt_service_prob,
             ev_service_prob=ev_service_prob,
@@ -489,13 +554,16 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         aircraft_diag_last = aircraft_diag
 
         max_flow_delta = 0.0
+        max_flow_gap_to_target = 0.0
         alpha = float(cfg.get("flow_msa_alpha") or (1.0 / itn))
         for it in itineraries:
             it_id = it["id"]
             for g in groups:
                 for t in times:
                     prev_flow = float(flows[it_id][g][t])
-                    max_flow_delta = max(max_flow_delta, abs(float(flows_target[it_id][g][t]) - prev_flow))
+                    flow_gap = abs(float(flows_target[it_id][g][t]) - prev_flow)
+                    max_flow_gap_to_target = max(max_flow_gap_to_target, flow_gap)
+                    max_flow_delta = max(max_flow_delta, alpha * flow_gap)
                     flows[it_id][g][t] = (1.0 - alpha) * prev_flow + alpha * float(flows_target[it_id][g][t])
 
         arc_flows = aggregate_arc_flows(itineraries, flows, times)
@@ -511,6 +579,18 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         )
         ev_waits = compute_station_waits(ev_util, data["parameters"]["stations"], times)
         vt_waits, _ = compute_vt_departure_waits(data, itineraries, flows, times, cfg)
+        transfer_flow_by_hub_time_last = _aggregate_transfer_flow_by_hub_time(itineraries, flows, times)
+        transfer_processing_time_by_hub_time_last, transfer_capacity_active_last = _compute_transfer_processing_time_by_hub_time(
+            data,
+            transfer_flow_by_hub_time_last,
+            times,
+        )
+        if transfer_capacity_active_last:
+            transfer_processing_time_for_costs = _msa_update(
+                transfer_processing_time_for_costs if transfer_processing_time_for_costs else transfer_processing_time_by_hub_time_last,
+                transfer_processing_time_by_hub_time_last,
+                alpha,
+            )
 
         station_loads = compute_station_loads_from_flows(data, itineraries, flows, times)
         _, _, shed_ev_out, shed_vt_out, shadow_prices, _, lp_diag = solve_shared_power_inventory_lp(
@@ -523,6 +603,9 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         max_price_delta = 0.0
         max_vt_prob_delta = 0.0
         max_ev_prob_delta = 0.0
+        max_price_gap_to_target = 0.0
+        max_vt_prob_gap_to_target = 0.0
+        max_ev_prob_gap_to_target = 0.0
         for s in ev_stations:
             for t in times:
                 base_price = float(data["parameters"]["electricity_price"][s][t])
@@ -535,20 +618,26 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 )
                 scarcity_adder_used = float(local_mu) if local_mu is not None else 0.0
                 eff_price_new = max(0.0, base_price + scarcity_adder_used)
-                max_price_delta = max(max_price_delta, abs(electricity_price[s][t] - eff_price_new))
+                price_gap = abs(electricity_price[s][t] - eff_price_new)
+                max_price_gap_to_target = max(max_price_gap_to_target, price_gap)
+                max_price_delta = max(max_price_delta, alpha * price_gap)
                 electricity_price[s][t] = (1.0 - alpha) * electricity_price[s][t] + alpha * eff_price_new
 
                 ev_req = float(station_loads["E_ev_req"].get(s, {}).get(t, 0.0))
                 ev_shed = float(shed_ev_out.get(s, {}).get(t, 0.0)) * float(data["meta"]["delta_t"])
                 ev_prob = 1.0 if ev_req <= 1e-9 else max(0.0, min(1.0, (ev_req - ev_shed) / ev_req))
-                max_ev_prob_delta = max(max_ev_prob_delta, abs(ev_service_prob[s][t] - ev_prob))
+                ev_prob_gap = abs(ev_service_prob[s][t] - ev_prob)
+                max_ev_prob_gap_to_target = max(max_ev_prob_gap_to_target, ev_prob_gap)
+                max_ev_prob_delta = max(max_ev_prob_delta, alpha * ev_prob_gap)
                 ev_service_prob[s][t] = (1.0 - alpha) * ev_service_prob[s][t] + alpha * ev_prob
 
                 vt_req = float(station_loads["E_vt_req"].get(s, {}).get(t, 0.0))
                 vt_shed = float(shed_vt_out.get(s, {}).get(t, 0.0))
                 vt_prob = 1.0 if vt_req <= 1e-9 else max(0.0, min(1.0, (vt_req - vt_shed) / vt_req))
                 if s in vt_service_prob:
-                    max_vt_prob_delta = max(max_vt_prob_delta, abs(vt_service_prob[s][t] - vt_prob))
+                    vt_prob_gap = abs(vt_service_prob[s][t] - vt_prob)
+                    max_vt_prob_gap_to_target = max(max_vt_prob_gap_to_target, vt_prob_gap)
+                    max_vt_prob_delta = max(max_vt_prob_delta, alpha * vt_prob_gap)
                     vt_service_prob[s][t] = (1.0 - alpha) * vt_service_prob[s][t] + alpha * vt_prob
 
                 diagnostics["hub_time"].setdefault(s, {})[t] = {
@@ -577,9 +666,13 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 "iteration": itn,
                 "alpha": alpha,
                 "max_price_delta": max_price_delta,
+                "max_price_gap_to_target": max_price_gap_to_target,
                 "max_flow_delta": max_flow_delta,
+                "max_flow_gap_to_target": max_flow_gap_to_target,
                 "max_vt_service_prob_delta": max_vt_prob_delta,
+                "max_vt_service_prob_gap_to_target": max_vt_prob_gap_to_target,
                 "max_ev_service_prob_delta": max_ev_prob_delta,
+                "max_ev_service_prob_gap_to_target": max_ev_prob_gap_to_target,
                 "max_joint_delta": max(max_price_delta, max_flow_delta, max_vt_prob_delta, max_ev_prob_delta),
                 "lp_solver": lp_diag.get("solver") if isinstance(lp_diag, dict) else "unknown",
                 "lp_dual_available": bool(lp_diag.get("dual_available", False)) if isinstance(lp_diag, dict) else False,
@@ -592,11 +685,19 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 "aircraft_post_reroute_binding_count": float(aircraft_diag_last.get("aircraft_post_reroute_binding_count", 0.0)),
             }
         )
+        final_residuals = {
+            "final_max_price_delta": max_price_delta,
+            "final_max_flow_delta": max_flow_delta,
+            "final_max_vt_service_prob_delta": max_vt_prob_delta,
+            "final_max_ev_service_prob_delta": max_ev_prob_delta,
+        }
         if (
             max_price_delta <= float(cfg.get("tol_price", cfg.get("tol", 1e-3)))
             and max_flow_delta <= float(cfg.get("tol_flow", cfg.get("tol", 1e-3)))
             and max(max_vt_prob_delta, max_ev_prob_delta) <= float(cfg.get("tol_service_prob", cfg.get("tol", 1e-3)))
         ):
+            converged = True
+            termination_reason = "tolerance_met"
             break
 
     group_time_super = _compute_group_time_supermode_metrics(
@@ -698,6 +799,12 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "ev_service_prob": ev_service_prob,
         "hub_diagnostics": diagnostics["hub_time"],
         "iteration_history": diagnostics["iteration_history"],
+        "converged": converged,
+        "termination_reason": termination_reason,
+        **final_residuals,
+        "transfer_flow_by_hub_time": transfer_flow_by_hub_time_last,
+        "transfer_processing_time_by_hub_time": transfer_processing_time_by_hub_time_last,
+        "endogenous_transfer_capacity_active": transfer_capacity_active_last,
         "shared_power_price_signal_check": shared_power_signal_last,
         "travel_times_fallback_used": travel_times_fallback_used,
         "aircraft_inventory_by_station_time": aircraft_diag_last.get("aircraft_inventory_by_station_time", {}),

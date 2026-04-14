@@ -10,15 +10,19 @@ try:
 except ImportError:
     HAS_GUROBI = False
 
-HAS_SCIPY = True
+HAS_SCIPY = False
 SCIPY_VERSION = None
+SCIPY_IMPORT_ERROR = None
 try:
     import numpy as np
     import scipy
     from scipy.optimize import linprog
-    SCIPY_VERSION = getattr(scipy, "__version__", "unknown")
-except Exception:
+except Exception as exc:
     HAS_SCIPY = False
+    SCIPY_IMPORT_ERROR = repr(exc)
+else:
+    HAS_SCIPY = True
+    SCIPY_VERSION = getattr(scipy, "__version__", "unknown")
 
 LAST_SOLVER_USED = "unknown"
 LAST_SHARED_SOLVER_USED = "unknown"
@@ -645,7 +649,7 @@ def _solve_shared_power_core(
     if not HAS_SCIPY:
         raise LPFailed({
             "status": None,
-            "message": "SciPy is not available for requested HiGHS solver",
+            "message": f"SciPy is not available for requested HiGHS solver: {SCIPY_IMPORT_ERROR}",
             "fun": None,
             "nit": None,
             "max_ub_violation": None,

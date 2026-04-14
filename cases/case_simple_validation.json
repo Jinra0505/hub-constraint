@@ -20,7 +20,7 @@
       "H2": {"0": 0.22, "1": 0.22, "2": 0.22}
     },
     "vertiport_storage": {
-      "H1": {"B_min": 0.0, "B_max": 1200.0, "B_init": 250.0, "eta_ch": 1.0},
+      "H1": {"B_min": 0.0, "B_max": 1200.0, "B_init": 180.0, "eta_ch": 1.0},
       "H2": {"B_min": 0.0, "B_max": 1200.0, "B_init": 250.0, "eta_ch": 1.0}
     },
     "vt_aircraft_init_by_station": {"H1": 60.0, "H2": 22.0},
@@ -35,6 +35,22 @@
     "vt_departure_capacity_fast": {
       "H1": {"0": 38.0, "1": 34.0, "2": 38.0},
       "H2": {"0": 38.0, "1": 34.0, "2": 38.0}
+    },
+    "transfer_base_time": {
+      "H1": {"0": 0.12, "1": 0.12, "2": 0.12},
+      "H2": {"0": 0.10, "1": 0.10, "2": 0.10}
+    },
+    "transfer_capacity": {
+      "H1": {"0": 5.0, "1": 5.0, "2": 5.0},
+      "H2": {"0": 50.0, "1": 50.0, "2": 50.0}
+    },
+    "transfer_alpha": {
+      "H1": {"0": 0.8, "1": 0.8, "2": 0.8},
+      "H2": {"0": 0.3, "1": 0.3, "2": 0.3}
+    },
+    "transfer_beta": {
+      "H1": {"0": 2.0, "1": 2.0, "2": 2.0},
+      "H2": {"0": 2.0, "1": 2.0, "2": 2.0}
     },
     "arc_params": {
       "arc_ev_main": {"tau0": 1.42, "cap": 450.0, "alpha": 0.15, "beta": 4.0, "type": "R", "use_bpr": false},
@@ -79,13 +95,13 @@
         {"arc": "arc_vt_egress", "t": 2, "frac": 1.0}
       ],
       "flight_time": {"0": 0.28, "1": 0.28, "2": 0.28},
-      "e_per_pax": {"0": 2.1, "1": 2.2, "2": 2.1}
+      "e_per_pax": {"0": 2.25, "1": 2.35, "2": 2.25}
     },
     {
       "id": "it_mm",
       "od": ["O", "D"],
       "mode": "EV_to_eVTOL_fast",
-      "money": {"0": 9.4, "1": 9.4, "2": 9.0},
+      "money": {"0": 7.0, "1": 7.0, "2": 6.6},
       "dep_station": "H1",
       "arr_station": "H2",
       "access_arcs": [
@@ -105,12 +121,13 @@
       ],
       "transfer_time": {"0": 0.16, "1": 0.16, "2": 0.16},
       "flight_time": {"0": 0.28, "1": 0.28, "2": 0.28},
-      "e_per_pax": {"0": 2.1, "1": 2.2, "2": 2.1}
+      "e_per_pax": {"0": 2.25, "1": 2.35, "2": 2.25}
     }
   ],
   "config": {
-    "max_iter": 45,
+    "max_iter": 500,
     "tol": 0.001,
+    "tol_flow": 0.003,
     "use_distribution_grid": false,
     "shared_power_solver": "highs",
     "multimodal_access_utilization_factor": 1.0,

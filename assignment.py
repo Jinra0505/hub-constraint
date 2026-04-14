@@ -185,6 +185,7 @@ def compute_itinerary_costs(
     vt_departure_waits: Dict[str, Dict[str, Dict[int, float]]] | None = None,
     transfer_time_by_station: Dict[str, float] | Dict[str, Dict[int, float]] | None = None,
     transfer_time_default: float = 0.0,
+    prefer_transfer_time_by_station: bool = False,
     multimodal_penalty_cfg: Dict[str, Any] | None = None,
     vt_service_prob: Dict[str, Dict[int, float]] | None = None,
     ev_service_prob: Dict[str, Dict[int, float]] | None = None,
@@ -244,6 +245,9 @@ def compute_itinerary_costs(
                 "ev_prob_used": 1.0,
                 "vt_prob_used": 1.0,
             }
+            transfer_buffer_threshold = 0.0
+            preflight_transfer_burden = 0.0
+            transfer_overrun = 0.0
 
             # Optional scalar access energy (multimodal).
             # If access_stations already provide per-station energy for this time, scalar access_energy_kwh
@@ -285,6 +289,10 @@ def compute_itinerary_costs(
                             "access_travel_time_applied": access_travel_time_applied,
                             "ev_access_wait_applied": ev_access_wait_applied,
                             "transfer_processing_time_applied": 0.0,
+                            "preflight_transfer_burden": 0.0,
+                            "transfer_buffer_limit_applied": 0.0,
+                            "transfer_overrun": 0.0,
+                            "transfer_overrun_term": 0.0,
                             "vt_departure_wait_applied": 0.0,
                             "flight_time_applied": 0.0,
                             "continuity_penalty": 0.0,
@@ -293,7 +301,10 @@ def compute_itinerary_costs(
                     }
                     continue
                 if is_multimodal_evtol(it):
-                    if "transfer_time" in it:
+                    if prefer_transfer_time_by_station and dep_station is not None and transfer_time_by_station and dep_station in transfer_time_by_station:
+                        transfer_time_applied = _value_by_time(transfer_time_by_station.get(dep_station, 0.0), t, 0.0)
+                        transfer_time_source = "hub_endogenous"
+                    elif "transfer_time" in it:
                         transfer_time_applied = _value_by_time(it.get("transfer_time", 0.0), t, 0.0)
                         transfer_time_source = "itinerary"
                     elif dep_station is not None and transfer_time_by_station and dep_station in transfer_time_by_station:
@@ -340,20 +351,21 @@ def compute_itinerary_costs(
                     coeff_transfer_overrun = float(multimodal_penalty_cfg.get("coeff_transfer_overrun", 0.0) or 0.0)
                     transfer_buffer_threshold = float(multimodal_penalty_cfg.get("transfer_buffer_threshold", 0.0) or 0.0)
                     preflight_transfer_burden = ev_access_wait_applied + transfer_time_applied + vt_wait_applied
-                    transfer_overrun = coeff_transfer_overrun * max(0.0, preflight_transfer_burden - transfer_buffer_threshold)
+                    transfer_overrun = max(0.0, preflight_transfer_burden - transfer_buffer_threshold)
+                    transfer_overrun_term = coeff_transfer_overrun * transfer_overrun
                     multimodal_extra_penalty = (
                         base_penalty
                         + ev_term
                         + vt_term
                         + joint_term
-                        + transfer_overrun
+                        + transfer_overrun_term
                     )
                     multimodal_penalty_components = {
                         "base_transfer_fragility_penalty": base_penalty,
                         "ev_unreliability_term": ev_term,
                         "vt_unreliability_term": vt_term,
                         "joint_unreliability_term": joint_term,
-                        "transfer_overrun_term": transfer_overrun,
+                        "transfer_overrun_term": transfer_overrun_term,
                         "ev_prob_used": ev_prob,
                         "vt_prob_used": vt_prob,
                     }
@@ -371,6 +383,10 @@ def compute_itinerary_costs(
                     "access_travel_time_applied": access_travel_time_applied,
                     "ev_access_wait_applied": ev_access_wait_applied,
                     "transfer_processing_time_applied": transfer_time_applied,
+                    "preflight_transfer_burden": preflight_transfer_burden,
+                    "transfer_buffer_limit_applied": transfer_buffer_threshold,
+                    "transfer_overrun": transfer_overrun,
+                    "transfer_overrun_term": float(multimodal_penalty_components.get("transfer_overrun_term", 0.0)),
                     "continuity_penalty": multimodal_extra_penalty,
                     "vt_departure_wait_applied": vt_wait_applied,
                     "flight_time_applied": flight_time_applied,
