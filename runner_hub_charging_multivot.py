@@ -430,6 +430,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "hub_time": {},
         "mode_share_by_group_time": {},
     }
+    shared_power_signal_last: Dict[str, Any] = {}
 
     aircraft_diag_last: Dict[str, Any] = {}
     for itn in range(1, int(cfg["max_iter"]) + 1):
@@ -517,6 +518,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             station_loads["E_vt_req"],
             station_loads["E_ev_req"],
         )
+        shared_power_signal_last = dict(lp_diag.get("shared_power_price_signal_check", {})) if isinstance(lp_diag, dict) else {}
 
         max_price_delta = 0.0
         max_vt_prob_delta = 0.0
@@ -549,6 +551,9 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "total_requested_power_kw": float(station_loads["P_total_req"].get(s, {}).get(t, 0.0)),
                     "effective_power_cap_kw": float(data["parameters"]["stations"][s]["P_site"][t]),
                     "local_shadow_price": local_mu,
+                    "lp_dual_available": bool(lp_diag.get("dual_available", False)) if isinstance(lp_diag, dict) else False,
+                    "solver_used": lp_diag.get("solver", "unknown") if isinstance(lp_diag, dict) else "unknown",
+                    "cap_binding_flag": bool(lp_diag.get("cap_binding_flags", {}).get(s, {}).get(t, False)) if isinstance(lp_diag, dict) else False,
                     "shed_ev_kwh": ev_shed,
                     "shed_vt_kwh": vt_shed,
                     "effective_electricity_price": float(electricity_price[s][t]),
@@ -566,6 +571,10 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 "max_ev_service_prob_delta": max_ev_prob_delta,
                 "max_joint_delta": max(max_price_delta, max_flow_delta, max_vt_prob_delta, max_ev_prob_delta),
                 "lp_solver": lp_diag.get("solver") if isinstance(lp_diag, dict) else "unknown",
+                "lp_dual_available": bool(lp_diag.get("dual_available", False)) if isinstance(lp_diag, dict) else False,
+                "binding_cap_total_count": int(lp_diag.get("binding_cap_total_count", 0)) if isinstance(lp_diag, dict) else 0,
+                "binding_cap_with_positive_dual_count": int(lp_diag.get("binding_cap_with_positive_dual_count", 0)) if isinstance(lp_diag, dict) else 0,
+                "shared_power_fallback_used": bool(lp_diag.get("fallback_used", False)) if isinstance(lp_diag, dict) else False,
                 "unserved_demand_total": float(details.get("unserved_demand_total", 0.0)),
                 "aircraft_binding_count": float(aircraft_diag_last.get("aircraft_binding_count", 0.0)),
                 "aircraft_inner_recheck_rounds": float(aircraft_diag_last.get("aircraft_inner_recheck_rounds", 1.0)),
@@ -667,6 +676,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "ev_service_prob": ev_service_prob,
         "hub_diagnostics": diagnostics["hub_time"],
         "iteration_history": diagnostics["iteration_history"],
+        "shared_power_price_signal_check": shared_power_signal_last,
         "travel_times_fallback_used": travel_times_fallback_used,
         "aircraft_inventory_by_station_time": aircraft_diag_last.get("aircraft_inventory_by_station_time", {}),
         "aircraft_departures_by_station_time": aircraft_diag_last.get("aircraft_departures_by_station_time", {}),

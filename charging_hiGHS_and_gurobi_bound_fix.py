@@ -576,6 +576,9 @@ def solve_shared_power_inventory_highs(
             residuals["INV4"] = max(residuals["INV4"], max(0.0, shed_ev_out[s][t]))
 
     lp_diag = {
+        "solver": "highs",
+        "fallback_used": False,
+        "dual_available": marg is not None,
         "objective_components": objective_components,
         "objective_totals": {
             "energy_cost_term": total_energy_cost,
@@ -584,6 +587,31 @@ def solve_shared_power_inventory_highs(
             "total_objective": total_energy_cost + total_ev_shed_penalty + total_vt_shed_penalty,
         },
         "dual_trace": dual_trace,
+    }
+    binding_cap_total_count = 0
+    binding_cap_with_positive_dual_count = 0
+    cap_binding_flags = {s: {t: False for t in times} for s in stations}
+    for s in stations:
+        for t in times:
+            p_vt_sum = sum(P_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
+            lhs = p_vt_sum + p_ev_req_kw[s][t] - shed_ev_out[s][t]
+            cap = _effective_station_power_cap(data, s, t)
+            bind = abs(lhs - cap) <= 1.0e-6
+            cap_binding_flags[s][t] = bind
+            if bind:
+                binding_cap_total_count += 1
+                mu = shadow_prices.get(s, {}).get(t)
+                if mu is not None and float(mu) > 1.0e-9:
+                    binding_cap_with_positive_dual_count += 1
+    lp_diag["cap_binding_flags"] = cap_binding_flags
+    lp_diag["binding_cap_total_count"] = binding_cap_total_count
+    lp_diag["binding_cap_with_positive_dual_count"] = binding_cap_with_positive_dual_count
+    lp_diag["shared_power_price_signal_check"] = {
+        "solver_used": "highs",
+        "dual_available": bool(marg is not None),
+        "binding_cap_total_count": binding_cap_total_count,
+        "binding_cap_with_positive_dual_count": binding_cap_with_positive_dual_count,
+        "note": "If binding>0 but positive_dual=0, scarcity can still be reflected via shedding penalties/degeneracy rather than positive cap duals.",
     }
 
     return B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag
@@ -702,6 +730,9 @@ def _solve_shared_power_core_heuristic(
 
     residuals = {"INV1": 0.0, "INV2": 0.0, "INV3": 0.0, "INV4": 0.0}
     lp_diag = {
+        "solver": "heuristic",
+        "fallback_used": True,
+        "dual_available": False,
         "objective_components": objective_components,
         "objective_totals": {
             "energy_cost_term": total_energy,
@@ -710,6 +741,16 @@ def _solve_shared_power_core_heuristic(
             "total_objective": total_energy + total_ev_pen + total_vt_pen,
         },
         "dual_trace": {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": None} for t in times} for s in stations},
+        "cap_binding_flags": {s: {t: False for t in times} for s in stations},
+        "binding_cap_total_count": 0,
+        "binding_cap_with_positive_dual_count": 0,
+        "shared_power_price_signal_check": {
+            "solver_used": "heuristic",
+            "dual_available": False,
+            "binding_cap_total_count": 0,
+            "binding_cap_with_positive_dual_count": 0,
+            "note": "Heuristic fallback does not provide LP dual prices.",
+        },
     }
     return B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag
 
