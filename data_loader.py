@@ -112,6 +112,29 @@ def _normalize_od_structures(data: Dict[str, Any]) -> None:
                 it["od"] = [a, b]
 
 
+def _apply_parameter_aliases(data: Dict[str, Any]) -> None:
+    """Backward-compatible parameter aliases (canonical keys remain lowercase/new names).
+
+    Supported aliases:
+    - parameters.VOT -> parameters.vot
+    - parameters.arcs -> parameters.arc_params (only when arc_params is absent)
+    """
+    params = data.setdefault("parameters", {})
+    if "vot" not in params and "VOT" in params:
+        if not isinstance(params["VOT"], dict):
+            raise ValueError("Invalid field: parameters.VOT must be a dict when used as alias for parameters.vot")
+        params["vot"] = params["VOT"]
+    if "arc_params" not in params and "arcs" in params:
+        arcs = params["arcs"]
+        if not isinstance(arcs, dict):
+            raise ValueError("Invalid field: parameters.arcs must be a dict when used as alias for parameters.arc_params")
+        # lightweight structure sanity check
+        for arc, cfg in arcs.items():
+            if not isinstance(cfg, dict):
+                raise ValueError(f"Invalid field: parameters.arcs.{arc} must be a dict of arc parameters")
+        params["arc_params"] = arcs
+
+
 def _harmonize_access_energy_fields(data: Dict[str, Any]) -> None:
     """Normalize multimodal access-energy fields without forcing one format.
 
@@ -300,6 +323,7 @@ def load_data(data_path: str, schema_path: str) -> Dict[str, Any]:
 
     data = _coerce_numeric_keys(data)
     data = _coerce_numeric_values(data)
+    _apply_parameter_aliases(data)
     _normalize_od_structures(data)
     _harmonize_access_energy_fields(data)
     data.setdefault("config", {}).setdefault("use_distribution_grid", False)
