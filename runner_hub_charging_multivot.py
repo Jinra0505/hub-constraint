@@ -675,7 +675,11 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "access_ev_charging_kwh": float(station_loads["E_ev_access_req"].get(s, {}).get(t, 0.0)),
                     "evtol_charging_kwh": float(station_loads["E_vt_req"].get(s, {}).get(t, 0.0)),
                     "total_requested_power_kw": float(station_loads["P_total_req"].get(s, {}).get(t, 0.0)),
+                    "grid_connection_cap_kw": float(data["parameters"]["stations"][s]["P_site"][t]),
                     "effective_power_cap_kw": float(data["parameters"]["stations"][s]["P_site"][t]),
+                    "power_cap_semantics": "grid_side_connection_limit",
+                    "served_power_semantics": "total_served_power_may_exceed_grid_cap_when_storage_discharges",
+                    "storage_support_semantics": "VT_protective_buffer",
                     "local_shadow_price": local_mu,
                     "local_shadow_price_is_lp_dual": True,
                     "lp_dual_available": bool(lp_diag.get("dual_available", False)) if isinstance(lp_diag, dict) else False,
@@ -698,6 +702,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "actual_total_served_power_kw": actual_total_served_power_kw,
                     "power_balance_residual_kw": power_balance_residual_kw,
                     "simultaneous_charge_discharge_kw": simultaneous_charge_discharge_kw,
+                    "power_balance_note": "grid cap applies to grid draw (EV served + storage charging), not to total served power when storage discharges",
                     "scarcity_price_adder_applied": scarcity_adder_used,
                     "base_electricity_price": base_price,
                     "lp_shadow_price_adder": scarcity_adder_used,
@@ -859,6 +864,13 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "transfer_processing_time_by_hub_time": transfer_processing_time_by_hub_time_last,
         "endogenous_transfer_capacity_active": transfer_capacity_active_last,
         "shared_power_price_signal_check": shared_power_signal_last,
+        "semantic_clarifications": {
+            "power_cap_semantics": "grid_side_connection_limit",
+            "grid_connection_cap_applies_to": "actual_grid_draw_kw",
+            "served_power_semantics": "actual_total_served_power_kw may exceed grid_connection_cap_kw when storage_discharge_kw > 0",
+            "storage_support_semantics": "VT_protective_buffer",
+            "storage_support_scope": "VT discharge is supplied by storage dispatch, EV is grid-draw constrained with EV shedding",
+        },
         "travel_times_fallback_used": travel_times_fallback_used,
         "aircraft_inventory_by_station_time": aircraft_diag_last.get("aircraft_inventory_by_station_time", {}),
         "aircraft_departures_by_station_time": aircraft_diag_last.get("aircraft_departures_by_station_time", {}),
@@ -927,6 +939,9 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 )
                 for it in itineraries
             },
+            "power_cap_semantics": "grid_side_connection_limit",
+            "storage_support_semantics": "VT_protective_buffer",
+            "storage_support_scope": "VT can be buffered by local storage discharge; EV is primarily constrained by grid draw and EV shedding.",
         },
         "model_validation_notes": {
             "continuity_penalty_separate_from_money": True,
@@ -938,6 +953,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "price_mechanism_validated_with_lp_duals": price_mechanism_validated,
             "price_mechanism_validation_limited": not price_mechanism_validated,
             "summary_is_not_sensitivity_proof": True,
+            "power_cap_is_grid_side_not_total_served_cap": True,
+            "storage_role_is_vt_protective_not_symmetric_ev_vt_buffer": True,
         },
         "unused_legacy_paths": [
             "mfd.py",
