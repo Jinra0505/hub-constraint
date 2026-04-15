@@ -594,7 +594,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             )
 
         station_loads = compute_station_loads_from_flows(data, itineraries, flows, times)
-        _, _, shed_ev_out, shed_vt_out, shadow_prices, _, lp_diag = solve_shared_power_inventory_lp(
+        B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, _, lp_diag = solve_shared_power_inventory_lp(
             data,
             station_loads["E_vt_req"],
             station_loads["E_ev_req"],
@@ -630,6 +630,23 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
 
                 ev_req = float(station_loads["E_ev_req"].get(s, {}).get(t, 0.0))
                 ev_shed = float(shed_ev_out.get(s, {}).get(t, 0.0)) * float(data["meta"]["delta_t"])
+                dt = float(data["meta"]["delta_t"])
+                requested_ev_power_kw = float(station_loads["P_ev_req_kw"].get(s, {}).get(t, 0.0))
+                requested_vt_power_kw = float(station_loads["P_vt_req_kw_grid"].get(s, {}).get(t, 0.0))
+                actual_served_ev_power_kw = max(0.0, requested_ev_power_kw - float(shed_ev_out.get(s, {}).get(t, 0.0)))
+                actual_grid_draw_kw = max(0.0, actual_served_ev_power_kw + float(P_out.get(s, {}).get(t, 0.0)))
+                storage_state_kwh = float(B_out.get(s, {}).get(t, 0.0))
+                storage_state_next_kwh = float(B_out.get(s, {}).get(t + 1, storage_state_kwh))
+                served_vt_energy_kwh = max(0.0, float(station_loads["E_vt_req"].get(s, {}).get(t, 0.0)) - float(shed_vt_out.get(s, {}).get(t, 0.0)))
+                actual_served_vt_power_kw = served_vt_energy_kwh / max(1.0e-9, dt)
+                storage_charge_kwh = max(0.0, float(P_out.get(s, {}).get(t, 0.0)) * dt)
+                storage_discharge_kwh = served_vt_energy_kwh
+                storage_charge_kw = storage_charge_kwh / max(1.0e-9, dt)
+                storage_discharge_kw = storage_discharge_kwh / max(1.0e-9, dt)
+                actual_total_served_power_kw = actual_served_ev_power_kw + actual_served_vt_power_kw
+                power_balance_residual_kw = (
+                    actual_grid_draw_kw + storage_discharge_kw - storage_charge_kw - actual_total_served_power_kw
+                )
                 ev_prob = 1.0 if ev_req <= 1e-9 else max(0.0, min(1.0, (ev_req - ev_shed) / ev_req))
                 ev_prob_smoothed = (1.0 - alpha) * ev_service_prob[s][t] + alpha * ev_prob
                 ev_prob_gap = abs(ev_service_prob[s][t] - ev_prob)
@@ -663,6 +680,19 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "cap_binding_flag": bool(lp_diag.get("cap_binding_flags", {}).get(s, {}).get(t, False)) if isinstance(lp_diag, dict) else False,
                     "shed_ev_kwh": ev_shed,
                     "shed_vt_kwh": vt_shed,
+                    "storage_state_kwh": storage_state_kwh,
+                    "storage_state_next_kwh": storage_state_next_kwh,
+                    "storage_charge_kwh": storage_charge_kwh,
+                    "storage_discharge_kwh": storage_discharge_kwh,
+                    "storage_charge_kw": storage_charge_kw,
+                    "storage_discharge_kw": storage_discharge_kw,
+                    "actual_grid_draw_kw": actual_grid_draw_kw,
+                    "requested_ev_power_kw": requested_ev_power_kw,
+                    "requested_vt_power_kw": requested_vt_power_kw,
+                    "actual_served_ev_power_kw": actual_served_ev_power_kw,
+                    "actual_served_vt_power_kw": actual_served_vt_power_kw,
+                    "actual_total_served_power_kw": actual_total_served_power_kw,
+                    "power_balance_residual_kw": power_balance_residual_kw,
                     "scarcity_price_adder_applied": scarcity_adder_used,
                     "base_electricity_price": base_price,
                     "lp_shadow_price_adder": scarcity_adder_used,
