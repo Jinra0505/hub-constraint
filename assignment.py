@@ -229,7 +229,7 @@ def compute_itinerary_costs(
                     access_travel_time_applied += float(travel_times[arc][t]) * float(seg.get("frac", 1.0))
 
             # EV component (pure EV or multimodal access)
-            ev_stops_t = _ev_stops_at_time(it, t) if access_mode == "private_ev_hub_charging_access" else []
+            ev_stops_t = _ev_stops_at_time(it, t) if (str(it.get("mode", "")) == "EV" or access_mode == "private_ev_hub_charging_access") else []
             has_implicit_access_fallback = any(bool(st.get("implicit_access_fallback", False)) for st in ev_stops_t)
             for stop in ev_stops_t:
                 station = stop.get("station")
@@ -296,6 +296,7 @@ def compute_itinerary_costs(
                         "cost_breakdown": {
                             "access_mode": access_mode,
                             "access_charging_accounted": bool(access_mode == "private_ev_hub_charging_access"),
+                            "ev_charging_accounted": bool(len(ev_stops_t) > 0),
                             "transfer_time_applied": 0.0,
                             "transfer_time_source": "none",
                             "access_energy_price_source": access_energy_price_source,
@@ -392,6 +393,7 @@ def compute_itinerary_costs(
                 "cost_breakdown": {
                     "access_mode": access_mode,
                     "access_charging_accounted": bool(access_mode == "private_ev_hub_charging_access"),
+                    "ev_charging_accounted": bool(len(ev_stops_t) > 0),
                     "transfer_time_applied": transfer_time_applied,
                     "transfer_time_source": transfer_time_source,
                     "access_energy_price_source": access_energy_price_source,
