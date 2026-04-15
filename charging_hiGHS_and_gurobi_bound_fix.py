@@ -407,13 +407,32 @@ def solve_shared_power_inventory_highs(
 
     p_ev_req_kw = {s: {t: float(ev_energy.get(s, {}).get(t, 0.0)) / max(1.0e-9, delta_t) for t in times} for s in stations}
 
+    storage_throughput_penalty_per_kwh = max(0.0, float(cfg.get("storage_throughput_penalty_per_kwh", 1.0e-4) or 0.0))
+    storage_single_port_discharge_priority = bool(cfg.get("storage_single_port_discharge_priority", True))
+
     for dep in deps:
         if dep not in storage_params:
             raise ValueError(f"Missing required key path: parameters.vertiport_storage.{dep}")
         for tau in times_ext:
             add_var("B", dep, tau, storage_params[dep]["B_min"], storage_params[dep]["B_max"], 0.0)
         for t in times:
-            add_var("P", dep, t, 0.0, _vt_charge_power_upper_bound(data, dep, t, e_dep), prices[dep][t] * delta_t)
+            p_ch_ub = _vt_charge_power_upper_bound(data, dep, t, e_dep)
+            if storage_single_port_discharge_priority and float(e_dep.get(dep, {}).get(t, 0.0)) > 1.0e-9:
+                p_ch_ub = 0.0
+            add_var(
+                "PCH",
+                dep,
+                t,
+                0.0,
+                p_ch_ub,
+                (prices[dep][t] + storage_throughput_penalty_per_kwh) * delta_t,
+            )
+            p_dis_ub_cfg = storage_params[dep].get("P_dis_max", None)
+            if p_dis_ub_cfg is not None:
+                p_dis_ub = max(0.0, float(p_dis_ub_cfg))
+            else:
+                p_dis_ub = max(0.0, float(e_dep.get(dep, {}).get(t, 0.0)) / max(1.0e-9, delta_t))
+            add_var("PDS", dep, t, 0.0, p_dis_ub, storage_throughput_penalty_per_kwh * delta_t)
             vt_penalty_mult = max(0.0, float(_resolve_time_value(vt_shed_penalty_multiplier_cfg.get(dep) if isinstance(vt_shed_penalty_multiplier_cfg, dict) else vt_shed_penalty_multiplier_cfg, t, 1.0) or 1.0))
             add_var("SVT", dep, t, 0.0, float(e_dep.get(dep, {}).get(t, 0.0)), voll_vt_per_kwh * vt_penalty_mult)
 
@@ -432,16 +451,24 @@ def solve_shared_power_inventory_highs(
         A_eq.append(row)
         b_eq.append(float(storage_params[dep]["B_init"]))
 
-        eta = float(storage_params[dep]["eta_ch"])
+        eta_ch = float(storage_params[dep].get("eta_ch", 1.0))
+        eta_dis = max(1.0e-6, float(storage_params[dep].get("eta_dis", 1.0)))
         for idx, t in enumerate(times):
             t_next = times_ext[idx + 1]
+            # VT service balance: discharge from storage (kWh) + shed = demand.
+            row = [0.0] * n
+            row[var_idx[("PDS", dep, t)]] = delta_t
+            row[var_idx[("SVT", dep, t)]] = 1.0
+            A_eq.append(row)
+            b_eq.append(float(e_dep.get(dep, {}).get(t, 0.0)))
+
             row = [0.0] * n
             row[var_idx[("B", dep, t_next)]] = 1.0
             row[var_idx[("B", dep, t)]] = -1.0
-            row[var_idx[("P", dep, t)]] = -eta * delta_t
-            row[var_idx[("SVT", dep, t)]] = -1.0
+            row[var_idx[("PCH", dep, t)]] = -eta_ch * delta_t
+            row[var_idx[("PDS", dep, t)]] = (1.0 / eta_dis) * delta_t
             A_eq.append(row)
-            b_eq.append(-float(e_dep.get(dep, {}).get(t, 0.0)))
+            b_eq.append(0.0)
 
     A_ub = []
     b_ub = []
@@ -454,16 +481,39 @@ def solve_shared_power_inventory_highs(
         b_ub.append(-float(b_terminal_target))
 
     cap_rows = []
+    storage_causality_rows = []
     for s in stations:
         for t in times:
             row = [0.0] * n
             for dep in deps:
                 if dep == s:
-                    row[var_idx[("P", dep, t)]] += 1.0
+                    row[var_idx[("PCH", dep, t)]] += 1.0
             row[var_idx[("SEV", s, t)]] = -1.0
             A_ub.append(row)
             b_ub.append(float(_effective_station_power_cap(data, s, t)) - p_ev_req_kw[s][t])
             cap_rows.append((s, t, len(A_ub) - 1))
+
+    for dep in deps:
+        eta_ch = float(storage_params[dep].get("eta_ch", 1.0))
+        eta_dis = max(1.0e-6, float(storage_params[dep].get("eta_dis", 1.0)))
+        b_min = float(storage_params[dep]["B_min"])
+        b_max = float(storage_params[dep]["B_max"])
+        for t in times:
+            # Charging in period t cannot exceed start-of-period SOC headroom.
+            row = [0.0] * n
+            row[var_idx[("B", dep, t)]] = 1.0
+            row[var_idx[("PCH", dep, t)]] = eta_ch * delta_t
+            A_ub.append(row)
+            b_ub.append(b_max)
+            storage_causality_rows.append((dep, t, "charge_headroom", len(A_ub) - 1))
+
+            # Discharging in period t cannot exceed start-of-period available SOC above minimum.
+            row = [0.0] * n
+            row[var_idx[("PDS", dep, t)]] = (1.0 / eta_dis) * delta_t
+            row[var_idx[("B", dep, t)]] = -1.0
+            A_ub.append(row)
+            b_ub.append(-b_min)
+            storage_causality_rows.append((dep, t, "discharge_availability", len(A_ub) - 1))
 
     A_ub_np = np.array(A_ub, dtype=float) if A_ub else None
     b_ub_np = np.array(b_ub, dtype=float) if b_ub else None
@@ -523,7 +573,8 @@ def solve_shared_power_inventory_highs(
 
     x = res.x
     B_out = {dep: {tau: float(x[var_idx[("B", dep, tau)]]) for tau in times_ext} for dep in deps}
-    P_out = {dep: {t: float(x[var_idx[("P", dep, t)]]) for t in times} for dep in deps}
+    P_out = {dep: {t: float(x[var_idx[("PCH", dep, t)]]) for t in times} for dep in deps}
+    P_dis_out = {dep: {t: float(x[var_idx[("PDS", dep, t)]]) for t in times} for dep in deps}
     shed_vt_out = {dep: {t: float(x[var_idx[("SVT", dep, t)]]) for t in times} for dep in deps}
     shed_ev_out = {s: {t: float(x[var_idx[("SEV", s, t)]]) for t in times} for s in stations}
 
@@ -585,12 +636,17 @@ def solve_shared_power_inventory_highs(
 
     residuals = {"INV1": 0.0, "INV2": 0.0, "INV3": 0.0, "INV4": 0.0}
     for dep in deps:
-        eta = float(storage_params[dep]["eta_ch"])
+        eta_ch = float(storage_params[dep].get("eta_ch", 1.0))
+        eta_dis = max(1.0e-6, float(storage_params[dep].get("eta_dis", 1.0)))
         for idx, t in enumerate(times):
             t_next = times_ext[idx + 1]
             lhs = B_out[dep][t_next]
-            rhs = B_out[dep][t] + eta * P_out[dep][t] * delta_t - (float(e_dep.get(dep, {}).get(t, 0.0)) - shed_vt_out[dep][t])
+            rhs = B_out[dep][t] + eta_ch * P_out[dep][t] * delta_t - (1.0 / eta_dis) * P_dis_out[dep][t] * delta_t
             residuals["INV1"] = max(residuals["INV1"], abs(lhs - rhs))
+            residuals["INV4"] = max(
+                residuals["INV4"],
+                abs(P_dis_out[dep][t] * delta_t + shed_vt_out[dep][t] - float(e_dep.get(dep, {}).get(t, 0.0))),
+            )
         for tau in times_ext:
             residuals["INV2"] = max(
                 residuals["INV2"],
@@ -603,7 +659,7 @@ def solve_shared_power_inventory_highs(
                 residuals["INV3"],
                 max(0.0, p_vt_sum + p_ev_req_kw[s][t] - shed_ev_out[s][t] - _effective_station_power_cap(data, s, t)),
             )
-            residuals["INV4"] = max(residuals["INV4"], max(0.0, shed_ev_out[s][t]))
+            residuals["INV3"] = max(residuals["INV3"], max(0.0, shed_ev_out[s][t]))
 
     lp_diag = {
         "solver": "highs",
@@ -617,7 +673,22 @@ def solve_shared_power_inventory_highs(
             "total_objective": total_energy_cost + total_ev_shed_penalty + total_vt_shed_penalty,
         },
         "dual_trace": dual_trace,
+        "storage_dispatch": {
+            "charge_power_kw": P_out,
+            "discharge_power_kw": P_dis_out,
+        },
     }
+    simultaneous_charge_discharge = {dep: {} for dep in deps}
+    for dep in deps:
+        for t in times:
+            pch = float(P_out[dep][t])
+            pds = float(P_dis_out[dep][t])
+            simultaneous_charge_discharge[dep][t] = min(pch, pds)
+    lp_diag["simultaneous_charge_discharge_kw"] = simultaneous_charge_discharge
+    lp_diag["max_simultaneous_charge_discharge_kw"] = max(
+        (float(v) for by_t in simultaneous_charge_discharge.values() for v in by_t.values()),
+        default=0.0,
+    )
     binding_cap_total_count = 0
     binding_cap_with_positive_dual_count = 0
     cap_binding_flags = {s: {t: False for t in times} for s in stations}
@@ -662,6 +733,12 @@ def solve_shared_power_inventory_highs(
         "binding_cap_total_count": binding_cap_total_count,
         "binding_cap_with_positive_dual_count": binding_cap_with_positive_dual_count,
         "note": "LP-dual-only mode: scarcity adders are derived strictly from HiGHS cap-row marginals.",
+    }
+    lp_diag["storage_model"] = {
+        "formulation": "explicit_charge_discharge_lp_with_vt_service_balance_and_causal_soc_bounds",
+        "single_port_discharge_priority": storage_single_port_discharge_priority,
+        "throughput_penalty_per_kwh": storage_throughput_penalty_per_kwh,
+        "storage_causality_rows": len(storage_causality_rows),
     }
 
     return B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag
