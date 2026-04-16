@@ -333,6 +333,14 @@ def logit_assignment(
     unserved_demand: Dict[str, Dict[str, Dict[int, float]]] = {}
     unserved_demand_total = 0.0
     unserved_cases_count = 0
+    skip_threshold_stats = {
+        "vt_skip_threshold": float(vt_service_prob_skip_below),
+        "ev_skip_threshold": float(ev_service_prob_skip_below),
+        "alts_skipped_vt_below_threshold": 0,
+        "alts_skipped_ev_below_threshold": 0,
+        "od_group_time_with_any_vt_skip": 0,
+        "od_group_time_with_any_ev_skip": 0,
+    }
 
     itineraries_by_od: Dict[str, List[Dict[str, Any]]] = {}
     for it in itineraries:
@@ -367,6 +375,8 @@ def logit_assignment(
 
                 feasible_alts = []
                 total_demand = float(time_map.get(t, 0.0))
+                any_vt_skip = False
+                any_ev_skip = False
                 for it in available_alts:
                     comp = costs[it["id"]][t]
                     raw_cost = float(vot[group][t]) * comp["TT"] + comp["Money"] + comp["ChargeCost"]
@@ -383,6 +393,8 @@ def logit_assignment(
                             vt_prob = float(vt_service_prob[dep_station].get(t, 1.0))
                         vt_prob = min(1.0, max(vt_service_prob_floor, vt_prob))
                         if vt_service_prob_skip_below > 0.0 and vt_prob < vt_service_prob_skip_below:
+                            skip_threshold_stats["alts_skipped_vt_below_threshold"] += 1
+                            any_vt_skip = True
                             continue
 
                     ev_prob = 1.0
@@ -398,6 +410,8 @@ def logit_assignment(
                             ev_prob = min(ev_candidates)
                     ev_prob = min(1.0, max(ev_service_prob_floor, ev_prob))
                     if (str(it.get("mode", "")) == "EV" or is_multimodal_evtol(it)) and ev_service_prob_skip_below > 0.0 and ev_prob < ev_service_prob_skip_below:
+                        skip_threshold_stats["alts_skipped_ev_below_threshold"] += 1
+                        any_ev_skip = True
                         continue
 
                     vt_term = vt_reliability_gamma * math.log(max(vt_prob, vt_service_prob_floor))
@@ -428,6 +442,10 @@ def logit_assignment(
                         "access_energy_price_source": str(cb.get("access_energy_price_source", "none")),
                     }
                     feasible_alts.append((it, util))
+                if any_vt_skip:
+                    skip_threshold_stats["od_group_time_with_any_vt_skip"] += 1
+                if any_ev_skip:
+                    skip_threshold_stats["od_group_time_with_any_ev_skip"] += 1
 
                 if total_demand <= 0.0:
                     continue
@@ -449,6 +467,7 @@ def logit_assignment(
         "unserved_demand": unserved_demand,
         "unserved_demand_total": unserved_demand_total,
         "unserved_cases_count": unserved_cases_count,
+        "skip_threshold_stats": skip_threshold_stats,
     }
     return flows, details
 

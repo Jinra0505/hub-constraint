@@ -178,6 +178,9 @@ def _compute_vt_departure_waits(
     reposition_lag = int(data.get("config", {}).get("vt_reposition_lag", 1))
     reposition_reserve = float(data.get("config", {}).get("vt_reposition_reserve", 0.6))
     reposition_max_send = float(data.get("config", {}).get("vt_reposition_max_send_per_period", 1.4))
+    vt_wait_scale = float(data.get("config", {}).get("vt_departure_wait_scale", 0.04))
+    vt_wait_util_cap_raw = data.get("config", {}).get("vt_departure_wait_util_cap")
+    vt_wait_util_cap = float(vt_wait_util_cap_raw) if vt_wait_util_cap_raw is not None else None
 
     carry = {s: init[s] for s in stations}
     for t in times:
@@ -208,7 +211,10 @@ def _compute_vt_departure_waits(
             diag[s]["cap_dep"][t] = cap_total
             diag[s]["served_ratio"][t] = ratio
             util = req_total / max(1.0e-6, min(cap_total + 1.0e-9, served_total + max(0.0, carry[s]))) if req_total > 0 else 0.0
-            w = 0.04 * (util / max(1.0e-6, 1.0 - min(0.95, util))) if util > 0 else 0.0
+            util_eff = util
+            if vt_wait_util_cap is not None:
+                util_eff = min(util_eff, max(0.0, vt_wait_util_cap))
+            w = vt_wait_scale * (util_eff / max(1.0e-6, 1.0 - min(0.95, util_eff))) if util_eff > 0 else 0.0
             waits[s]["fast"][t] = w
             waits[s]["slow"][t] = w
         if reposition_enabled:
@@ -336,6 +342,9 @@ def _compute_vt_ev_service_probabilities(
 ) -> Tuple[Dict[str, Dict[int, float]], Dict[str, Dict[int, float]], Dict[str, Dict[int, Dict[str, float]]]]:
     stations = [str(s) for s in data["sets"]["hybrid_stations"]]
     cfg = data.get("config", {})
+    # NOTE:
+    # vt_prob is a bounded operational-readiness score (0..1), not a literal realized
+    # service-success probability. It blends energy adequacy and operational adequacy.
     vt_floor = float(cfg.get("vt_service_prob_floor", 0.01))
     ev_floor = float(cfg.get("ev_service_prob_floor", 0.01))
     vt_energy_weight = float(cfg.get("vt_energy_weight", 0.45))
@@ -384,6 +393,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     flow_relax = float(cfg.get("flow_step_relax", 0.65))
     flow_floor = float(cfg.get("flow_step_floor", 0.15))
     price_relax = float(cfg.get("price_step_relax", 0.45))
+    readiness_relax = float(cfg.get("readiness_step_relax", price_relax))
     max_shadow = float(cfg.get("max_local_shadow_price", 2.5))
     stop_reason = "max_iter"
     prev_dx = None
@@ -466,8 +476,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 mu_dual = max(0.0, float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0))
                 mu_used = min(max_shadow, mu_dual)
                 electricity_price[s][t] = (1.0 - price_relax) * electricity_price[s][t] + price_relax * (base_p + mu_used)
-                vt_service_prob[s][t] = (1.0 - price_relax) * vt_service_prob[s][t] + price_relax * vt_service_prob_new[s][t]
-                ev_service_prob[s][t] = (1.0 - price_relax) * ev_service_prob[s][t] + price_relax * ev_service_prob_new[s][t]
+                vt_service_prob[s][t] = (1.0 - readiness_relax) * vt_service_prob[s][t] + readiness_relax * vt_service_prob_new[s][t]
+                ev_service_prob[s][t] = (1.0 - readiness_relax) * ev_service_prob[s][t] + readiness_relax * ev_service_prob_new[s][t]
 
                 dt = float(data["meta"]["delta_t"])
                 eta = float(data["parameters"].get("vertiport_storage", {}).get(s, {}).get("eta_ch", 1.0))
@@ -490,7 +500,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "local_shadow_price_dual_raw": mu_dual,
                     "local_shadow_price_used_for_price": mu_used,
                     "storage_port_semantics": "overlap_capped_charge_with_departure",
-                    "vt_service_probability": vt_service_prob[s][t],
+                    "vt_operational_readiness": vt_service_prob[s][t],
                     "ev_service_probability": ev_service_prob[s][t],
                     "vt_service_components": vt_diag_components[s][t],
                     "transfer_congestion_wait": transfer_wait[s][t],
@@ -511,7 +521,12 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "mode_share_by_group_time": mode_share,
         "group_time_supermode_metrics": group_metrics,
         "effective_electricity_price": electricity_price,
-        "vt_service_prob": vt_service_prob,
+        "vt_operational_readiness": vt_service_prob,
+        "vt_operational_readiness_meta": {
+            "interpretation": "bounded operational readiness score in [0,1], not a literal realized service-success probability",
+            "construction": "convex blend of VT energy adequacy and VT operational adequacy (departure-capacity + aircraft served-ratio), with floor clipping",
+            "ops_blend_component": "0.5 * (departure_capacity_component + aircraft_component)",
+        },
         "ev_service_prob": ev_service_prob,
         "hub_diagnostics": hub_diag,
         "assignment_diagnostics": assign_details,
