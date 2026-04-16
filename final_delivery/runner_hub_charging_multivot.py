@@ -480,8 +480,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         for s in stations:
             for t in times:
                 base_p = float(data["parameters"]["electricity_price"][s][t])
-                mu_dual = max(0.0, float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0))
-                mu_used = min(max_shadow, mu_dual)
+                scarcity_proxy_raw = max(0.0, float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0))
+                mu_used = min(max_shadow, scarcity_proxy_raw)
                 electricity_price[s][t] = (1.0 - price_relax) * electricity_price[s][t] + price_relax * (base_p + mu_used)
                 vt_service_prob[s][t] = (1.0 - readiness_relax) * vt_service_prob[s][t] + readiness_relax * vt_service_prob_new[s][t]
                 ev_service_prob[s][t] = (1.0 - readiness_relax) * ev_service_prob[s][t] + readiness_relax * ev_service_prob_new[s][t]
@@ -507,8 +507,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "vt_charge_power_from_grid_kw": vt_charge_power_from_grid_kw,
                     "storage_state_kwh": float(B_out.get(s, {}).get(t, 0.0)),
                     "storage_state_next_kwh": float(B_out.get(s, {}).get(t + 1, B_out.get(s, {}).get(t, 0.0))),
-                    "local_shadow_price_dual_raw": mu_dual,
-                    "local_shadow_price_used_for_price": mu_used,
+                    "local_scarcity_signal_proxy_raw": scarcity_proxy_raw,
+                    "local_scarcity_signal_proxy_used_for_price": mu_used,
                     "storage_port_semantics": "strict_no_simultaneous_charge_discharge",
                     "vt_operational_readiness": vt_service_prob[s][t],
                     "ev_service_probability": ev_service_prob[s][t],
@@ -551,7 +551,9 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "solver_used": str(data.get("diagnostics_runtime", {}).get("lp_failure", {}).get("fallback_solver", "highs"))
             if not bool(data.get("diagnostics_runtime", {}).get("lp_ok", True))
             else "highs",
-            "lp_dual_available": bool(data.get("diagnostics_runtime", {}).get("lp_ok", False)),
+            "shared_power_subproblem_type": str(lp_diag.get("shared_power_subproblem_type", "unknown")) if isinstance(lp_diag, dict) else "unknown",
+            "lp_dual_available": bool(lp_diag.get("true_dual_available", False)) if isinstance(lp_diag, dict) else False,
+            "scarcity_signal_type": str(lp_diag.get("scarcity_signal_type", "unknown")) if isinstance(lp_diag, dict) else "unknown",
             "shared_power_fallback_used": not bool(data.get("diagnostics_runtime", {}).get("lp_ok", True)),
             "binding_cap_total_count": int(lp_diag.get("binding_cap_total_count", 0)) if isinstance(lp_diag, dict) else 0,
             "binding_cap_with_positive_dual_count": int(lp_diag.get("binding_cap_with_positive_dual_count", 0)) if isinstance(lp_diag, dict) else 0,

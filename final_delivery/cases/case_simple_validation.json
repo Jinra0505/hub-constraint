@@ -176,19 +176,22 @@
         "B_min": 0,
         "B_max": 220,
         "B_init": 95,
-        "eta_ch": 1.0
+        "eta_ch": 1.0,
+        "eta_dis": 1.0
       },
       "H2": {
         "B_min": 0,
         "B_max": 200,
         "B_init": 88,
-        "eta_ch": 1.0
+        "eta_ch": 1.0,
+        "eta_dis": 1.0
       },
       "H3": {
         "B_min": 0,
         "B_max": 210,
         "B_init": 92,
-        "eta_ch": 1.0
+        "eta_ch": 1.0,
+        "eta_dis": 1.0
       }
     },
     "vt_aircraft_init_by_station": {

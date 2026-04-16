@@ -559,9 +559,9 @@ def solve_shared_power_inventory_highs(
     shed_vt_out = {dep: {t: float(x[var_idx[("SVT", dep, t)]]) for t in times} for dep in deps}
     shed_ev_out = {s: {t: float(x[var_idx[("SEV", s, t)]]) for t in times} for s in stations}
 
-    # HiGHS dual (marginal) of station power constraint is converted to nonnegative scarcity value mu_kw ($/kW).
+    # MILP has no reliable LP dual semantics for binding-cap rows; use an honest scarcity proxy.
     shadow_prices = {s: {t: 0.0 for t in times} for s in stations}
-    dual_trace = {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": None} for t in times} for s in stations}
+    scarcity_trace = {s: {t: {"label": f"cap_constraint[{s},{t}]", "proxy_signal_kw": None} for t in times} for s in stations}
     max_shadow = float(data.get("config", {}).get("max_local_shadow_price", 2.5))
     for s, t, _ in cap_rows:
         p_ch = sum(P_ch_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
@@ -570,7 +570,7 @@ def solve_shared_power_inventory_highs(
         if cap - (p_ch + p_ev_served) <= 1.0e-6 and (shed_ev_out[s][t] > 1.0e-8 or sum(shed_vt_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s) > 1.0e-8):
             mu = min(max_shadow, max(0.0, voll_ev_per_kwh - float(prices[s][t])))
             shadow_prices[s][t] = mu
-            dual_trace[s][t]["mu_kw"] = mu
+            scarcity_trace[s][t]["proxy_signal_kw"] = mu
 
     objective_components = {s: {t: {"energy_cost_term": 0.0, "ev_shed_penalty": 0.0, "vt_shed_penalty": 0.0} for t in times} for s in stations}
     total_energy_cost = 0.0
@@ -630,7 +630,10 @@ def solve_shared_power_inventory_highs(
             "vt_shed_penalty": total_vt_shed_penalty,
             "total_objective": total_energy_cost + total_ev_shed_penalty + total_vt_shed_penalty,
         },
-        "dual_trace": dual_trace,
+        "scarcity_signal_trace": scarcity_trace,
+        "shared_power_subproblem_type": "milp",
+        "true_dual_available": False,
+        "scarcity_signal_type": "proxy_from_binding_and_shed",
         "storage_charge_kw": {dep: {t: float(P_ch_out[dep][t]) for t in times} for dep in deps},
         "storage_discharge_kw": {dep: {t: float(P_dis_out[dep][t]) for t in times} for dep in deps},
         "storage_physics_mode": "strict_milp_no_simultaneous_charge_discharge",
@@ -791,7 +794,10 @@ def _solve_shared_power_core_heuristic(
             "vt_shed_penalty": total_vt_pen,
             "total_objective": total_energy + total_ev_pen + total_vt_pen,
         },
-        "dual_trace": {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": float(shadow_prices[s][t])} for t in times} for s in stations},
+        "scarcity_signal_trace": {s: {t: {"label": f"cap_constraint[{s},{t}]", "proxy_signal_kw": float(shadow_prices[s][t])} for t in times} for s in stations},
+        "shared_power_subproblem_type": "heuristic",
+        "true_dual_available": False,
+        "scarcity_signal_type": "proxy_heuristic",
         "binding_cap_total_count": bind_cnt,
         "binding_cap_with_positive_dual_count": bind_dual_cnt,
     }
