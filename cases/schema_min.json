@@ -1,0 +1,15 @@
+{
+  "required_paths": [
+    "meta.delta_t",
+    "sets.time",
+    "sets.groups",
+    "sets.ev_stations",
+    "sets.hybrid_stations",
+    "parameters.q",
+    "parameters.vot",
+    "parameters.stations",
+    "parameters.arc_params",
+    "parameters.electricity_price",
+    "itineraries"
+  ]
+}
