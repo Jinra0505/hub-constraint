@@ -808,7 +808,7 @@
     "price_step_relax": 0.09,
     "vt_reliability_gamma": 0.14,
     "ev_reliability_gamma": 0.06,
-    "multimodal_reliability_gamma": 0.04,
+    "multimodal_reliability_gamma": 0.037,
     "vt_reposition_enabled": true,
     "vt_reposition_lag": 1,
     "vt_reposition_reserve": 0.7,
@@ -820,6 +820,6 @@
     "vt_service_prob_floor": 0.01,
     "ev_service_prob_floor": 0.01,
     "vt_energy_weight": 0.45,
-    "vt_departure_wait_util_cap": 6.0
+    "vt_departure_wait_util_cap": 5.7
   }
 }
