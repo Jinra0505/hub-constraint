@@ -364,7 +364,10 @@ def _compute_vt_ev_service_probabilities(
             p_depart = 1.0 if req_dep <= 1.0e-9 else max(0.0, min(1.0, cap_dep / req_dep))
             p_air = max(0.0, min(1.0, float(vt_wait_diag.get(s, {}).get("served_ratio", {}).get(t, 1.0))))
             p_ops = min(1.0, 0.5 * (p_depart + p_air))
-            vt_integrated = vt_energy_weight * p_energy + (1.0 - vt_energy_weight) * p_ops
+            # Bottleneck-aware integrated readiness: weighted harmonic-style aggregation.
+            # Drops naturally when either energy or operational component becomes critically weak.
+            denom = vt_energy_weight * max(1.0e-8, p_ops) + (1.0 - vt_energy_weight) * max(1.0e-8, p_energy)
+            vt_integrated = (max(0.0, p_energy) * max(0.0, p_ops)) / max(1.0e-8, denom)
             vt_prob[s][t] = max(vt_floor, min(1.0, vt_integrated))
             ev_prob[s][t] = 1.0 if ev_req_kwh <= 1.0e-9 else max(ev_floor, min(1.0, (ev_req_kwh - ev_shed_kwh) / ev_req_kwh))
             components[s][t] = {"energy": p_energy, "departure_capacity": p_depart, "aircraft": p_air, "ops_blend": p_ops}
@@ -454,17 +457,21 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             station_loads["E_ev_req"],
         )
 
+        dx_raw = 0.0
         dx = 0.0
         for it in itineraries:
             for g in groups:
                 for t in times:
                     old = float(flows[it["id"]][g][t])
                     new = float(flows_new[it["id"]][g][t])
-                    dx = max(dx, abs(new - old))
+                    gap = abs(new - old)
+                    dx_raw = max(dx_raw, gap)
+                    applied = alpha * gap
+                    dx = max(dx, applied)
                     flows[it["id"]][g][t] = (1.0 - alpha) * old + alpha * new
-        if prev_dx is not None and dx > prev_dx * 1.03:
+        if prev_dx is not None and dx_raw > prev_dx * 1.03:
             alpha = max(flow_floor, 0.7 * alpha)
-        prev_dx = dx
+        prev_dx = dx_raw
 
         vt_service_prob_new, ev_service_prob_new, vt_diag_components = _compute_vt_ev_service_probabilities(
             data, times, station_loads, shed_ev, shed_vt, vt_wait_diag
@@ -485,9 +492,12 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 vt_charge_power_from_grid_kw = max(0.0, float(P_out.get(s, {}).get(t, 0.0)))
                 b_t = float(B_out.get(s, {}).get(t, 0.0))
                 b_next = float(B_out.get(s, {}).get(t + 1, b_t))
-                delta_b = b_next - b_t
-                charge_kw = max(0.0, delta_b / max(1.0e-9, eta * dt))
-                discharge_kw = max(0.0, -delta_b / max(1.0e-9, dt))
+                charge_kw = float(lp_diag.get("storage_charge_kw", {}).get(s, {}).get(t, 0.0)) if isinstance(lp_diag, dict) else 0.0
+                discharge_kw = float(lp_diag.get("storage_discharge_kw", {}).get(s, {}).get(t, 0.0)) if isinstance(lp_diag, dict) else 0.0
+                if charge_kw <= 1.0e-12 and discharge_kw <= 1.0e-12:
+                    delta_b = b_next - b_t
+                    charge_kw = max(0.0, delta_b / max(1.0e-9, eta * dt))
+                    discharge_kw = max(0.0, -delta_b / max(1.0e-9, dt))
                 grid_draw_kw = served_ev_kw + vt_charge_power_from_grid_kw
                 hub_diag[s][t] = {
                     "grid_connection_cap_kw": float(data["parameters"]["stations"][s]["P_site"][t]),
@@ -499,14 +509,14 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "storage_state_next_kwh": float(B_out.get(s, {}).get(t + 1, B_out.get(s, {}).get(t, 0.0))),
                     "local_shadow_price_dual_raw": mu_dual,
                     "local_shadow_price_used_for_price": mu_used,
-                    "storage_port_semantics": "overlap_capped_charge_with_departure",
+                    "storage_port_semantics": "strict_no_simultaneous_charge_discharge",
                     "vt_operational_readiness": vt_service_prob[s][t],
                     "ev_service_probability": ev_service_prob[s][t],
                     "vt_service_components": vt_diag_components[s][t],
                     "transfer_congestion_wait": transfer_wait[s][t],
                     "multimodal_continuity_penalty": mm_penalty[s][t],
                 }
-        iteration_history.append({"iteration": itn, "alpha": alpha, "max_flow_delta": dx})
+        iteration_history.append({"iteration": itn, "alpha": alpha, "max_flow_delta": dx, "max_flow_delta_raw": dx_raw})
         if dx <= tol_flow:
             stop_reason = "tol_flow"
             break
@@ -524,8 +534,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "vt_operational_readiness": vt_service_prob,
         "vt_operational_readiness_meta": {
             "interpretation": "bounded operational readiness score in [0,1], not a literal realized service-success probability",
-            "construction": "convex blend of VT energy adequacy and VT operational adequacy (departure-capacity + aircraft served-ratio), with floor clipping",
-            "ops_blend_component": "0.5 * (departure_capacity_component + aircraft_component)",
+            "construction": "bottleneck-aware weighted harmonic-style aggregation of VT energy adequacy and VT operational adequacy, with floor clipping",
+            "ops_blend_component": "0.5 * (departure_capacity_component + aircraft_component), then integrated with energy via weighted harmonic-style formula",
         },
         "ev_service_prob": ev_service_prob,
         "hub_diagnostics": hub_diag,
