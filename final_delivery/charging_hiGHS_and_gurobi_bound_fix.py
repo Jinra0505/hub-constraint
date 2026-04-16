@@ -372,6 +372,7 @@ def solve_shared_power_inventory_highs(
     voll_vt_per_kwh = float(voll_vt_cfg) if voll_vt_cfg is not None else 200.0
     throughput_penalty = float(data.get("config", {}).get("storage_throughput_penalty_per_kwh", 0.0) or 0.0)
     single_port_priority = bool(data.get("config", {}).get("storage_single_port_discharge_priority", False))
+    overlap_ratio = float(data.get("config", {}).get("storage_single_port_overlap_ratio", 0.15))
 
     var_idx: Dict[tuple[str, str, int], int] = {}
     bounds = []
@@ -393,7 +394,7 @@ def solve_shared_power_inventory_highs(
         for t in times:
             p_ub = _vt_charge_power_upper_bound(data, dep, t, e_dep)
             if single_port_priority and float(e_dep.get(dep, {}).get(t, 0.0)) > 1.0e-9:
-                p_ub = 0.0
+                p_ub = overlap_ratio * p_ub
             add_var("P", dep, t, 0.0, p_ub, (prices[dep][t] + throughput_penalty) * delta_t)
             add_var("SVT", dep, t, 0.0, float(e_dep.get(dep, {}).get(t, 0.0)), voll_vt_per_kwh - throughput_penalty)
 

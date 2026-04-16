@@ -870,11 +870,11 @@
     }
   ],
   "config": {
-    "max_iter": 220,
+    "max_iter": 260,
     "tol": 0.001,
     "tol_flow": 0.003,
     "shared_power_solver": "highs",
-    "terminal_soc_policy": "at_least_init",
+    "terminal_soc_policy": "target",
     "multimodal_access_utilization_factor": 1.0,
     "voll_ev_per_kwh": 70.0,
     "voll_vt_per_kwh": 140.0,
@@ -890,9 +890,9 @@
       "coeff_transfer_overrun": 0.35,
       "transfer_buffer_threshold": 0.16
     },
-    "flow_step_relax": 0.58,
-    "flow_step_floor": 0.1,
-    "price_step_relax": 0.22,
+    "flow_step_relax": 0.45,
+    "flow_step_floor": 0.05,
+    "price_step_relax": 0.1,
     "vt_reliability_gamma": 0.14,
     "ev_reliability_gamma": 0.06,
     "multimodal_reliability_gamma": 0.1,
@@ -900,6 +900,12 @@
     "vt_reposition_lag": 1,
     "vt_reposition_reserve": 0.7,
     "vt_reposition_max_send_per_period": 1.4,
-    "max_local_shadow_price": 2.0
+    "max_local_shadow_price": 2.0,
+    "terminal_soc_target_kwh": {
+      "H1": 58,
+      "H2": 54,
+      "H3": 56
+    },
+    "storage_single_port_overlap_ratio": 0.04
   }
 }
