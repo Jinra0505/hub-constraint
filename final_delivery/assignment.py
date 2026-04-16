@@ -1,7 +1,14 @@
 import math
 from typing import Any, Dict, List, Tuple
 
-from .utils import logsumexp
+def logsumexp(values) -> float:
+    vals = list(values)
+    if not vals:
+        return -float("inf")
+    m = max(vals)
+    if math.isinf(m):
+        return m
+    return m + math.log(sum(math.exp(v - m) for v in vals))
 
 
 EVTOL_MODES = {"eVTOL", "eVTOL_fast", "eVTOL_slow", "EV_to_eVTOL_fast", "EV_to_eVTOL_slow"}
@@ -163,6 +170,8 @@ def compute_itinerary_costs(
     vt_departure_waits: Dict[str, Dict[str, Dict[int, float]]] | None = None,
     transfer_time_by_station: Dict[str, float] | Dict[str, Dict[int, float]] | None = None,
     transfer_time_default: float = 0.0,
+    transfer_congestion_waits: Dict[str, Dict[int, float]] | None = None,
+    multimodal_continuity_penalty: Dict[str, Dict[int, float]] | None = None,
 ) -> Dict[str, Dict[int, Dict[str, float]]]:
     costs: Dict[str, Dict[int, Dict[str, float]]] = {it["id"]: {} for it in itineraries}
     for it in itineraries:
@@ -194,8 +203,10 @@ def compute_itinerary_costs(
                 charge_cost += float(stop.get("energy", 0.0)) * float(electricity_price[station][t])
 
             transfer_time_applied = 0.0
+            transfer_congestion_time = 0.0
             transfer_time_source = "none"
             access_energy_price_source = "none"
+            continuity_penalty = 0.0
 
             # Optional scalar access energy (multimodal).
             # If access_stations already provide per-station energy for this time, scalar access_energy_kwh
@@ -247,6 +258,12 @@ def compute_itinerary_costs(
                         transfer_time_applied = float(transfer_time_default)
                         transfer_time_source = "global_default"
                     tt += transfer_time_applied
+                    if dep_station is not None and transfer_congestion_waits and dep_station in transfer_congestion_waits:
+                        transfer_congestion_time = float(transfer_congestion_waits[dep_station].get(t, 0.0))
+                        tt += transfer_congestion_time
+                    if dep_station is not None and multimodal_continuity_penalty and dep_station in multimodal_continuity_penalty:
+                        continuity_penalty = float(multimodal_continuity_penalty[dep_station].get(t, 0.0))
+                        money_t += continuity_penalty
                 tt += flight_time
                 svc_class = get_evtol_service_class(it)
                 if vt_departure_waits is not None:
@@ -264,6 +281,8 @@ def compute_itinerary_costs(
                 "ChargeCost": charge_cost,
                 "cost_breakdown": {
                     "transfer_time_applied": transfer_time_applied,
+                    "transfer_congestion_time": transfer_congestion_time,
+                    "continuity_penalty": continuity_penalty,
                     "transfer_time_source": transfer_time_source,
                     "access_energy_price_source": access_energy_price_source,
                 },
@@ -282,8 +301,9 @@ def logit_assignment(
     ev_service_prob: Dict[str, Dict[int, float]] | None = None,
     vt_service_prob_floor: float = 1.0e-4,
     ev_service_prob_floor: float = 1.0e-4,
-    vt_reliability_gamma: float = 0.0,
-    ev_reliability_gamma: float = 0.0,
+    vt_reliability_gamma: float = 0.15,
+    ev_reliability_gamma: float = 0.08,
+    multimodal_reliability_gamma: float = 0.12,
     vt_service_prob_skip_below: float = 0.0,
     ev_service_prob_skip_below: float = 0.0,
     fail_on_infeasible_demand: bool = False,
@@ -382,9 +402,13 @@ def logit_assignment(
 
                     vt_term = vt_reliability_gamma * math.log(max(vt_prob, vt_service_prob_floor))
                     ev_term = ev_reliability_gamma * math.log(max(ev_prob, ev_service_prob_floor))
+                    mm_term = 0.0
+                    if is_multimodal_evtol(it):
+                        mm_joint = min(vt_prob, ev_prob)
+                        mm_term = multimodal_reliability_gamma * math.log(max(mm_joint, 1.0e-8))
                     lam = max(float(lambdas[group]), 1.0e-9)
-                    perceived_cost = raw_cost - (vt_term + ev_term) / lam
-                    util = -lam * raw_cost + vt_term + ev_term
+                    perceived_cost = raw_cost - (vt_term + ev_term + mm_term) / lam
+                    util = -lam * raw_cost + vt_term + ev_term + mm_term
 
                     generalized_costs_perceived[it["id"]][group][t] = perceived_cost
                     utilities[it["id"]][group][t] = util
@@ -395,8 +419,11 @@ def logit_assignment(
                         "ev_prob": ev_prob,
                         "vt_reliability_term": vt_term,
                         "ev_reliability_term": ev_term,
+                        "multimodal_reliability_term": mm_term,
                         "perceived_cost": perceived_cost,
                         "transfer_time_applied": float(cb.get("transfer_time_applied", 0.0) or 0.0),
+                        "transfer_congestion_time": float(cb.get("transfer_congestion_time", 0.0) or 0.0),
+                        "continuity_penalty": float(cb.get("continuity_penalty", 0.0) or 0.0),
                         "transfer_time_source": str(cb.get("transfer_time_source", "none")),
                         "access_energy_price_source": str(cb.get("access_energy_price_source", "none")),
                     }
