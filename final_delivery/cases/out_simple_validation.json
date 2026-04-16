@@ -2,191 +2,201 @@
   "flows": {
     "it_ev_A": {
       "low": {
-        "0": 14.560086592623328,
-        "1": 17.584592540079957,
-        "2": 3.3549387517828375,
-        "3": 26.06283937656612,
-        "4": 16.809227991264176
+        "0": 13.320871468555714,
+        "1": 21.679531284953512,
+        "2": 20.716654889808613,
+        "3": 22.481647209291772,
+        "4": 21.231682195439966
       },
       "mid": {
-        "0": 15.169891520701395,
-        "1": 19.586696257507104,
-        "2": 15.101304907532935,
-        "3": 27.32363731827252,
-        "4": 18.69749179275646
+        "0": 13.494026897838566,
+        "1": 23.134413853251463,
+        "2": 27.046596554026323,
+        "3": 24.540175844555716,
+        "4": 22.683404151153443
       },
       "high": {
-        "0": 15.434198148412543,
-        "1": 20.456088312644944,
-        "2": 28.279071295355337,
-        "3": 27.105302853510924,
-        "4": 19.991627582204757
+        "0": 13.823013919094386,
+        "1": 22.025937235914196,
+        "2": 28.574815304161813,
+        "3": 25.948632481183406,
+        "4": 21.67791216302299
       }
     },
     "it_vt_A": {
       "low": {
-        "0": 5.394107222224574,
-        "1": 5.929520802928002,
-        "2": 23.321402447996707,
-        "3": 0.2918305430219236,
-        "4": 5.196722030363071
+        "0": 6.664088132280356,
+        "1": 6.47559025279494,
+        "2": 4.615338956536752,
+        "3": 4.50665966187298,
+        "4": 4.290290398128137
       },
       "mid": {
-        "0": 3.1830886438368524,
-        "1": 3.48499057208865,
-        "2": 9.245805371868112,
-        "3": 0.10552133477386133,
-        "4": 2.858091268009272
+        "0": 4.714520940882501,
+        "1": 3.463282380008505,
+        "2": 1.0210427993089006,
+        "3": 2.5081124586134114,
+        "4": 1.7196750676099877
       },
       "high": {
-        "0": 1.1731961590591802,
-        "1": 1.167478492524225,
-        "2": 0.3190444275823745,
-        "3": 0.05409630273980594,
-        "4": 0.8776680229929937
+        "0": 2.5247717895627577,
+        "1": 0.951650693462063,
+        "2": 0.046143948313844975,
+        "3": 0.7787760879249707,
+        "4": 0.2824396320826056
       }
     },
     "it_mm_A": {
       "low": {
-        "0": 6.045806185152103,
-        "1": 6.485886656992043,
-        "2": 9.323658800220459,
-        "3": 7.645330080411965,
-        "4": 5.994049978372781
+        "0": 6.014759310677974,
+        "1": 1.8445541293831376,
+        "2": 10.66761695421254,
+        "3": 7.011325551584385,
+        "4": 2.477724695754709
       },
       "mid": {
-        "0": 3.647019835461761,
-        "1": 3.9283131704042575,
-        "2": 9.652889720598967,
-        "3": 3.570841346953602,
-        "4": 3.4444169392342774
+        "0": 3.79121431717543,
+        "1": 0.40201186715845855,
+        "2": 5.93199306941392,
+        "3": 3.951376552866848,
+        "4": 0.5966505038462243
       },
       "high": {
-        "0": 1.3926056925282781,
-        "1": 1.376433194830836,
-        "2": 1.4018842770622926,
-        "3": 0.8406008437492637,
-        "4": 1.130704394802272
+        "0": 1.6520196916218082,
+        "1": 0.022163415424630566,
+        "2": 1.3787164146559385,
+        "3": 1.272288720214435,
+        "4": 0.03941036079089969
       }
     },
     "it_ev_B": {
       "low": {
-        "0": 11.209963543336453,
-        "1": 12.57587447613287,
-        "2": 18.425189034480407,
-        "3": 1.3562807355680666,
-        "4": 13.922710960859442
+        "0": 9.835774757834857,
+        "1": 15.802134393248773,
+        "2": 15.7720224476595,
+        "3": 9.588394014091302,
+        "4": 13.587733825198953
       },
       "mid": {
-        "0": 10.65336271268742,
-        "1": 13.501103890418559,
-        "2": 19.806738670355784,
-        "3": 3.740020314777701,
-        "4": 15.290495457386578
+        "0": 8.834650067776876,
+        "1": 17.846233402642085,
+        "2": 15.796071252282998,
+        "3": 11.199240917243577,
+        "4": 13.519567757083317
       },
       "high": {
-        "0": 10.573820157316852,
-        "1": 13.924744900640135,
-        "2": 20.07211528192188,
-        "3": 13.621556315346798,
-        "4": 16.153596964989152
+        "0": 8.24326725662267,
+        "1": 18.007055747042706,
+        "2": 14.509482426481433,
+        "3": 13.439554139927438,
+        "4": 12.473394471861068
       }
     },
     "it_vt_B": {
       "low": {
-        "0": 6.969731282716547,
-        "1": 7.5294422884195065,
-        "2": 9.369097768043218,
-        "3": 24.6639501613774,
-        "4": 8.127801854477836
+        "0": 7.741220332270128,
+        "1": 4.060474375651543,
+        "2": 11.526624306850675,
+        "3": 15.963535723207633,
+        "4": 10.032579357297587
       },
       "mid": {
-        "0": 5.4914410918765695,
-        "1": 6.5108732300308025,
-        "2": 7.149007873570171,
-        "3": 18.836743688435742,
-        "4": 6.783895590652385
+        "0": 6.673384731732658,
+        "1": 2.052387193383547,
+        "2": 11.11585569678282,
+        "3": 14.760366572725411,
+        "4": 9.687799640707997
       },
       "high": {
-        "0": 3.8691084073492816,
-        "1": 4.526680459869143,
-        "2": 3.8991239097964168,
-        "3": 7.104379313405685,
-        "4": 4.361537372654467
+        "0": 5.752418561338112,
+        "1": 0.48814174806887184,
+        "2": 9.488298507183181,
+        "3": 11.94807895725079,
+        "4": 8.423832623890643
       }
     },
     "it_mm_B": {
       "low": {
-        "0": 3.8203051739470126,
-        "1": 3.894683235447628,
-        "2": 0.20571319747634353,
-        "3": 5.979769103054549,
-        "4": 3.9494871846627326
+        "0": 4.422767065791512,
+        "1": 4.137131764804956,
+        "2": 0.7010505348126416,
+        "3": 6.44772430764143,
+        "4": 2.3794057290175035
       },
       "mid": {
-        "0": 1.8551961954360152,
-        "1": 1.988022879550644,
-        "2": 0.04425345607405611,
-        "3": 7.423235996786563,
-        "4": 1.9256089519610373
+        "0": 2.491770600769418,
+        "1": 2.101141559870861,
+        "2": 0.08778115135261383,
+        "3": 4.040068177162601,
+        "4": 0.7923731359139577
       },
       "high": {
-        "0": 0.55707143533387,
-        "1": 0.5485746394907257,
-        "2": 0.028760808281696023,
-        "3": 6.274064371247516,
-        "4": 0.4848656623564023
+        "0": 1.0041520156050103,
+        "1": 0.5045970940717515,
+        "2": 0.0019596000406660813,
+        "3": 1.6120750032402034,
+        "4": 0.10254587124041029
       }
     }
   },
   "costs": {
     "it_ev_A": {
       "0": {
-        "TT": 0.9528594983476495,
+        "TT": 0.9518741914012822,
         "Money": 6.2,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "1": {
-        "TT": 0.9575792036620837,
+        "TT": 0.9637161201253773,
         "Money": 6.2,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "2": {
-        "TT": 0.9820243339232632,
+        "TT": 1.0328134561986784,
         "Money": 6.2,
-        "ChargeCost": 81.6,
+        "ChargeCost": 15.163974919636107,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "3": {
-        "TT": 0.9788451802172683,
+        "TT": 0.9694837817553047,
         "Money": 6.2,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "4": {
-        "TT": 0.9565196215252123,
+        "TT": 0.9627208963099974,
         "Money": 6.2,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
@@ -194,51 +204,61 @@
     },
     "it_vt_A": {
       "0": {
-        "TT": 2.253354021441644,
-        "Money": 9.128536312849162,
+        "TT": 1.7231238458155067,
+        "Money": 8.936,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "1": {
-        "TT": 2.4268387146403727,
-        "Money": 9.128536312849162,
+        "TT": 2.5064227280269433,
+        "Money": 8.936,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "2": {
-        "TT": 8.633526035511258,
-        "Money": 9.128536312849162,
+        "TT": 5.450171533255309,
+        "Money": 8.936001167282612,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "3": {
-        "TT": 3.8135321228341175,
-        "Money": 46.38958659217876,
+        "TT": 2.323611844961268,
+        "Money": 15.335988197475814,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "4": {
-        "TT": 2.5839964885808255,
-        "Money": 9.128536312849162,
+        "TT": 3.178859893637224,
+        "Money": 8.936,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
@@ -246,51 +266,61 @@
     },
     "it_mm_A": {
       "0": {
-        "TT": 2.163520191949427,
-        "Money": 8.667,
+        "TT": 1.997583736959898,
+        "Money": 8.681805358037032,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.27,
+          "transfer_congestion_time": 0.02345515090252406,
+          "continuity_penalty": 0.01480535803703125,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
       },
       "1": {
-        "TT": 2.303595081130875,
-        "Money": 8.667,
-        "ChargeCost": 0.5290000000000001,
+        "TT": 4.586778911857156,
+        "Money": 8.729744171189934,
+        "ChargeCost": 0.529,
         "cost_breakdown": {
           "transfer_time_applied": 0.27,
+          "transfer_congestion_time": 9.526567521675498e-05,
+          "continuity_penalty": 0.06274417118993371,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
       },
       "2": {
-        "TT": 5.507572226607672,
-        "Money": 42.8,
+        "TT": 3.175182882056407,
+        "Money": 14.605478236902592,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.27,
+          "transfer_congestion_time": 0.10849682543073297,
+          "continuity_penalty": 0.13848893294013265,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
       },
       "3": {
-        "TT": 2.8137133880336034,
-        "Money": 8.667,
+        "TT": 2.448267040141973,
+        "Money": 8.719811903441121,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.27,
+          "transfer_congestion_time": 0.02931742729579549,
+          "continuity_penalty": 0.05281190344112048,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
       },
       "4": {
-        "TT": 2.4371824876224775,
-        "Money": 8.667,
+        "TT": 4.370329193036504,
+        "Money": 8.693412780983445,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.27,
+          "transfer_congestion_time": 0.0002795582195340657,
+          "continuity_penalty": 0.026412780983445953,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
@@ -298,51 +328,61 @@
     },
     "it_ev_B": {
       "0": {
-        "TT": 1.0514347990614525,
+        "TT": 1.050679852135199,
         "Money": 6.4,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "1": {
-        "TT": 1.0533183023406159,
+        "TT": 1.0592254074425285,
         "Money": 6.4,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "2": {
-        "TT": 1.0649740756690957,
+        "TT": 1.0558408897539755,
         "Money": 6.4,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "3": {
-        "TT": 1.0801821625625123,
+        "TT": 1.0889508564490233,
         "Money": 6.4,
-        "ChargeCost": 77.57259776536311,
+        "ChargeCost": 14.49497602612275,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "4": {
-        "TT": 1.0554888198004744,
+        "TT": 1.0531802244267687,
         "Money": 6.4,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
@@ -350,51 +390,61 @@
     },
     "it_vt_B": {
       "0": {
-        "TT": 1.43017431619818,
-        "Money": 9.254435754189945,
+        "TT": 1.0835080888742243,
+        "Money": 9.098,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "1": {
-        "TT": 1.5034692076322127,
-        "Money": 9.254435754189945,
+        "TT": 2.8660199387538254,
+        "Money": 9.098,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "2": {
-        "TT": 1.82086330726524,
-        "Money": 9.254435754189945,
+        "TT": 1.0810086521697564,
+        "Money": 9.098,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "3": {
-        "TT": 6.149969611688428,
-        "Money": 9.254435754189945,
+        "TT": 1.9070656235898786,
+        "Money": 9.098,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
       },
       "4": {
-        "TT": 1.630318988569478,
+        "TT": 1.0599587668326955,
         "Money": 9.098,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.0,
+          "transfer_congestion_time": 0.0,
+          "continuity_penalty": 0.0,
           "transfer_time_source": "none",
           "access_energy_price_source": "none"
         }
@@ -402,51 +452,61 @@
     },
     "it_mm_B": {
       "0": {
-        "TT": 2.6133835199737794,
-        "Money": 8.612469273743017,
+        "TT": 2.087142814079087,
+        "Money": 8.474664881223731,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.23,
+          "transfer_congestion_time": 0.003929758758928603,
+          "continuity_penalty": 0.0306648812237321,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
       },
       "1": {
-        "TT": 2.7869009693379034,
-        "Money": 8.612469273743017,
+        "TT": 2.8687686175489646,
+        "Money": 8.50137453254193,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.23,
+          "transfer_congestion_time": 0.002349524795372824,
+          "continuity_penalty": 0.0573745325419315,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
       },
       "2": {
-        "TT": 9.008285727219512,
-        "Money": 8.612469273743017,
-        "ChargeCost": 0.6673854748603354,
+        "TT": 5.830623324203293,
+        "Money": 8.512000914192232,
+        "ChargeCost": 0.529000838984377,
         "cost_breakdown": {
           "transfer_time_applied": 0.23,
+          "transfer_congestion_time": 2.4688416457576296e-06,
+          "continuity_penalty": 0.06799989281994594,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
       },
       "3": {
-        "TT": 4.176688510509207,
-        "Money": 41.21588826815641,
+        "TT": 2.6935282038979445,
+        "Money": 14.171206787381788,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.23,
+          "transfer_congestion_time": 0.015260042041086903,
+          "continuity_penalty": 0.12721711459045099,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
       },
       "4": {
-        "TT": 2.9541430481830044,
-        "Money": 8.612469273743017,
+        "TT": 3.5495997534668247,
+        "Money": 8.504409998000959,
         "ChargeCost": 0.0,
         "cost_breakdown": {
           "transfer_time_applied": 0.23,
+          "transfer_congestion_time": 0.00023284598095700098,
+          "continuity_penalty": 0.060409998000959385,
           "transfer_time_source": "itinerary",
           "access_energy_price_source": "none"
         }
@@ -456,83 +516,83 @@
   "mode_share_by_group_time": {
     "low": {
       "0": {
-        "EV": 0.5368760444991619,
-        "eVTOL": 0.25757996885293993,
-        "EV_to_eVTOL": 0.20554398664789816
+        "EV": 0.48243534537111643,
+        "eVTOL": 0.30011383757086135,
+        "EV_to_eVTOL": 0.2174508170580221
       },
       "1": {
-        "EV": 0.5585271669669042,
-        "eVTOL": 0.24924005724717607,
-        "EV_to_eVTOL": 0.1922327757859198
+        "EV": 0.6941124240824923,
+        "eVTOL": 0.19511441733481552,
+        "EV_to_eVTOL": 0.11077315858269209
       },
       "2": {
-        "EV": 0.34031449666036334,
-        "eVTOL": 0.510789065875624,
-        "EV_to_eVTOL": 0.1488964374640126
+        "EV": 0.5701417472548822,
+        "eVTOL": 0.25222090277472425,
+        "EV_to_eVTOL": 0.17763734997039357
       },
       "3": {
-        "EV": 0.41544121382021476,
-        "eVTOL": 0.37811788946059566,
-        "EV_to_eVTOL": 0.2064408967191895
+        "EV": 0.48591496877899165,
+        "eVTOL": 0.3101578286774656,
+        "EV_to_eVTOL": 0.2039272025435427
       },
       "4": {
-        "EV": 0.5691099805948814,
-        "eVTOL": 0.24675044231186846,
-        "EV_to_eVTOL": 0.18413957709325013
+        "EV": 0.6448109714952679,
+        "eVTOL": 0.26524119635211457,
+        "EV_to_eVTOL": 0.08994783215261759
       }
     },
     "mid": {
       "0": {
-        "EV": 0.6455813558347202,
-        "eVTOL": 0.21686324339283547,
-        "EV_to_eVTOL": 0.13755540077244435
+        "EV": 0.5582229591421711,
+        "eVTOL": 0.2847007197420814,
+        "EV_to_eVTOL": 0.15707632111574743
       },
       "1": {
-        "EV": 0.6752612275086868,
-        "eVTOL": 0.20399722045141733,
-        "EV_to_eVTOL": 0.12074155203989592
+        "EV": 0.836348781762841,
+        "eVTOL": 0.11256590213199719,
+        "EV_to_eVTOL": 0.051085316105161774
       },
       "2": {
-        "EV": 0.5722630094735853,
-        "eVTOL": 0.26876743025308647,
-        "EV_to_eVTOL": 0.15896956027332818
+        "EV": 0.7023464096310624,
+        "eVTOL": 0.19896770017508833,
+        "EV_to_eVTOL": 0.09868589019384924
       },
       "3": {
-        "EV": 0.5092402890663972,
-        "eVTOL": 0.31052893480671484,
-        "EV_to_eVTOL": 0.18023077612688795
+        "EV": 0.5858984122660384,
+        "eVTOL": 0.2830928807300835,
+        "EV_to_eVTOL": 0.13100870700387812
       },
       "4": {
-        "EV": 0.6936323928600618,
-        "eVTOL": 0.19677524201350316,
-        "EV_to_eVTOL": 0.10959236512643498
+        "EV": 0.7388441491073267,
+        "eVTOL": 0.23280812320308336,
+        "EV_to_eVTOL": 0.028347727689590034
       }
     },
     "high": {
       "0": {
-        "EV": 0.7881217668402845,
-        "eVTOL": 0.15279710807298366,
-        "EV_to_eVTOL": 0.05908112508673175
+        "EV": 0.6686824163324794,
+        "eVTOL": 0.25082666173832163,
+        "EV_to_eVTOL": 0.08049092192919904
       },
       "1": {
-        "EV": 0.8185912669829779,
-        "eVTOL": 0.135575213152223,
-        "EV_to_eVTOL": 0.045833519864799076
+        "EV": 0.953176804479782,
+        "eVTOL": 0.034281143034118305,
+        "EV_to_eVTOL": 0.012542052486099622
       },
       "2": {
-        "EV": 0.8953923440236522,
-        "eVTOL": 0.0781142284699776,
-        "EV_to_eVTOL": 0.026493427506370158
+        "EV": 0.7978659911877997,
+        "eVTOL": 0.176565658044082,
+        "EV_to_eVTOL": 0.02556835076811825
       },
       "3": {
-        "EV": 0.7404883485246859,
-        "eVTOL": 0.13015410211173623,
-        "EV_to_eVTOL": 0.12935754936357782
+        "EV": 0.7161565900939307,
+        "eVTOL": 0.23139986614381897,
+        "EV_to_eVTOL": 0.052443543762250265
       },
       "4": {
-        "EV": 0.8405866173766016,
-        "eVTOL": 0.12184198594528967,
-        "EV_to_eVTOL": 0.037571396678108666
+        "EV": 0.7942250198120245,
+        "eVTOL": 0.20247363677517777,
+        "EV_to_eVTOL": 0.00330134341279766
       }
     }
   },
@@ -540,278 +600,283 @@
     "low": {
       "0": {
         "EV": {
-          "flow": 25.77005013595978,
-          "avg_generalized_cost": 13.257177993628726
+          "flow": 23.15664622639057,
+          "avg_generalized_cost": 13.241842857552976
         },
         "eVTOL": {
-          "flow": 12.363838504941121,
-          "avg_generalized_cost": 21.724691812694115
+          "flow": 14.405308464550483,
+          "avg_generalized_cost": 18.678876813297883
         },
         "EV_to_eVTOL": {
-          "flow": 9.866111359099115,
-          "avg_generalized_cost": 25.009882672108354
+          "flow": 10.437526376469485,
+          "avg_generalized_cost": 22.84276493343302
         }
       },
       "1": {
         "EV": {
-          "flow": 30.160467016212827,
-          "avg_generalized_cost": 13.26588684137335
+          "flow": 37.48166567820228,
+          "avg_generalized_cost": 13.312196701392544
         },
         "eVTOL": {
-          "flow": 13.45896309134751,
-          "avg_generalized_cost": 22.570870486399667
+          "flow": 10.536064628446482,
+          "avg_generalized_cost": 27.513483482710477
         },
         "EV_to_eVTOL": {
-          "flow": 10.38056989243967,
-          "avg_generalized_cost": 26.371550677674968
+          "flow": 5.981685894188094,
+          "avg_generalized_cost": 32.524745556730345
         }
       },
       "2": {
         "EV": {
-          "flow": 21.780127786263243,
-          "avg_generalized_cost": 26.303963820966104
+          "flow": 36.48867733746811,
+          "avg_generalized_cost": 22.195250727322456
         },
         "eVTOL": {
-          "flow": 32.69050021603992,
-          "avg_generalized_cost": 55.93173678501956
+          "flow": 16.141963263387428,
+          "avg_generalized_cost": 25.363413532117328
         },
         "EV_to_eVTOL": {
-          "flow": 9.529371997696803,
-          "avg_generalized_cost": 81.1583930255972
+          "flow": 11.368667489025182,
+          "avg_generalized_cost": 37.63486100787323
         }
       },
       "3": {
         "EV": {
-          "flow": 27.419120112134188,
-          "avg_generalized_cost": 16.93400895623971
+          "flow": 32.07004122338307,
+          "avg_generalized_cost": 17.62996334878423
         },
         "eVTOL": {
-          "flow": 24.955780704399324,
-          "avg_generalized_cost": 52.54722342771452
+          "flow": 20.470195385080615,
+          "avg_generalized_cost": 24.46273637528368
         },
         "EV_to_eVTOL": {
-          "flow": 13.625099183466514,
-          "avg_generalized_cost": 46.83528288601895
+          "flow": 13.459049859225814,
+          "avg_generalized_cost": 29.29170708953575
         }
       },
       "4": {
         "EV": {
-          "flow": 30.73193895212362,
-          "avg_generalized_cost": 13.300101872190648
+          "flow": 34.81941602063892,
+          "avg_generalized_cost": 13.264195543345785
         },
         "eVTOL": {
-          "flow": 13.324523884840907,
-          "avg_generalized_cost": 23.125761035670248
+          "flow": 14.322869755425724,
+          "avg_generalized_cost": 20.912073820510336
         },
         "EV_to_eVTOL": {
-          "flow": 9.943537163035515,
-          "avg_generalized_cost": 27.142944205469924
+          "flow": 4.857130424772213,
+          "avg_generalized_cost": 36.378722387767205
         }
       }
     },
     "mid": {
       "0": {
         "EV": {
-          "flow": 25.823254233388816,
-          "avg_generalized_cost": 17.21130308967414
+          "flow": 22.328676965615443,
+          "avg_generalized_cost": 17.17978097180358
         },
         "eVTOL": {
-          "flow": 8.674529735713422,
-          "avg_generalized_cost": 28.262847229336668
+          "flow": 11.387905672615158,
+          "avg_generalized_cost": 23.862287670740088
         },
         "EV_to_eVTOL": {
-          "flow": 5.502216030897776,
-          "avg_generalized_cost": 34.115833054728284
+          "flow": 6.282984917944848,
+          "avg_generalized_cost": 30.96377740086895
         }
       },
       "1": {
         "EV": {
-          "flow": 33.08780014792566,
-          "avg_generalized_cost": 17.24469684659154
+          "flow": 40.980647255893544,
+          "avg_generalized_cost": 17.34548897454721
         },
         "eVTOL": {
-          "flow": 9.995863802119452,
-          "avg_generalized_cost": 29.289895182376423
+          "flow": 5.515669573392052,
+          "avg_generalized_cost": 38.03880243760266
         },
         "EV_to_eVTOL": {
-          "flow": 5.916336049954902,
-          "avg_generalized_cost": 36.125885299326484
+          "flow": 2.5031534270293196,
+          "avg_generalized_cost": 43.21454248809522
         }
       },
       "2": {
         "EV": {
-          "flow": 34.90804357788872,
-          "avg_generalized_cost": 52.93382676563156
+          "flow": 42.84266780630932,
+          "avg_generalized_cost": 27.301104740847304
         },
         "eVTOL": {
-          "flow": 16.394813245438282,
-          "avg_generalized_cost": 71.47471760135701
+          "flow": 12.136898496091721,
+          "avg_generalized_cost": 25.018684575166812
         },
         "EV_to_eVTOL": {
-          "flow": 9.697143176673023,
-          "avg_generalized_cost": 103.40605615587724
+          "flow": 6.019774220766534,
+          "avg_generalized_cost": 49.87728985799561
         }
       },
       "3": {
         "EV": {
-          "flow": 31.063657633050223,
-          "avg_generalized_cost": 26.465216549990668
+          "flow": 35.73941676179929,
+          "avg_generalized_cost": 21.8809094201877
         },
         "eVTOL": {
-          "flow": 18.942265023209604,
-          "avg_generalized_cost": 76.96779854618877
+          "flow": 17.268479031338824,
+          "avg_generalized_cost": 31.647242333702522
         },
         "EV_to_eVTOL": {
-          "flow": 10.994077343740164,
-          "avg_generalized_cost": 71.7180966957802
+          "flow": 7.991444730029449,
+          "avg_generalized_cost": 39.770604784741614
         }
       },
       "4": {
         "EV": {
-          "flow": 33.987987250143036,
-          "avg_generalized_cost": 17.301457961240278
+          "flow": 36.20297190823676,
+          "avg_generalized_cost": 17.236207992748103
         },
         "eVTOL": {
-          "flow": 9.641986858661657,
-          "avg_generalized_cost": 30.15015513441463
+          "flow": 11.407474708317984,
+          "avg_generalized_cost": 24.246789188727607
         },
         "EV_to_eVTOL": {
-          "flow": 5.370025891195315,
-          "avg_generalized_cost": 37.49556892287657
+          "flow": 1.389023639760182,
+          "avg_generalized_cost": 51.509150542108095
         }
       }
     },
     "high": {
       "0": {
         "EV": {
-          "flow": 26.008018305729394,
-          "avg_generalized_cost": 22.168292377747765
+          "flow": 22.066281175717055,
+          "avg_generalized_cost": 22.09527165753523
         },
         "eVTOL": {
-          "flow": 5.042304566408462,
-          "avg_generalized_cost": 35.172407506501045
+          "flow": 8.27719035090087,
+          "avg_generalized_cost": 29.506322642225182
         },
         "EV_to_eVTOL": {
-          "flow": 1.9496771278621483,
-          "avg_generalized_cost": 45.3243372425799
+          "flow": 2.6561717072268185,
+          "avg_generalized_cost": 41.10655431613898
         }
       },
       "1": {
         "EV": {
-          "flow": 34.38083321328508,
-          "avg_generalized_cost": 22.222682179179447
+          "flow": 40.0329929829569,
+          "avg_generalized_cost": 22.396788463840394
         },
         "eVTOL": {
-          "flow": 5.694158952393368,
-          "avg_generalized_cost": 36.3132381887787
+          "flow": 1.4397924415309349,
+          "avg_generalized_cost": 51.0443510210355
         },
         "EV_to_eVTOL": {
-          "flow": 1.9250078343215615,
-          "avg_generalized_cost": 48.09089456301098
+          "flow": 0.526760509496382,
+          "avg_generalized_cost": 55.59010150083343
         }
       },
       "2": {
         "EV": {
-          "flow": 48.35118657727722,
-          "avg_generalized_cost": 70.27162175753747
+          "flow": 43.08429773064324,
+          "avg_generalized_cost": 32.973657162424296
         },
         "eVTOL": {
-          "flow": 4.218168337378791,
-          "avg_generalized_cost": 46.62322247745604
+          "flow": 9.534442455497025,
+          "avg_generalized_cost": 26.7316821943865
         },
         "EV_to_eVTOL": {
-          "flow": 1.4306450853439885,
-          "avg_generalized_cost": 131.3733062904268
+          "flow": 1.3806760146966046,
+          "avg_generalized_cost": 65.46080873002225
         }
       },
       "3": {
         "EV": {
-          "flow": 40.72685916885772,
-          "avg_generalized_cost": 48.41573602221388
+          "flow": 39.38818662111085,
+          "avg_generalized_cost": 27.377989516384048
         },
         "eVTOL": {
-          "flow": 7.158475616145491,
-          "avg_generalized_cost": 107.6520765567352
+          "flow": 12.72685504517576,
+          "avg_generalized_cost": 40.40058798952329
         },
         "EV_to_eVTOL": {
-          "flow": 7.11466521499678,
-          "avg_generalized_cost": 101.62066106041082
+          "flow": 2.8843637234546384,
+          "avg_generalized_cost": 53.132105963259704
         }
       },
       "4": {
         "EV": {
-          "flow": 36.145224547193905,
-          "avg_generalized_cost": 22.30137791089137
+          "flow": 34.15130663488406,
+          "avg_generalized_cost": 22.205210793524834
         },
         "eVTOL": {
-          "flow": 5.239205395647461,
-          "avg_generalized_cost": 37.74436944197178
+          "flow": 8.706272255973248,
+          "avg_generalized_cost": 27.15191105394911
         },
         "EV_to_eVTOL": {
-          "flow": 1.6155700571586742,
-          "avg_generalized_cost": 50.1279612462004
+          "flow": 0.14195623203130997,
+          "avg_generalized_cost": 68.996135776683
         }
       }
     }
   },
   "effective_electricity_price": {
     "H1": {
-      "0": 0.28983333333333344,
-      "1": 0.28983333333333344,
-      "2": 0.28983333333333344,
-      "3": 11.934611111111108,
-      "4": 0.28983333333333344
+      "0": 0.23,
+      "1": 0.23,
+      "2": 0.23000033194599268,
+      "3": 2.2299966436571848,
+      "4": 0.23
     },
     "H2": {
-      "0": 0.2300000000000001,
-      "1": 0.2300000000000001,
-      "2": 12.0,
-      "3": 0.2300000000000001,
-      "4": 0.2300000000000001
+      "0": 0.23,
+      "1": 0.23,
+      "2": 2.2299966436571848,
+      "3": 0.23,
+      "4": 0.23
     },
     "H3": {
-      "0": 0.28983333333333344,
-      "1": 0.28983333333333344,
-      "2": 0.28983333333333344,
-      "3": 0.28983333333333344,
-      "4": 0.2300000000000001
+      "0": 0.23,
+      "1": 0.23,
+      "2": 0.23,
+      "3": 0.23,
+      "4": 0.23
     }
   },
-  "vt_service_prob": {
+  "vt_operational_readiness": {
     "H1": {
-      "0": 1.0,
-      "1": 1.0,
-      "2": 1.0,
-      "3": 1.0,
-      "4": 1.0
+      "0": 0.7416889570244865,
+      "1": 0.40781832198136025,
+      "2": 0.2750012708265088,
+      "3": 0.42954735628264296,
+      "4": 0.36987496969610456
     },
     "H2": {
-      "0": 1.0,
-      "1": 1.0,
-      "2": 1.0,
-      "3": 1.0,
-      "4": 1.0
+      "0": 0.9399332181897836,
+      "1": 0.34069790194486194,
+      "2": 0.39612858287891534,
+      "3": 0.4648510309768133,
+      "4": 0.7948402404828009
     },
     "H3": {
-      "0": 1.0,
-      "1": 1.0,
-      "2": 1.0,
-      "3": 1.0,
-      "4": 1.0
+      "0": 0.9631675665357159,
+      "1": 0.39164953082708664,
+      "2": 0.5500007551771333,
+      "3": 0.5283480965335337,
+      "4": 0.5500007551771333
     }
+  },
+  "vt_operational_readiness_meta": {
+    "interpretation": "bounded operational readiness score in [0,1], not a literal realized service-success probability",
+    "construction": "convex blend of VT energy adequacy and VT operational adequacy (departure-capacity + aircraft served-ratio), with floor clipping",
+    "ops_blend_component": "0.5 * (departure_capacity_component + aircraft_component)"
   },
   "ev_service_prob": {
     "H1": {
       "0": 1.0,
       "1": 1.0,
-      "2": 1.0,
-      "3": 0.4888669448807596,
+      "2": 0.9999999558045433,
+      "3": 0.1501441113255145,
       "4": 1.0
     },
     "H2": {
       "0": 1.0,
       "1": 1.0,
-      "2": 0.1956980552682013,
+      "2": 0.070194307406109,
       "3": 1.0,
       "4": 1.0
     },
@@ -827,1263 +892,2847 @@
     "H1": {
       "0": {
         "grid_connection_cap_kw": 90.0,
-        "effective_power_cap_kw": 90.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 23.409608047299514,
-        "storage_charge_kw": 23.409608047299514,
-        "storage_discharge_kw": 49.00226635025702,
+        "actual_grid_draw_kw": 8.599894130677322,
+        "storage_charge_kw": 0.0,
+        "storage_discharge_kw": 34.39957652270929,
+        "vt_charge_power_from_grid_kw": 8.599894130677322,
         "storage_state_kwh": 95.0,
-        "storage_state_next_kwh": 69.4073416970425,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 49.00226635025702,
-        "actual_total_served_power_kw": 49.00226635025702,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "storage_state_next_kwh": 60.60042347729071,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.7416889570244865,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.645026204044465,
+          "departure_capacity": 1.0,
+          "aircraft": 0.6415523103288137,
+          "ops_blend": 0.8207761551644068
+        },
+        "transfer_congestion_wait": 0.003929758758928603,
+        "multimodal_continuity_penalty": 0.0306648812237321
       },
       "1": {
         "grid_connection_cap_kw": 82.0,
-        "effective_power_cap_kw": 82.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 82.0,
-        "storage_charge_kw": 82.0,
-        "storage_discharge_kw": 52.206568252823175,
-        "storage_state_kwh": 69.4073416970425,
-        "storage_state_next_kwh": 99.20077344421932,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 52.206568252823175,
-        "actual_total_served_power_kw": 52.206568252823175,
-        "power_balance_residual_kw": -1.4210854715202004e-14,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "actual_grid_draw_kw": 8.599894130677322,
+        "storage_charge_kw": 8.59989413067732,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 8.599894130677322,
+        "storage_state_kwh": 60.60042347729071,
+        "storage_state_next_kwh": 69.20031760796803,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.40781832198136025,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.4829749351850922,
+          "ops_blend": 0.7414874675925461
+        },
+        "transfer_congestion_wait": 0.002349524795372824,
+        "multimodal_continuity_penalty": 0.0573745325419315
       },
       "2": {
-        "grid_connection_cap_kw": 64.0,
-        "effective_power_cap_kw": 64.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 64.0,
-        "storage_charge_kw": 63.59551274915881,
-        "storage_discharge_kw": 106.20101948873189,
-        "storage_state_kwh": 99.20077344421932,
-        "storage_state_next_kwh": 56.59526670464625,
-        "actual_served_ev_power_kw": 0.40448725084119336,
-        "actual_served_vt_power_kw": 106.20101948873189,
-        "actual_total_served_power_kw": 106.60550673957309,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "grid_connection_cap_kw": 46.0,
+        "actual_grid_draw_kw": 10.418211944943506,
+        "storage_charge_kw": 8.599894130677328,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 8.599894130677322,
+        "storage_state_kwh": 69.20031760796803,
+        "storage_state_next_kwh": 77.80021173864536,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.2750012708265088,
+        "ev_service_probability": 0.9999999558045433,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.0,
+          "ops_blend": 0.5
+        },
+        "transfer_congestion_wait": 2.4688416457576296e-06,
+        "multimodal_continuity_penalty": 0.06799989281994594
       },
       "3": {
-        "grid_connection_cap_kw": 58.0,
-        "effective_power_cap_kw": 58.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 58.0,
-        "storage_charge_kw": 0.0,
-        "storage_discharge_kw": 56.59526670464625,
-        "storage_state_kwh": 56.59526670464625,
-        "storage_state_next_kwh": 0.0,
-        "actual_served_ev_power_kw": 58.0,
-        "actual_served_vt_power_kw": 56.59526670464625,
-        "actual_total_served_power_kw": 114.59526670464625,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 11.77,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 0.4888669448807596
+        "grid_connection_cap_kw": 42.0,
+        "actual_grid_draw_kw": 42.00000000000001,
+        "storage_charge_kw": 8.599894130677328,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 8.599894130677322,
+        "storage_state_kwh": 77.80021173864536,
+        "storage_state_next_kwh": 86.40010586932269,
+        "local_shadow_price_dual_raw": 69.77,
+        "local_shadow_price_used_for_price": 2.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.42954735628264296,
+        "ev_service_probability": 0.1501441113255145,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.5619862026676815,
+          "ops_blend": 0.7809931013338407
+        },
+        "transfer_congestion_wait": 0.015260042041086903,
+        "multimodal_continuity_penalty": 0.12721711459045099
       },
       "4": {
         "grid_connection_cap_kw": 74.0,
-        "effective_power_cap_kw": 74.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 46.673933823118006,
-        "storage_charge_kw": 46.673933823118006,
-        "storage_discharge_kw": 46.673933823118006,
-        "storage_state_kwh": 0.0,
-        "storage_state_next_kwh": 0.0,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 46.673933823118006,
-        "actual_total_served_power_kw": 46.673933823118006,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "actual_grid_draw_kw": 8.599894130677322,
+        "storage_charge_kw": 8.599894130677313,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 8.599894130677322,
+        "storage_state_kwh": 86.40010586932269,
+        "storage_state_next_kwh": 95.0,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.36987496969610456,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.3449978568491938,
+          "ops_blend": 0.6724989284245969
+        },
+        "transfer_congestion_wait": 0.00023284598095700098,
+        "multimodal_continuity_penalty": 0.060409998000959385
       }
     },
     "H2": {
       "0": {
         "grid_connection_cap_kw": 88.0,
-        "effective_power_cap_kw": 88.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 37.40049844782684,
-        "storage_charge_kw": 37.40049844782684,
-        "storage_discharge_kw": 32.13191136311523,
+        "actual_grid_draw_kw": 7.564110308900859,
+        "storage_charge_kw": 0.0,
+        "storage_discharge_kw": 21.22894347423727,
+        "vt_charge_power_from_grid_kw": 7.564110308900859,
         "storage_state_kwh": 88.0,
-        "storage_state_next_kwh": 93.26858708471161,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 32.13191136311523,
-        "actual_total_served_power_kw": 32.13191136311523,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "storage_state_next_kwh": 66.77105652576273,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.9399332181897836,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.8665226138522,
+          "departure_capacity": 1.0,
+          "aircraft": 1.0,
+          "ops_blend": 1.0
+        },
+        "transfer_congestion_wait": 0.02345515090252406,
+        "multimodal_continuity_penalty": 0.01480535803703125
       },
       "1": {
         "grid_connection_cap_kw": 78.0,
-        "effective_power_cap_kw": 78.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 27.107571955328496,
-        "storage_charge_kw": 0.0,
-        "storage_discharge_kw": 34.179112465414185,
-        "storage_state_kwh": 93.26858708471161,
-        "storage_state_next_kwh": 59.08947461929743,
-        "actual_served_ev_power_kw": 27.107571955328496,
-        "actual_served_vt_power_kw": 34.179112465414185,
-        "actual_total_served_power_kw": 61.28668442074268,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "actual_grid_draw_kw": 12.781789946769944,
+        "storage_charge_kw": 7.564110308900865,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 7.564110308900859,
+        "storage_state_kwh": 66.77105652576273,
+        "storage_state_next_kwh": 74.3351668346636,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.34069790194486194,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.23890299920638045,
+          "ops_blend": 0.6194514996031902
+        },
+        "transfer_congestion_wait": 9.526567521675498e-05,
+        "multimodal_continuity_penalty": 0.06274417118993371
       },
       "2": {
-        "grid_connection_cap_kw": 62.0,
-        "effective_power_cap_kw": 62.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 62.0,
-        "storage_charge_kw": 0.0,
-        "storage_discharge_kw": 59.08947461929743,
-        "storage_state_kwh": 59.08947461929743,
-        "storage_state_next_kwh": 0.0,
-        "actual_served_ev_power_kw": 62.0,
-        "actual_served_vt_power_kw": 59.08947461929743,
-        "actual_total_served_power_kw": 121.08947461929742,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 11.77,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 0.1956980552682013
+        "grid_connection_cap_kw": 44.0,
+        "actual_grid_draw_kw": 43.99999999999999,
+        "storage_charge_kw": 7.564110308900865,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 7.564110308900859,
+        "storage_state_kwh": 74.3351668346636,
+        "storage_state_next_kwh": 81.89927714356446,
+        "local_shadow_price_dual_raw": 69.77,
+        "local_shadow_price_used_for_price": 2.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.39612858287891534,
+        "ev_service_probability": 0.070194307406109,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.4404575604754345,
+          "ops_blend": 0.7202287802377172
+        },
+        "transfer_congestion_wait": 0.10849682543073297,
+        "multimodal_continuity_penalty": 0.13848893294013265
       },
       "3": {
-        "grid_connection_cap_kw": 56.0,
-        "effective_power_cap_kw": 56.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 34.96989624812212,
-        "storage_charge_kw": 34.96989624812212,
-        "storage_discharge_kw": 34.96989624812212,
-        "storage_state_kwh": 0.0,
-        "storage_state_next_kwh": 0.0,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 34.96989624812212,
-        "actual_total_served_power_kw": 34.96989624812212,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "grid_connection_cap_kw": 40.0,
+        "actual_grid_draw_kw": 7.564110308900859,
+        "storage_charge_kw": 7.564110308900851,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 7.564110308900859,
+        "storage_state_kwh": 81.89927714356446,
+        "storage_state_next_kwh": 89.46338745246531,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.4648510309768133,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.6903609139215636,
+          "ops_blend": 0.8451804569607818
+        },
+        "transfer_congestion_wait": 0.02931742729579549,
+        "multimodal_continuity_penalty": 0.05281190344112048
       },
       "4": {
         "grid_connection_cap_kw": 70.0,
-        "effective_power_cap_kw": 70.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 30.642745842747377,
-        "storage_charge_kw": 30.642745842747377,
-        "storage_discharge_kw": 30.642745842747377,
-        "storage_state_kwh": 0.0,
-        "storage_state_next_kwh": 0.0,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 30.642745842747377,
-        "actual_total_served_power_kw": 30.642745842747377,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "actual_grid_draw_kw": 7.564110308900859,
+        "storage_charge_kw": 0.0,
+        "storage_discharge_kw": 1.4633874524653123,
+        "vt_charge_power_from_grid_kw": 7.564110308900859,
+        "storage_state_kwh": 89.46338745246531,
+        "storage_state_next_kwh": 88.0,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.7948402404828009,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 1.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.2539646129090302,
+          "ops_blend": 0.6269823064545151
+        },
+        "transfer_congestion_wait": 0.0002795582195340657,
+        "multimodal_continuity_penalty": 0.026412780983445953
       }
     },
     "H3": {
       "0": {
         "grid_connection_cap_kw": 84.0,
-        "effective_power_cap_kw": 84.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 0.0,
+        "actual_grid_draw_kw": 9.628482255002975,
         "storage_charge_kw": 0.0,
-        "storage_discharge_kw": 43.32075466358265,
+        "storage_discharge_kw": 38.513929020011915,
+        "vt_charge_power_from_grid_kw": 9.628482255002975,
         "storage_state_kwh": 92.0,
-        "storage_state_next_kwh": 48.67924533641735,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 43.32075466358265,
-        "actual_total_served_power_kw": 43.32075466358265,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "storage_state_next_kwh": 53.486070979988085,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.9631675665357159,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.9181468447290034,
+          "departure_capacity": 1.0,
+          "aircraft": 1.0,
+          "ops_blend": 1.0
+        },
+        "transfer_congestion_wait": 0.0,
+        "multimodal_continuity_penalty": 0.012946582916554617
       },
       "1": {
         "grid_connection_cap_kw": 76.0,
-        "effective_power_cap_kw": 76.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 74.31443104143017,
-        "storage_charge_kw": 74.31443104143017,
-        "storage_discharge_kw": 49.13193005935594,
-        "storage_state_kwh": 48.67924533641735,
-        "storage_state_next_kwh": 73.86174631849158,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 49.13193005935594,
-        "actual_total_served_power_kw": 49.13193005935594,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "actual_grid_draw_kw": 9.628482255002975,
+        "storage_charge_kw": 9.628482255002979,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 9.628482255002975,
+        "storage_state_kwh": 53.486070979988085,
+        "storage_state_next_kwh": 63.114553234991064,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.39164953082708664,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.4241779220647371,
+          "ops_blend": 0.7120889610323685
+        },
+        "transfer_congestion_wait": 0.0,
+        "multimodal_continuity_penalty": 0.05866803276870467
       },
       "2": {
-        "grid_connection_cap_kw": 60.0,
-        "effective_power_cap_kw": 60.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 60.0,
-        "storage_charge_kw": 60.0,
-        "storage_discharge_kw": 53.6955239077908,
-        "storage_state_kwh": 73.86174631849158,
-        "storage_state_next_kwh": 80.16622241070078,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 53.6955239077908,
-        "actual_total_served_power_kw": 53.6955239077908,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "grid_connection_cap_kw": 43.0,
+        "actual_grid_draw_kw": 9.628482255002975,
+        "storage_charge_kw": 9.628482255002979,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 9.628482255002975,
+        "storage_state_kwh": 63.114553234991064,
+        "storage_state_next_kwh": 72.74303548999404,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.5500007551771333,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 1.0,
+          "ops_blend": 1.0
+        },
+        "transfer_congestion_wait": 0.0,
+        "multimodal_continuity_penalty": 0.04599993361080147
       },
       "3": {
-        "grid_connection_cap_kw": 52.0,
-        "effective_power_cap_kw": 52.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 52.0,
-        "storage_charge_kw": 52.0,
-        "storage_discharge_kw": 132.16622241070078,
-        "storage_state_kwh": 80.16622241070078,
-        "storage_state_next_kwh": 0.0,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 132.16622241070078,
-        "actual_total_served_power_kw": 132.16622241070078,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "grid_connection_cap_kw": 38.0,
+        "actual_grid_draw_kw": 9.628482255002975,
+        "storage_charge_kw": 9.628482255002979,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 9.628482255002975,
+        "storage_state_kwh": 72.74303548999404,
+        "storage_state_next_kwh": 82.37151774499702,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.5283480965335337,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 0.9212251548804598,
+          "ops_blend": 0.9606125774402299
+        },
+        "transfer_congestion_wait": 0.0,
+        "multimodal_continuity_penalty": 0.04773206382855013
       },
       "4": {
         "grid_connection_cap_kw": 68.0,
-        "effective_power_cap_kw": 68.0,
-        "power_cap_semantics": "grid_side_connection_limit",
-        "actual_grid_draw_kw": 50.10070902505025,
-        "storage_charge_kw": 50.10070902505025,
-        "storage_discharge_kw": 50.10070902505025,
-        "storage_state_kwh": 0.0,
-        "storage_state_next_kwh": 0.0,
-        "actual_served_ev_power_kw": 0.0,
-        "actual_served_vt_power_kw": 50.10070902505025,
-        "actual_total_served_power_kw": 50.10070902505025,
-        "power_balance_residual_kw": 0.0,
-        "local_shadow_price": 0.0,
-        "local_shadow_price_is_lp_dual": true,
-        "solver_used": "highs",
-        "shared_power_fallback_used": false,
-        "vt_service_probability": 1.0,
-        "ev_service_probability": 1.0
+        "actual_grid_draw_kw": 9.628482255002975,
+        "storage_charge_kw": 9.628482255002979,
+        "storage_discharge_kw": 0.0,
+        "vt_charge_power_from_grid_kw": 9.628482255002975,
+        "storage_state_kwh": 82.37151774499702,
+        "storage_state_next_kwh": 92.0,
+        "local_shadow_price_dual_raw": 0.0,
+        "local_shadow_price_used_for_price": 0.0,
+        "storage_port_semantics": "overlap_capped_charge_with_departure",
+        "vt_operational_readiness": 0.5500007551771333,
+        "ev_service_probability": 1.0,
+        "vt_service_components": {
+          "energy": 0.0,
+          "departure_capacity": 1.0,
+          "aircraft": 1.0,
+          "ops_blend": 1.0
+        },
+        "transfer_congestion_wait": 0.0,
+        "multimodal_continuity_penalty": 0.04599993361080147
       }
+    }
+  },
+  "assignment_diagnostics": {
+    "generalized_costs": {
+      "it_ev_A": {
+        "high": {
+          "0": 21.429987062420516,
+          "1": 21.61945792200604,
+          "2": 39.3379825402569,
+          "3": 21.711740508084876,
+          "4": 21.603534340959957
+        },
+        "low": {
+          "0": 12.863119339808975,
+          "1": 12.946012840877643,
+          "2": 30.58603355500952,
+          "3": 12.986386472287133,
+          "4": 12.939046274169982
+        },
+        "mid": {
+          "0": 16.670616105414105,
+          "1": 16.80087732137915,
+          "2": 34.49591355291728,
+          "3": 16.86432159930835,
+          "4": 16.78992985940997
+        }
+      },
+      "it_vt_A": {
+        "high": {
+          "0": 36.886304618934396,
+          "1": 50.18031530050729,
+          "2": 97.78181001240476,
+          "3": 53.58926156002124,
+          "4": 61.06360024454585
+        },
+        "low": {
+          "0": 21.520811163802197,
+          "1": 28.050592617793374,
+          "2": 49.34641533049592,
+          "3": 33.08006139655676,
+          "4": 32.92855193169219
+        },
+        "mid": {
+          "0": 28.35520163116493,
+          "1": 37.9018798052784,
+          "2": 70.89607774902537,
+          "3": 42.21019874480716,
+          "4": 45.4505989866598
+        }
+      },
+      "it_mm_A": {
+        "high": {
+          "0": 40.74282295161873,
+          "1": 84.37981025746625,
+          "2": 66.89844784047864,
+          "3": 49.12470918203245,
+          "4": 78.98814990028211
+        },
+        "low": {
+          "0": 22.8019484948134,
+          "1": 43.74852636196253,
+          "2": 38.88056821097356,
+          "3": 27.552540059374603,
+          "4": 39.79373842447155
+        },
+        "mid": {
+          "0": 30.77705488953554,
+          "1": 61.83093869741643,
+          "2": 51.35365420590183,
+          "3": 37.15729056717142,
+          "4": 57.2186083863695
+        }
+      },
+      "it_ev_B": {
+        "high": {
+          "0": 23.210877634163182,
+          "1": 23.347606519080458,
+          "2": 23.29345423606361,
+          "3": 39.35245741896743,
+          "4": 23.250883590828302
+        },
+        "low": {
+          "0": 13.754758964946394,
+          "1": 13.814577852097699,
+          "2": 13.790886228277829,
+          "3": 29.93975009454884,
+          "4": 13.772261570987382
+        },
+        "mid": {
+          "0": 17.95747837348719,
+          "1": 18.051479481867815,
+          "2": 18.01424978729373,
+          "3": 34.13754040109128,
+          "4": 17.984982468694454
+        }
+      },
+      "it_vt_B": {
+        "high": {
+          "0": 26.481891981055657,
+          "1": 56.14735796318223,
+          "2": 27.15501996987599,
+          "3": 40.42304723622253,
+          "4": 26.818221804483013
+        },
+        "low": {
+          "0": 16.74823014083816,
+          "1": 30.800568118068192,
+          "2": 17.711272676033136,
+          "3": 23.563955595957797,
+          "4": 17.56392347867371
+        },
+        "mid": {
+          "0": 21.074965438699657,
+          "1": 42.08237803455111,
+          "2": 21.91906149461829,
+          "3": 31.068162953558577,
+          "4": 21.687512755910625
+        }
+      },
+      "it_mm_B": {
+        "high": {
+          "0": 42.34978695078822,
+          "1": 55.844919859164555,
+          "2": 104.40827770554567,
+          "3": 58.62737690860769,
+          "4": 66.89839194278441
+        },
+        "low": {
+          "0": 23.745815515688598,
+          "1": 30.567220093413574,
+          "2": 52.711656324634674,
+          "3": 34.895517645598225,
+          "4": 35.55213887007586
+        },
+        "mid": {
+          "0": 32.0209255569037,
+          "1": 41.82179842605067,
+          "2": 75.71678392122173,
+          "3": 45.46189563553102,
+          "4": 49.506034484186806
+        }
+      }
+    },
+    "generalized_costs_raw": {
+      "it_ev_A": {
+        "high": {
+          "0": 21.429987062420516,
+          "1": 21.61945792200604,
+          "2": 37.88899021881496,
+          "3": 21.711740508084876,
+          "4": 21.603534340959957
+        },
+        "low": {
+          "0": 12.863119339808975,
+          "1": 12.946012840877643,
+          "2": 28.593669113026856,
+          "3": 12.986386472287133,
+          "4": 12.939046274169982
+        },
+        "mid": {
+          "0": 16.670616105414105,
+          "1": 16.80087732137915,
+          "2": 32.724922937821574,
+          "3": 16.86432159930835,
+          "4": 16.78992985940997
+        }
+      },
+      "it_vt_A": {
+        "high": {
+          "0": 36.50598153304811,
+          "1": 49.03876364843109,
+          "2": 96.13874569936756,
+          "3": 52.513777716856104,
+          "4": 59.79775829819558
+        },
+        "low": {
+          "0": 20.997866920708546,
+          "1": 26.480959096188602,
+          "2": 47.08720190006978,
+          "3": 31.601271112204692,
+          "4": 31.188019255460567
+        },
+        "mid": {
+          "0": 27.890362303970573,
+          "1": 36.506650008296376,
+          "2": 68.88788803309102,
+          "3": 40.89571849204977,
+          "4": 43.90345883000946
+        }
+      },
+      "it_mm_A": {
+        "high": {
+          "0": 40.6431451493954,
+          "1": 82.64720676090442,
+          "2": 65.4084043498051,
+          "3": 47.892084545712684,
+          "4": 78.61867986956752
+        },
+        "low": {
+          "0": 22.66489151675632,
+          "1": 41.36619655419003,
+          "2": 36.83175841129744,
+          "3": 25.85768118443493,
+          "4": 39.28571713223897
+        },
+        "mid": {
+          "0": 30.655226464595913,
+          "1": 59.713312201618656,
+          "2": 49.53248993952307,
+          "3": 35.65074934500282,
+          "4": 56.76703390438499
+        }
+      },
+      "it_ev_B": {
+        "high": {
+          "0": 23.210877634163182,
+          "1": 23.347606519080458,
+          "2": 23.29345423606361,
+          "3": 38.31818972930712,
+          "4": 23.250883590828302
+        },
+        "low": {
+          "0": 13.754758964946394,
+          "1": 13.814577852097699,
+          "2": 13.790886228277829,
+          "3": 28.517632021265914,
+          "4": 13.772261570987382
+        },
+        "mid": {
+          "0": 17.95747837348719,
+          "1": 18.051479481867815,
+          "2": 18.01424978729373,
+          "3": 32.87343544706201,
+          "4": 17.984982468694454
+        }
+      },
+      "it_vt_B": {
+        "high": {
+          "0": 26.434129421987592,
+          "1": 54.954319020061206,
+          "2": 26.394138434716105,
+          "3": 39.61104997743806,
+          "4": 26.057340269323127
+        },
+        "low": {
+          "0": 16.68255662211957,
+          "1": 29.16013957127678,
+          "2": 16.665060565188295,
+          "3": 22.44745936512915,
+          "4": 16.51771136782887
+        },
+        "mid": {
+          "0": 21.01658897761647,
+          "1": 40.62421932629208,
+          "2": 20.98909517386732,
+          "3": 30.075721859488667,
+          "4": 20.757546435159654
+        }
+      },
+      "it_mm_B": {
+        "high": {
+          "0": 41.86894990648912,
+          "1": 54.401672413325365,
+          "2": 102.33097494042929,
+          "3": 57.2676580497489,
+          "4": 65.29800605347015
+        },
+        "low": {
+          "0": 23.08466457977734,
+          "1": 28.58275485538468,
+          "2": 49.855365022599656,
+          "3": 33.0259042146674,
+          "4": 33.351608272268734
+        },
+        "mid": {
+          "0": 31.433235836093687,
+          "1": 40.05782932558054,
+          "2": 73.17785831941282,
+          "3": 43.80001703025918,
+          "4": 47.55000728613603
+        }
+      }
+    },
+    "utilities": {
+      "it_ev_A": {
+        "high": {
+          "0": -2.3572985768662567,
+          "1": -2.378140371420664,
+          "2": -4.327178079428259,
+          "3": -2.3882914558893362,
+          "4": -2.3763887775055954
+        },
+        "low": {
+          "0": -1.029049547184718,
+          "1": -1.0356810272702115,
+          "2": -2.4468826844007614,
+          "3": -1.0389109177829707,
+          "4": -1.0351237019335986
+        },
+        "mid": {
+          "0": -1.5003554494872693,
+          "1": -1.5120789589241235,
+          "2": -3.104632219762555,
+          "3": -1.5177889439377514,
+          "4": -1.5110936873468972
+        }
+      },
+      "it_vt_A": {
+        "high": {
+          "0": -4.057493508082784,
+          "1": -5.5198346830558025,
+          "2": -10.755999101364523,
+          "3": -5.8948187716023375,
+          "4": -6.716996026900044
+        },
+        "low": {
+          "0": -1.7216648931041758,
+          "1": -2.2440474094234704,
+          "2": -3.947713226439674,
+          "3": -2.6464049117245407,
+          "4": -2.6342841545353757
+        },
+        "mid": {
+          "0": -2.551968146804844,
+          "1": -3.4111691824750556,
+          "2": -6.380646997412283,
+          "3": -3.798917887032644,
+          "4": -4.090553908799381
+        }
+      },
+      "it_mm_A": {
+        "high": {
+          "0": -4.48171052467806,
+          "1": -9.281779128321288,
+          "2": -7.358829262452649,
+          "3": -5.403718010023569,
+          "4": -8.688696489031033
+        },
+        "low": {
+          "0": -1.8241558795850719,
+          "1": -3.4998821089570025,
+          "2": -3.1104454568778848,
+          "3": -2.2042032047499687,
+          "4": -3.183499073957724
+        },
+        "mid": {
+          "0": -2.769934940058198,
+          "1": -5.564784482767479,
+          "2": -4.621828878531165,
+          "3": -3.344156151045428,
+          "4": -5.149674754773255
+        }
+      },
+      "it_ev_B": {
+        "high": {
+          "0": -2.55319653975795,
+          "1": -2.5682367170988503,
+          "2": -2.5622799659669973,
+          "3": -4.328770316086418,
+          "4": -2.5575971949911134
+        },
+        "low": {
+          "0": -1.1003807171957116,
+          "1": -1.1051662281678158,
+          "2": -1.1032708982622264,
+          "3": -2.3951800075639076,
+          "4": -1.1017809256789906
+        },
+        "mid": {
+          "0": -1.6161730536138472,
+          "1": -1.6246331533681033,
+          "2": -1.6212824808564354,
+          "3": -3.072378636098215,
+          "4": -1.6186484221825008
+        }
+      },
+      "it_vt_B": {
+        "high": {
+          "0": -2.9130081179161222,
+          "1": -6.176209375950046,
+          "2": -2.987052196686359,
+          "3": -4.446535195984478,
+          "4": -2.9500043984931312
+        },
+        "low": {
+          "0": -1.3398584112670529,
+          "1": -2.4640454494454556,
+          "2": -1.4169018140826508,
+          "3": -1.8851164476766238,
+          "4": -1.4051138782938968
+        },
+        "mid": {
+          "0": -1.8967468894829693,
+          "1": -3.7874140231095996,
+          "2": -1.972715534515646,
+          "3": -2.796134665820272,
+          "4": -1.951876148031956
+        }
+      },
+      "it_mm_B": {
+        "high": {
+          "0": -4.658476564586704,
+          "1": -6.142941184508101,
+          "2": -11.484910547610022,
+          "3": -6.4490114599468455,
+          "4": -7.358823113706286
+        },
+        "low": {
+          "0": -1.8996652412550878,
+          "1": -2.445377607473086,
+          "2": -4.2169325059707745,
+          "3": -2.7916414116478583,
+          "4": -2.844171109606069
+        },
+        "mid": {
+          "0": -2.881883300121333,
+          "1": -3.76396185834456,
+          "2": -6.814510552909956,
+          "3": -4.0915706071977915,
+          "4": -4.4555431035768125
+        }
+      }
+    },
+    "utility_breakdown": {
+      "it_ev_A": {
+        "high": {
+          "0": {
+            "raw_cost": 21.429987062420516,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 21.429987062420516,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 21.61945792200604,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 21.61945792200604,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 37.88899021881496,
+            "vt_prob": 1.0,
+            "ev_prob": 0.07019445759934068,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": -0.15938915535861328,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 39.3379825402569,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 21.711740508084876,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 21.711740508084876,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 21.603534340959957,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 21.603534340959957,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        },
+        "low": {
+          "0": {
+            "raw_cost": 12.863119339808975,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 12.863119339808975,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 12.946012840877643,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 12.946012840877643,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 28.593669113026856,
+            "vt_prob": 1.0,
+            "ev_prob": 0.07019445759934068,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": -0.15938915535861328,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 30.58603355500952,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 12.986386472287133,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 12.986386472287133,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 12.939046274169982,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 12.939046274169982,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        },
+        "mid": {
+          "0": {
+            "raw_cost": 16.670616105414105,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 16.670616105414105,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 16.80087732137915,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 16.80087732137915,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 32.724922937821574,
+            "vt_prob": 1.0,
+            "ev_prob": 0.07019445759934068,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": -0.15938915535861328,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 34.49591355291728,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 16.86432159930835,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 16.86432159930835,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 16.78992985940997,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 16.78992985940997,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        }
+      },
+      "it_vt_A": {
+        "high": {
+          "0": {
+            "raw_cost": 36.50598153304811,
+            "vt_prob": 0.7416889847033488,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.04183553944749215,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 36.886304618934396,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 49.03876364843109,
+            "vt_prob": 0.4078183432258563,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.12557068172838182,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 50.18031530050729,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 96.13874569936756,
+            "vt_prob": 0.27500139651264704,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.18073707443409137,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 97.78181001240476,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 52.513777716856104,
+            "vt_prob": 0.42954747007320637,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.11830322274816547,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 53.58926156002124,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 59.79775829819558,
+            "vt_prob": 0.36987502498800773,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.13924261409853006,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 61.06360024454585,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        },
+        "low": {
+          "0": {
+            "raw_cost": 20.997866920708546,
+            "vt_prob": 0.7416889847033488,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.04183553944749215,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 21.520811163802197,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 26.480959096188602,
+            "vt_prob": 0.4078183432258563,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.12557068172838182,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 28.050592617793374,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 47.08720190006978,
+            "vt_prob": 0.27500139651264704,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.18073707443409137,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 49.34641533049592,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 31.601271112204692,
+            "vt_prob": 0.42954747007320637,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.11830322274816547,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 33.08006139655676,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 31.188019255460567,
+            "vt_prob": 0.36987502498800773,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.13924261409853006,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 32.92855193169219,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        },
+        "mid": {
+          "0": {
+            "raw_cost": 27.890362303970573,
+            "vt_prob": 0.7416889847033488,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.04183553944749215,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 28.35520163116493,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 36.506650008296376,
+            "vt_prob": 0.4078183432258563,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.12557068172838182,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 37.9018798052784,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 68.88788803309102,
+            "vt_prob": 0.27500139651264704,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.18073707443409137,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 70.89607774902537,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 40.89571849204977,
+            "vt_prob": 0.42954747007320637,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.11830322274816547,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 42.21019874480716,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 43.90345883000946,
+            "vt_prob": 0.36987502498800773,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.13924261409853006,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 45.4505989866598,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        }
+      },
+      "it_mm_A": {
+        "high": {
+          "0": {
+            "raw_cost": 40.6431451493954,
+            "vt_prob": 0.9399330245371094,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.008672531944854574,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.0022920262997115654,
+            "perceived_cost": 40.74282295161873,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.02345515090252406,
+            "continuity_penalty": 0.01480535803703125,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 82.64720676090442,
+            "vt_prob": 0.34069786012582853,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.15074629292119757,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03984009170060221,
+            "perceived_cost": 84.37981025746625,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 9.526567521675498e-05,
+            "continuity_penalty": 0.06274417118993371,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 65.4084043498051,
+            "vt_prob": 0.3961288552276355,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.1296422020134038,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03426258196068528,
+            "perceived_cost": 66.89844784047864,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.10849682543073297,
+            "continuity_penalty": 0.13848893294013265,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 47.892084545712684,
+            "vt_prob": 0.464851206985994,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.10724530734081555,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.028343402654358394,
+            "perceived_cost": 49.12470918203245,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.02931742729579549,
+            "continuity_penalty": 0.05281190344112048,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 78.61867986956752,
+            "vt_prob": 0.7948402377069256,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.032145980073473766,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.00849572330513235,
+            "perceived_cost": 78.98814990028211,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.0002795582195340657,
+            "continuity_penalty": 0.026412780983445953,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          }
+        },
+        "low": {
+          "0": {
+            "raw_cost": 22.66489151675632,
+            "vt_prob": 0.9399330245371094,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.008672531944854574,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.0022920262997115654,
+            "perceived_cost": 22.8019484948134,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.02345515090252406,
+            "continuity_penalty": 0.01480535803703125,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 41.36619655419003,
+            "vt_prob": 0.34069786012582853,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.15074629292119757,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03984009170060221,
+            "perceived_cost": 43.74852636196253,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 9.526567521675498e-05,
+            "continuity_penalty": 0.06274417118993371,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 36.83175841129744,
+            "vt_prob": 0.3961288552276355,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.1296422020134038,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03426258196068528,
+            "perceived_cost": 38.88056821097356,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.10849682543073297,
+            "continuity_penalty": 0.13848893294013265,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 25.85768118443493,
+            "vt_prob": 0.464851206985994,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.10724530734081555,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.028343402654358394,
+            "perceived_cost": 27.552540059374603,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.02931742729579549,
+            "continuity_penalty": 0.05281190344112048,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 39.28571713223897,
+            "vt_prob": 0.7948402377069256,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.032145980073473766,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.00849572330513235,
+            "perceived_cost": 39.79373842447155,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.0002795582195340657,
+            "continuity_penalty": 0.026412780983445953,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          }
+        },
+        "mid": {
+          "0": {
+            "raw_cost": 30.655226464595913,
+            "vt_prob": 0.9399330245371094,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.008672531944854574,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.0022920262997115654,
+            "perceived_cost": 30.77705488953554,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.02345515090252406,
+            "continuity_penalty": 0.01480535803703125,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 59.713312201618656,
+            "vt_prob": 0.34069786012582853,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.15074629292119757,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03984009170060221,
+            "perceived_cost": 61.83093869741643,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 9.526567521675498e-05,
+            "continuity_penalty": 0.06274417118993371,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 49.53248993952307,
+            "vt_prob": 0.3961288552276355,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.1296422020134038,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03426258196068528,
+            "perceived_cost": 51.35365420590183,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.10849682543073297,
+            "continuity_penalty": 0.13848893294013265,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 35.65074934500282,
+            "vt_prob": 0.464851206985994,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.10724530734081555,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.028343402654358394,
+            "perceived_cost": 37.15729056717142,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.02931742729579549,
+            "continuity_penalty": 0.05281190344112048,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 56.76703390438499,
+            "vt_prob": 0.7948402377069256,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.032145980073473766,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.00849572330513235,
+            "perceived_cost": 57.2186083863695,
+            "transfer_time_applied": 0.27,
+            "transfer_congestion_time": 0.0002795582195340657,
+            "continuity_penalty": 0.026412780983445953,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          }
+        }
+      },
+      "it_ev_B": {
+        "high": {
+          "0": {
+            "raw_cost": 23.210877634163182,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 23.210877634163182,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 23.347606519080458,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 23.347606519080458,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 23.29345423606361,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 23.29345423606361,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 38.31818972930712,
+            "vt_prob": 1.0,
+            "ev_prob": 0.15014445258683945,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": -0.11376944586263435,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 39.35245741896743,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 23.250883590828302,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 23.250883590828302,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        },
+        "low": {
+          "0": {
+            "raw_cost": 13.754758964946394,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 13.754758964946394,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 13.814577852097699,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 13.814577852097699,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 13.790886228277829,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 13.790886228277829,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 28.517632021265914,
+            "vt_prob": 1.0,
+            "ev_prob": 0.15014445258683945,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": -0.11376944586263435,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 29.93975009454884,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 13.772261570987382,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 13.772261570987382,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        },
+        "mid": {
+          "0": {
+            "raw_cost": 17.95747837348719,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 17.95747837348719,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 18.051479481867815,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 18.051479481867815,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 18.01424978729373,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 18.01424978729373,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 32.87343544706201,
+            "vt_prob": 1.0,
+            "ev_prob": 0.15014445258683945,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": -0.11376944586263435,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 34.13754040109128,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 17.984982468694454,
+            "vt_prob": 1.0,
+            "ev_prob": 1.0,
+            "vt_reliability_term": 0.0,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 17.984982468694454,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        }
+      },
+      "it_vt_B": {
+        "high": {
+          "0": {
+            "raw_cost": 26.434129421987592,
+            "vt_prob": 0.9631677135430673,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.005253881497487093,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 26.481891981055657,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 54.954319020061206,
+            "vt_prob": 0.3916495903911916,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.13123428374331303,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 56.14735796318223,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 26.394138434716105,
+            "vt_prob": 0.5500008298649817,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.08369696886758726,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 27.15501996987599,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 39.61104997743806,
+            "vt_prob": 0.5283492021431234,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.08931969846629188,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 40.42304723622253,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 26.057340269323127,
+            "vt_prob": 0.5500008298649817,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.08369696886758726,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 26.818221804483013,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        },
+        "low": {
+          "0": {
+            "raw_cost": 16.68255662211957,
+            "vt_prob": 0.9631677135430673,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.005253881497487093,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 16.74823014083816,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 29.16013957127678,
+            "vt_prob": 0.3916495903911916,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.13123428374331303,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 30.800568118068192,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 16.665060565188295,
+            "vt_prob": 0.5500008298649817,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.08369696886758726,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 17.711272676033136,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 22.44745936512915,
+            "vt_prob": 0.5283492021431234,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.08931969846629188,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 23.563955595957797,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 16.51771136782887,
+            "vt_prob": 0.5500008298649817,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.08369696886758726,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 17.56392347867371,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        },
+        "mid": {
+          "0": {
+            "raw_cost": 21.01658897761647,
+            "vt_prob": 0.9631677135430673,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.005253881497487093,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 21.074965438699657,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 40.62421932629208,
+            "vt_prob": 0.3916495903911916,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.13123428374331303,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 42.08237803455111,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 20.98909517386732,
+            "vt_prob": 0.5500008298649817,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.08369696886758726,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 21.91906149461829,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 30.075721859488667,
+            "vt_prob": 0.5283492021431234,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.08931969846629188,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 31.068162953558577,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 20.757546435159654,
+            "vt_prob": 0.5500008298649817,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.08369696886758726,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": 0.0,
+            "perceived_cost": 21.687512755910625,
+            "transfer_time_applied": 0.0,
+            "transfer_congestion_time": 0.0,
+            "continuity_penalty": 0.0,
+            "transfer_time_source": "none",
+            "access_energy_price_source": "none"
+          }
+        }
+      },
+      "it_mm_B": {
+        "high": {
+          "0": {
+            "raw_cost": 41.86894990648912,
+            "vt_prob": 0.7416889847033488,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.04183553944749215,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.011056535425408638,
+            "perceived_cost": 42.34978695078822,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.003929758758928603,
+            "continuity_penalty": 0.0306648812237321,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 54.401672413325365,
+            "vt_prob": 0.4078183432258563,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.12557068172838182,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.033186537313929475,
+            "perceived_cost": 55.844919859164555,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.002349524795372824,
+            "continuity_penalty": 0.0573745325419315,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 102.33097494042929,
+            "vt_prob": 0.27500139651264704,
+            "ev_prob": 0.999999951433564,
+            "vt_reliability_term": -0.18073707443409137,
+            "ev_reliability_term": -2.91398622979756e-09,
+            "multimodal_reliability_term": -0.047766226814724144,
+            "perceived_cost": 104.40827770554567,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 2.4688416457576296e-06,
+            "continuity_penalty": 0.06799989281994594,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 57.2676580497489,
+            "vt_prob": 0.42954747007320637,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.11830322274816547,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03126585172630087,
+            "perceived_cost": 58.62737690860769,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.015260042041086903,
+            "continuity_penalty": 0.12721711459045099,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 65.29800605347015,
+            "vt_prob": 0.36987502498800773,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.13924261409853006,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03679983372604008,
+            "perceived_cost": 66.89839194278441,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.00023284598095700098,
+            "continuity_penalty": 0.060409998000959385,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          }
+        },
+        "low": {
+          "0": {
+            "raw_cost": 23.08466457977734,
+            "vt_prob": 0.7416889847033488,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.04183553944749215,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.011056535425408638,
+            "perceived_cost": 23.745815515688598,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.003929758758928603,
+            "continuity_penalty": 0.0306648812237321,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 28.58275485538468,
+            "vt_prob": 0.4078183432258563,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.12557068172838182,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.033186537313929475,
+            "perceived_cost": 30.567220093413574,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.002349524795372824,
+            "continuity_penalty": 0.0573745325419315,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 49.855365022599656,
+            "vt_prob": 0.27500139651264704,
+            "ev_prob": 0.999999951433564,
+            "vt_reliability_term": -0.18073707443409137,
+            "ev_reliability_term": -2.91398622979756e-09,
+            "multimodal_reliability_term": -0.047766226814724144,
+            "perceived_cost": 52.711656324634674,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 2.4688416457576296e-06,
+            "continuity_penalty": 0.06799989281994594,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 33.0259042146674,
+            "vt_prob": 0.42954747007320637,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.11830322274816547,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03126585172630087,
+            "perceived_cost": 34.895517645598225,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.015260042041086903,
+            "continuity_penalty": 0.12721711459045099,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 33.351608272268734,
+            "vt_prob": 0.36987502498800773,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.13924261409853006,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03679983372604008,
+            "perceived_cost": 35.55213887007586,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.00023284598095700098,
+            "continuity_penalty": 0.060409998000959385,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          }
+        },
+        "mid": {
+          "0": {
+            "raw_cost": 31.433235836093687,
+            "vt_prob": 0.7416889847033488,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.04183553944749215,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.011056535425408638,
+            "perceived_cost": 32.0209255569037,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.003929758758928603,
+            "continuity_penalty": 0.0306648812237321,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "1": {
+            "raw_cost": 40.05782932558054,
+            "vt_prob": 0.4078183432258563,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.12557068172838182,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.033186537313929475,
+            "perceived_cost": 41.82179842605067,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.002349524795372824,
+            "continuity_penalty": 0.0573745325419315,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "2": {
+            "raw_cost": 73.17785831941282,
+            "vt_prob": 0.27500139651264704,
+            "ev_prob": 0.999999951433564,
+            "vt_reliability_term": -0.18073707443409137,
+            "ev_reliability_term": -2.91398622979756e-09,
+            "multimodal_reliability_term": -0.047766226814724144,
+            "perceived_cost": 75.71678392122173,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 2.4688416457576296e-06,
+            "continuity_penalty": 0.06799989281994594,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "3": {
+            "raw_cost": 43.80001703025918,
+            "vt_prob": 0.42954747007320637,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.11830322274816547,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03126585172630087,
+            "perceived_cost": 45.46189563553102,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.015260042041086903,
+            "continuity_penalty": 0.12721711459045099,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          },
+          "4": {
+            "raw_cost": 47.55000728613603,
+            "vt_prob": 0.36987502498800773,
+            "ev_prob": 1.0,
+            "vt_reliability_term": -0.13924261409853006,
+            "ev_reliability_term": 0.0,
+            "multimodal_reliability_term": -0.03679983372604008,
+            "perceived_cost": 49.506034484186806,
+            "transfer_time_applied": 0.23,
+            "transfer_congestion_time": 0.00023284598095700098,
+            "continuity_penalty": 0.060409998000959385,
+            "transfer_time_source": "itinerary",
+            "access_energy_price_source": "none"
+          }
+        }
+      }
+    },
+    "unserved_demand": {},
+    "unserved_demand_total": 0.0,
+    "unserved_cases_count": 0,
+    "skip_threshold_stats": {
+      "vt_skip_threshold": 0.03,
+      "ev_skip_threshold": 0.02,
+      "alts_skipped_vt_below_threshold": 0,
+      "alts_skipped_ev_below_threshold": 0,
+      "od_group_time_with_any_vt_skip": 0,
+      "od_group_time_with_any_ev_skip": 0
     }
   },
   "iteration_history": [
     {
       "iteration": 1,
-      "alpha": 1.0,
-      "max_flow_delta": 13.970359325853908
+      "alpha": 0.3,
+      "max_flow_delta": 13.514848682760217
     },
     {
       "iteration": 2,
-      "alpha": 0.5,
-      "max_flow_delta": 21.75863625540572
+      "alpha": 0.1944444444444444,
+      "max_flow_delta": 23.873402057307214
     },
     {
       "iteration": 3,
-      "alpha": 0.3333333333333333,
-      "max_flow_delta": 22.906919621401393
+      "alpha": 0.25862068965517243,
+      "max_flow_delta": 17.872231451918463
     },
     {
       "iteration": 4,
-      "alpha": 0.25,
-      "max_flow_delta": 13.504335010669283
+      "alpha": 0.24193548387096772,
+      "max_flow_delta": 13.381142509931937
     },
     {
       "iteration": 5,
-      "alpha": 0.2,
-      "max_flow_delta": 17.87471143742694
+      "alpha": 0.22727272727272727,
+      "max_flow_delta": 10.41102955332006
     },
     {
       "iteration": 6,
-      "alpha": 0.16666666666666666,
-      "max_flow_delta": 6.524135081401299
+      "alpha": 0.2142857142857143,
+      "max_flow_delta": 8.133566628862916
     },
     {
       "iteration": 7,
-      "alpha": 0.14285714285714285,
-      "max_flow_delta": 7.847484096141944
+      "alpha": 0.2027027027027027,
+      "max_flow_delta": 6.4333210843125705
     },
     {
       "iteration": 8,
-      "alpha": 0.125,
-      "max_flow_delta": 5.17337398588183
+      "alpha": 0.1923076923076923,
+      "max_flow_delta": 5.150595841588409
     },
     {
       "iteration": 9,
-      "alpha": 0.1111111111111111,
-      "max_flow_delta": 4.948166281343063
+      "alpha": 0.18292682926829265,
+      "max_flow_delta": 5.146778212413899
     },
     {
       "iteration": 10,
-      "alpha": 0.1,
-      "max_flow_delta": 4.46857998005186
+      "alpha": 0.1744186046511628,
+      "max_flow_delta": 5.265452386723446
     },
     {
       "iteration": 11,
-      "alpha": 0.09090909090909091,
-      "max_flow_delta": 4.092893806108176
+      "alpha": 0.16666666666666666,
+      "max_flow_delta": 4.397463632782214
     },
     {
       "iteration": 12,
-      "alpha": 0.08333333333333333,
-      "max_flow_delta": 3.775129485228234
+      "alpha": 0.1595744680851064,
+      "max_flow_delta": 3.567635933974895
     },
     {
       "iteration": 13,
-      "alpha": 0.07692307692307693,
-      "max_flow_delta": 3.5035581058716794
+      "alpha": 0.15306122448979592,
+      "max_flow_delta": 3.020662700617308
     },
     {
       "iteration": 14,
-      "alpha": 0.07142857142857142,
-      "max_flow_delta": 3.2691635763905857
+      "alpha": 0.14705882352941177,
+      "max_flow_delta": 2.5092118207466108
     },
     {
       "iteration": 15,
-      "alpha": 0.06666666666666667,
-      "max_flow_delta": 3.0649643454657642
+      "alpha": 0.14150943396226415,
+      "max_flow_delta": 2.141483281250494
     },
     {
       "iteration": 16,
-      "alpha": 0.0625,
-      "max_flow_delta": 2.8855446999138827
+      "alpha": 0.13636363636363635,
+      "max_flow_delta": 1.8420800897971077
     },
     {
       "iteration": 17,
-      "alpha": 0.058823529411764705,
-      "max_flow_delta": 2.726673241673918
+      "alpha": 0.13157894736842105,
+      "max_flow_delta": 1.5729326514822546
     },
     {
       "iteration": 18,
-      "alpha": 0.05555555555555555,
-      "max_flow_delta": 2.58501168342427
+      "alpha": 0.12711864406779658,
+      "max_flow_delta": 1.3400062192709257
     },
     {
       "iteration": 19,
-      "alpha": 0.05263157894736842,
-      "max_flow_delta": 2.457898626072833
+      "alpha": 0.12295081967213115,
+      "max_flow_delta": 1.1431057010604775
     },
     {
       "iteration": 20,
-      "alpha": 0.05,
-      "max_flow_delta": 2.3431900973035553
+      "alpha": 0.11904761904761904,
+      "max_flow_delta": 0.9789215001062352
     },
     {
       "iteration": 21,
-      "alpha": 0.047619047619047616,
-      "max_flow_delta": 2.2391416191242044
+      "alpha": 0.11538461538461538,
+      "max_flow_delta": 0.8467576003439241
     },
     {
       "iteration": 22,
-      "alpha": 0.045454545454545456,
-      "max_flow_delta": 2.1443203555029164
+      "alpha": 0.11194029850746269,
+      "max_flow_delta": 0.7890603746913669
     },
     {
       "iteration": 23,
-      "alpha": 0.043478260869565216,
-      "max_flow_delta": 2.0579157980789446
+      "alpha": 0.10869565217391305,
+      "max_flow_delta": 0.7368438864318065
     },
     {
       "iteration": 24,
-      "alpha": 0.041666666666666664,
-      "max_flow_delta": 1.9915302681325322
+      "alpha": 0.1056338028169014,
+      "max_flow_delta": 0.715908233913515
     },
     {
       "iteration": 25,
-      "alpha": 0.04,
-      "max_flow_delta": 1.9296709390930502
+      "alpha": 0.10273972602739725,
+      "max_flow_delta": 0.6935572253625253
     },
     {
       "iteration": 26,
-      "alpha": 0.038461538461538464,
-      "max_flow_delta": 1.8718786960109917
+      "alpha": 0.09999999999999999,
+      "max_flow_delta": 0.6700241719957258
     },
     {
       "iteration": 27,
-      "alpha": 0.037037037037037035,
-      "max_flow_delta": 1.817754950721266
+      "alpha": 0.0974025974025974,
+      "max_flow_delta": 0.6457108704071501
     },
     {
       "iteration": 28,
-      "alpha": 0.03571428571428571,
-      "max_flow_delta": 1.7669519908683178
+      "alpha": 0.09493670886075949,
+      "max_flow_delta": 0.6209668599908511
     },
     {
       "iteration": 29,
-      "alpha": 0.034482758620689655,
-      "max_flow_delta": 1.7191651081555825
+      "alpha": 0.09259259259259259,
+      "max_flow_delta": 0.5960838892219726
     },
     {
       "iteration": 30,
-      "alpha": 0.03333333333333333,
-      "max_flow_delta": 1.6741261382926211
+      "alpha": 0.09036144578313253,
+      "max_flow_delta": 0.571299020558639
     },
     {
       "iteration": 31,
-      "alpha": 0.03225806451612903,
-      "max_flow_delta": 1.6315981281660434
+      "alpha": 0.08823529411764706,
+      "max_flow_delta": 0.5468010736798661
     },
     {
       "iteration": 32,
-      "alpha": 0.03125,
-      "max_flow_delta": 1.591370908687761
+      "alpha": 0.08620689655172413,
+      "max_flow_delta": 0.5227378528061521
     },
     {
       "iteration": 33,
-      "alpha": 0.030303030303030304,
-      "max_flow_delta": 1.5532573997081123
+      "alpha": 0.08426966292134831,
+      "max_flow_delta": 0.4992230157439028
     },
     {
       "iteration": 34,
-      "alpha": 0.029411764705882353,
-      "max_flow_delta": 1.517090510106602
+      "alpha": 0.08241758241758242,
+      "max_flow_delta": 0.47634214445975687
     },
     {
       "iteration": 35,
-      "alpha": 0.02857142857142857,
-      "max_flow_delta": 1.4827205244755959
+      "alpha": 0.08064516129032258,
+      "max_flow_delta": 0.4541579122653321
     },
     {
       "iteration": 36,
-      "alpha": 0.027777777777777776,
-      "max_flow_delta": 1.45001288975795
+      "alpha": 0.07894736842105263,
+      "max_flow_delta": 0.4327143921475276
     },
     {
       "iteration": 37,
-      "alpha": 0.02702702702702703,
-      "max_flow_delta": 1.4188463323147893
+      "alpha": 0.07731958762886598,
+      "max_flow_delta": 0.41204060827057276
     },
     {
       "iteration": 38,
-      "alpha": 0.02631578947368421,
-      "max_flow_delta": 1.3891112493272573
+      "alpha": 0.07575757575757576,
+      "max_flow_delta": 0.3921534462779679
     },
     {
       "iteration": 39,
-      "alpha": 0.02564102564102564,
-      "max_flow_delta": 1.3607083290309383
+      "alpha": 0.07425742574257425,
+      "max_flow_delta": 0.37306003205228677
     },
     {
       "iteration": 40,
-      "alpha": 0.025,
-      "max_flow_delta": 1.3335473626867582
+      "alpha": 0.07281553398058252,
+      "max_flow_delta": 0.3547596751085518
     },
     {
       "iteration": 41,
-      "alpha": 0.024390243902439025,
-      "max_flow_delta": 1.3075462178972472
+      "alpha": 0.07142857142857142,
+      "max_flow_delta": 0.33829364922149807
     },
     {
       "iteration": 42,
-      "alpha": 0.023809523809523808,
-      "max_flow_delta": 1.282629948253387
+      "alpha": 0.07009345794392523,
+      "max_flow_delta": 0.32405656262550586
     },
     {
       "iteration": 43,
-      "alpha": 0.023255813953488372,
-      "max_flow_delta": 1.2587300186283308
+      "alpha": 0.06880733944954129,
+      "max_flow_delta": 0.31024671575761253
     },
     {
       "iteration": 44,
-      "alpha": 0.022727272727272728,
-      "max_flow_delta": 1.2357836289437145
+      "alpha": 0.06756756756756757,
+      "max_flow_delta": 0.2968825640803896
     },
     {
       "iteration": 45,
-      "alpha": 0.022222222222222223,
-      "max_flow_delta": 1.2137331220865129
+      "alpha": 0.06637168141592921,
+      "max_flow_delta": 0.2839760782275551
     },
     {
       "iteration": 46,
-      "alpha": 0.021739130434782608,
-      "max_flow_delta": 1.19252546398738
+      "alpha": 0.06521739130434782,
+      "max_flow_delta": 0.2715338566542762
     },
     {
       "iteration": 47,
-      "alpha": 0.02127659574468085,
-      "max_flow_delta": 1.1721117857844163
+      "alpha": 0.06410256410256411,
+      "max_flow_delta": 0.25955806337511866
     },
     {
       "iteration": 48,
-      "alpha": 0.020833333333333332,
-      "max_flow_delta": 1.152446979574087
+      "alpha": 0.06302521008403361,
+      "max_flow_delta": 0.24804721960252074
     },
     {
       "iteration": 49,
-      "alpha": 0.02040816326530612,
-      "max_flow_delta": 1.1334893405552435
+      "alpha": 0.06198347107438017,
+      "max_flow_delta": 0.2369968728630507
     },
     {
       "iteration": 50,
-      "alpha": 0.02,
-      "max_flow_delta": 1.1152002494566702
+      "alpha": 0.06097560975609756,
+      "max_flow_delta": 0.2264001629817276
     },
     {
       "iteration": 51,
-      "alpha": 0.0196078431372549,
-      "max_flow_delta": 1.0975438900415426
+      "alpha": 0.06,
+      "max_flow_delta": 0.21624830096274472
     },
     {
       "iteration": 52,
-      "alpha": 0.019230769230769232,
-      "max_flow_delta": 1.0804869972386832
+      "alpha": 0.05905511811023622,
+      "max_flow_delta": 0.2065309740832877
     },
     {
       "iteration": 53,
-      "alpha": 0.018867924528301886,
-      "max_flow_delta": 1.0639986320848926
+      "alpha": 0.05813953488372093,
+      "max_flow_delta": 0.19723668831849395
     },
     {
       "iteration": 54,
-      "alpha": 0.018518518518518517,
-      "max_flow_delta": 1.0480499801968222
+      "alpha": 0.05725190839694656,
+      "max_flow_delta": 0.188353057423285
     },
     {
       "iteration": 55,
-      "alpha": 0.01818181818181818,
-      "max_flow_delta": 1.0326141709436278
+      "alpha": 0.05639097744360902,
+      "max_flow_delta": 0.17986704652732755
     },
     {
       "iteration": 56,
-      "alpha": 0.017857142857142856,
-      "max_flow_delta": 1.0176661148732933
+      "alpha": 0.05555555555555555,
+      "max_flow_delta": 0.1723937834748277
     },
     {
       "iteration": 57,
-      "alpha": 0.017543859649122806,
-      "max_flow_delta": 1.0031823572721095
+      "alpha": 0.05474452554744525,
+      "max_flow_delta": 0.1657355631353319
     },
     {
       "iteration": 58,
-      "alpha": 0.017241379310344827,
-      "max_flow_delta": 0.9891409460135954
+      "alpha": 0.05395683453237409,
+      "max_flow_delta": 0.15929846133199277
     },
     {
       "iteration": 59,
-      "alpha": 0.01694915254237288,
-      "max_flow_delta": 0.9755213120911286
+      "alpha": 0.05319148936170213,
+      "max_flow_delta": 0.15308205312944523
     },
     {
       "iteration": 60,
-      "alpha": 0.016666666666666666,
-      "max_flow_delta": 0.9623041614313088
+      "alpha": 0.05244755244755245,
+      "max_flow_delta": 0.14708484773580466
     },
     {
       "iteration": 61,
-      "alpha": 0.01639344262295082,
-      "max_flow_delta": 0.9494713767606235
+      "alpha": 0.05172413793103448,
+      "max_flow_delta": 0.14130444279093624
     },
     {
       "iteration": 62,
-      "alpha": 0.016129032258064516,
-      "max_flow_delta": 0.9370059284480092
+      "alpha": 0.05102040816326531,
+      "max_flow_delta": 0.13573766331810333
     },
     {
       "iteration": 63,
-      "alpha": 0.015873015873015872,
-      "max_flow_delta": 0.9248917933770748
+      "alpha": 0.050335570469798654,
+      "max_flow_delta": 0.13038068645491663
     },
     {
       "iteration": 64,
-      "alpha": 0.015625,
-      "max_flow_delta": 0.9131138810130217
+      "alpha": 0.05,
+      "max_flow_delta": 0.12522915302587734
     },
     {
       "iteration": 65,
-      "alpha": 0.015384615384615385,
-      "max_flow_delta": 0.9016579659285426
+      "alpha": 0.05,
+      "max_flow_delta": 0.12023081174488581
     },
     {
       "iteration": 66,
-      "alpha": 0.015151515151515152,
-      "max_flow_delta": 0.8905106261373703
+      "alpha": 0.05,
+      "max_flow_delta": 0.11534398226388021
     },
     {
       "iteration": 67,
-      "alpha": 0.014925373134328358,
-      "max_flow_delta": 0.8796591866580385
+      "alpha": 0.05,
+      "max_flow_delta": 0.11057831766095205
     },
     {
       "iteration": 68,
-      "alpha": 0.014705882352941176,
-      "max_flow_delta": 0.8690916677960274
+      "alpha": 0.05,
+      "max_flow_delta": 0.10594132553314495
     },
     {
       "iteration": 69,
-      "alpha": 0.014492753623188406,
-      "max_flow_delta": 0.858796737688273
+      "alpha": 0.05,
+      "max_flow_delta": 0.10143865269398589
     },
     {
       "iteration": 70,
-      "alpha": 0.014285714285714285,
-      "max_flow_delta": 0.848763668704617
+      "alpha": 0.05,
+      "max_flow_delta": 0.09707433752310735
     },
     {
       "iteration": 71,
-      "alpha": 0.014084507042253521,
-      "max_flow_delta": 0.8389822973433638
+      "alpha": 0.05,
+      "max_flow_delta": 0.09285103329792221
     },
     {
       "iteration": 72,
-      "alpha": 0.013888888888888888,
-      "max_flow_delta": 0.829442987298048
+      "alpha": 0.05,
+      "max_flow_delta": 0.08877020552901982
     },
     {
       "iteration": 73,
-      "alpha": 0.0136986301369863,
-      "max_flow_delta": 0.8201365954047297
+      "alpha": 0.05,
+      "max_flow_delta": 0.08483230603784975
     },
     {
       "iteration": 74,
-      "alpha": 0.013513513513513514,
-      "max_flow_delta": 0.8110544402107536
+      "alpha": 0.05,
+      "max_flow_delta": 0.08103692625414283
     },
     {
       "iteration": 75,
-      "alpha": 0.013333333333333334,
-      "max_flow_delta": 0.8021882729310335
+      "alpha": 0.05,
+      "max_flow_delta": 0.07738293197188284
     },
     {
       "iteration": 76,
-      "alpha": 0.013157894736842105,
-      "max_flow_delta": 0.7935302505824886
+      "alpha": 0.05,
+      "max_flow_delta": 0.07386858158314524
     },
     {
       "iteration": 77,
-      "alpha": 0.012987012987012988,
-      "max_flow_delta": 0.7850729111072887
+      "alpha": 0.05,
+      "max_flow_delta": 0.07049162960873545
     },
     {
       "iteration": 78,
-      "alpha": 0.01282051282051282,
-      "max_flow_delta": 0.7768091503148469
+      "alpha": 0.05,
+      "max_flow_delta": 0.06724941716165134
     },
     {
       "iteration": 79,
-      "alpha": 0.012658227848101266,
-      "max_flow_delta": 0.7687322004885893
+      "alpha": 0.05,
+      "max_flow_delta": 0.0641389508126693
     },
     {
       "iteration": 80,
-      "alpha": 0.0125,
-      "max_flow_delta": 0.7608356105181251
+      "alpha": 0.05,
+      "max_flow_delta": 0.06115697117557417
     },
     {
       "iteration": 81,
-      "alpha": 0.012345679012345678,
-      "max_flow_delta": 0.7531132274314274
+      "alpha": 0.05,
+      "max_flow_delta": 0.058300012392550116
     },
     {
       "iteration": 82,
-      "alpha": 0.012195121951219513,
-      "max_flow_delta": 0.7455591792120231
+      "alpha": 0.05,
+      "max_flow_delta": 0.05556445357476392
     },
     {
       "iteration": 83,
-      "alpha": 0.012048192771084338,
-      "max_flow_delta": 0.7381678587985689
+      "alpha": 0.05,
+      "max_flow_delta": 0.05294656314136148
     },
     {
       "iteration": 84,
-      "alpha": 0.011904761904761904,
-      "max_flow_delta": 0.7309339091717675
+      "alpha": 0.05,
+      "max_flow_delta": 0.050442536897790546
     },
     {
       "iteration": 85,
-      "alpha": 0.011764705882352941,
-      "max_flow_delta": 0.7238522094434678
+      "alpha": 0.05,
+      "max_flow_delta": 0.0480485306030225
     },
     {
       "iteration": 86,
-      "alpha": 0.011627906976744186,
-      "max_flow_delta": 0.7169178618698133
+      "alpha": 0.05,
+      "max_flow_delta": 0.0457606876926846
     },
     {
       "iteration": 87,
-      "alpha": 0.011494252873563218,
-      "max_flow_delta": 0.7101261797173066
+      "alpha": 0.05,
+      "max_flow_delta": 0.04357516275091555
     },
     {
       "iteration": 88,
-      "alpha": 0.011363636363636364,
-      "max_flow_delta": 0.7034726759168279
+      "alpha": 0.05,
+      "max_flow_delta": 0.0414881412575312
     },
     {
       "iteration": 89,
-      "alpha": 0.011235955056179775,
-      "max_flow_delta": 0.6969530524463892
+      "alpha": 0.05,
+      "max_flow_delta": 0.039495856077408575
     },
     {
       "iteration": 90,
-      "alpha": 0.011111111111111112,
-      "max_flow_delta": 0.6905631903883105
+      "alpha": 0.05,
+      "max_flow_delta": 0.03759460110564561
     },
     {
       "iteration": 91,
-      "alpha": 0.01098901098901099,
-      "max_flow_delta": 0.6842991406112198
+      "alpha": 0.05,
+      "max_flow_delta": 0.035780742434671
     },
     {
       "iteration": 92,
-      "alpha": 0.010869565217391304,
-      "max_flow_delta": 0.6781571150311478
+      "alpha": 0.05,
+      "max_flow_delta": 0.0340507273668571
     },
     {
       "iteration": 93,
-      "alpha": 0.010752688172043012,
-      "max_flow_delta": 0.6721334784103483
+      "alpha": 0.05,
+      "max_flow_delta": 0.03240109155833082
     },
     {
       "iteration": 94,
-      "alpha": 0.010638297872340425,
-      "max_flow_delta": 0.6662247406550179
+      "alpha": 0.05,
+      "max_flow_delta": 0.030828464545994194
     },
     {
       "iteration": 95,
-      "alpha": 0.010526315789473684,
-      "max_flow_delta": 0.6604275495771432
+      "alpha": 0.05,
+      "max_flow_delta": 0.029329573879753212
     },
     {
       "iteration": 96,
-      "alpha": 0.010416666666666666,
-      "max_flow_delta": 0.6547386840876968
+      "alpha": 0.05,
+      "max_flow_delta": 0.027901248055190564
     },
     {
       "iteration": 97,
-      "alpha": 0.010309278350515464,
-      "max_flow_delta": 0.6491550477916377
+      "alpha": 0.05,
+      "max_flow_delta": 0.026540418418520062
     },
     {
       "iteration": 98,
-      "alpha": 0.01020408163265306,
-      "max_flow_delta": 0.6436736629568216
+      "alpha": 0.05,
+      "max_flow_delta": 0.025244120194393815
     },
     {
       "iteration": 99,
-      "alpha": 0.010101010101010102,
-      "max_flow_delta": 0.6382916648320993
+      "alpha": 0.05,
+      "max_flow_delta": 0.02400949276851705
     },
     {
       "iteration": 100,
-      "alpha": 0.01,
-      "max_flow_delta": 0.6330062962903327
+      "alpha": 0.05,
+      "max_flow_delta": 0.02283377934095654
     },
     {
       "iteration": 101,
-      "alpha": 0.009900990099009901,
-      "max_flow_delta": 0.6278149027756186
+      "alpha": 0.05,
+      "max_flow_delta": 0.021714326050869204
     },
     {
       "iteration": 102,
-      "alpha": 0.00980392156862745,
-      "max_flow_delta": 0.6227149275338846
+      "alpha": 0.05,
+      "max_flow_delta": 0.02064858066101749
     },
     {
       "iteration": 103,
-      "alpha": 0.009708737864077669,
-      "max_flow_delta": 0.617703907109032
+      "alpha": 0.05,
+      "max_flow_delta": 0.01963409087872492
     },
     {
       "iteration": 104,
-      "alpha": 0.009615384615384616,
-      "max_flow_delta": 0.6127794670871367
+      "alpha": 0.05,
+      "max_flow_delta": 0.018668502380236873
     },
     {
       "iteration": 105,
-      "alpha": 0.009523809523809525,
-      "max_flow_delta": 0.6079393180728232
+      "alpha": 0.05,
+      "max_flow_delta": 0.017759625430325165
     },
     {
       "iteration": 106,
-      "alpha": 0.009433962264150943,
-      "max_flow_delta": 0.6031812518832815
+      "alpha": 0.05,
+      "max_flow_delta": 0.016899288431020842
     },
     {
       "iteration": 107,
-      "alpha": 0.009345794392523364,
-      "max_flow_delta": 0.5985031379461496
+      "alpha": 0.05,
+      "max_flow_delta": 0.01607934804559985
     },
     {
       "iteration": 108,
-      "alpha": 0.009259259259259259,
-      "max_flow_delta": 0.5939029198886026
+      "alpha": 0.05,
+      "max_flow_delta": 0.015298025166980977
     },
     {
       "iteration": 109,
-      "alpha": 0.009174311926605505,
-      "max_flow_delta": 0.58937861230579
+      "alpha": 0.05,
+      "max_flow_delta": 0.014553607982596084
     },
     {
       "iteration": 110,
-      "alpha": 0.00909090909090909,
-      "max_flow_delta": 0.5849282976979246
+      "alpha": 0.05,
+      "max_flow_delta": 0.013844450525440699
     },
     {
       "iteration": 111,
-      "alpha": 0.009009009009009009,
-      "max_flow_delta": 0.5805501235652386
+      "alpha": 0.05,
+      "max_flow_delta": 0.013168971131126916
     },
     {
       "iteration": 112,
-      "alpha": 0.008928571428571428,
-      "max_flow_delta": 0.5762422996522041
+      "alpha": 0.05,
+      "max_flow_delta": 0.012525650819792844
     },
     {
       "iteration": 113,
-      "alpha": 0.008849557522123894,
-      "max_flow_delta": 0.572003095331187
+      "alpha": 0.05,
+      "max_flow_delta": 0.01191303161963031
     },
     {
       "iteration": 114,
-      "alpha": 0.008771929824561403,
-      "max_flow_delta": 0.5678308371180023
+      "alpha": 0.05,
+      "max_flow_delta": 0.011329714846810113
     },
     {
       "iteration": 115,
-      "alpha": 0.008695652173913044,
-      "max_flow_delta": 0.563723906311445
+      "alpha": 0.05,
+      "max_flow_delta": 0.010774359354902785
     },
     {
       "iteration": 116,
-      "alpha": 0.008620689655172414,
-      "max_flow_delta": 0.5596807367493994
+      "alpha": 0.05,
+      "max_flow_delta": 0.010245679765363391
     },
     {
       "iteration": 117,
-      "alpha": 0.008547008547008548,
-      "max_flow_delta": 0.5556998126752113
+      "alpha": 0.05,
+      "max_flow_delta": 0.009742444689138097
     },
     {
       "iteration": 118,
-      "alpha": 0.00847457627118644,
-      "max_flow_delta": 0.5517796667076844
+      "alpha": 0.05,
+      "max_flow_delta": 0.009263474948284056
     },
     {
       "iteration": 119,
-      "alpha": 0.008403361344537815,
-      "max_flow_delta": 0.5479188779090762
+      "alpha": 0.05,
+      "max_flow_delta": 0.008807641805277378
     },
     {
       "iteration": 120,
-      "alpha": 0.008333333333333333,
-      "max_flow_delta": 0.544116069945467
+      "alpha": 0.05,
+      "max_flow_delta": 0.008373865206625197
     },
     {
       "iteration": 121,
-      "alpha": 0.008264462809917356,
-      "max_flow_delta": 0.5403699093344159
+      "alpha": 0.05,
+      "max_flow_delta": 0.00796111204659411
     },
     {
       "iteration": 122,
-      "alpha": 0.00819672131147541,
-      "max_flow_delta": 0.5366791037752314
+      "alpha": 0.05,
+      "max_flow_delta": 0.007568394455880423
     },
     {
       "iteration": 123,
-      "alpha": 0.008130081300813009,
-      "max_flow_delta": 0.5330424005568695
+      "alpha": 0.05,
+      "max_flow_delta": 0.007194768119371808
     },
     {
       "iteration": 124,
-      "alpha": 0.008064516129032258,
-      "max_flow_delta": 0.5294585850399258
+      "alpha": 0.05,
+      "max_flow_delta": 0.006839330626513984
     },
     {
       "iteration": 125,
-      "alpha": 0.008,
-      "max_flow_delta": 0.5259264792081453
+      "alpha": 0.05,
+      "max_flow_delta": 0.00650121985714236
     },
     {
       "iteration": 126,
-      "alpha": 0.007936507936507936,
-      "max_flow_delta": 0.5224449402860039
+      "alpha": 0.05,
+      "max_flow_delta": 0.0061796124051021195
     },
     {
       "iteration": 127,
-      "alpha": 0.007874015748031496,
-      "max_flow_delta": 0.5190128594188863
+      "alpha": 0.05,
+      "max_flow_delta": 0.0058737220416258396
     },
     {
       "iteration": 128,
-      "alpha": 0.0078125,
-      "max_flow_delta": 0.5156291604124554
+      "alpha": 0.05,
+      "max_flow_delta": 0.005582798219764484
     },
     {
       "iteration": 129,
-      "alpha": 0.007751937984496124,
-      "max_flow_delta": 0.5122927985281223
+      "alpha": 0.05,
+      "max_flow_delta": 0.005306124621129449
     },
     {
       "iteration": 130,
-      "alpha": 0.007692307692307693,
-      "max_flow_delta": 0.5090027593318673
+      "alpha": 0.05,
+      "max_flow_delta": 0.0050430177456117775
     },
     {
       "iteration": 131,
-      "alpha": 0.007633587786259542,
-      "max_flow_delta": 0.5057580575934288
+      "alpha": 0.05,
+      "max_flow_delta": 0.004792825544557289
     },
     {
       "iteration": 132,
-      "alpha": 0.007575757575757576,
-      "max_flow_delta": 0.5025577362335447
+      "alpha": 0.05,
+      "max_flow_delta": 0.004554926097644518
     },
     {
       "iteration": 133,
-      "alpha": 0.007518796992481203,
-      "max_flow_delta": 0.4994008653165416
+      "alpha": 0.05,
+      "max_flow_delta": 0.00432872633345216
     },
     {
       "iteration": 134,
-      "alpha": 0.007462686567164179,
-      "max_flow_delta": 0.49628654108631665
+      "alpha": 0.05,
+      "max_flow_delta": 0.004113660793524154
     },
     {
       "iteration": 135,
-      "alpha": 0.007407407407407408,
-      "max_flow_delta": 0.493213885043172
+      "alpha": 0.05,
+      "max_flow_delta": 0.003909190439594923
     },
     {
       "iteration": 136,
-      "alpha": 0.007352941176470588,
-      "max_flow_delta": 0.4901820430598711
+      "alpha": 0.05,
+      "max_flow_delta": 0.003714801503424958
     },
     {
       "iteration": 137,
-      "alpha": 0.0072992700729927005,
-      "max_flow_delta": 0.4871901845345725
+      "alpha": 0.05,
+      "max_flow_delta": 0.0035300043787307445
     },
     {
       "iteration": 138,
-      "alpha": 0.007246376811594203,
-      "max_flow_delta": 0.4842375015792655
+      "alpha": 0.05,
+      "max_flow_delta": 0.0033543325543696767
     },
     {
       "iteration": 139,
-      "alpha": 0.007194244604316547,
-      "max_flow_delta": 0.4813232082416654
+      "alpha": 0.05,
+      "max_flow_delta": 0.0031873415880685485
     },
     {
       "iteration": 140,
-      "alpha": 0.007142857142857143,
-      "max_flow_delta": 0.4784465397590445
+      "alpha": 0.05,
+      "max_flow_delta": 0.003028608119763909
     },
     {
       "iteration": 141,
-      "alpha": 0.0070921985815602835,
-      "max_flow_delta": 0.4756067518425624
-    },
-    {
-      "iteration": 142,
-      "alpha": 0.007042253521126761,
-      "max_flow_delta": 0.4728031199906546
-    },
-    {
-      "iteration": 143,
-      "alpha": 0.006993006993006993,
-      "max_flow_delta": 0.4700349388297873
-    },
-    {
-      "iteration": 144,
-      "alpha": 0.006944444444444444,
-      "max_flow_delta": 0.46730152148180437
-    },
-    {
-      "iteration": 145,
-      "alpha": 0.006896551724137931,
-      "max_flow_delta": 0.4646021989563067
-    },
-    {
-      "iteration": 146,
-      "alpha": 0.00684931506849315,
-      "max_flow_delta": 0.46193631956684555
-    },
-    {
-      "iteration": 147,
-      "alpha": 0.006802721088435374,
-      "max_flow_delta": 0.45930324837015135
-    },
-    {
-      "iteration": 148,
-      "alpha": 0.006756756756756757,
-      "max_flow_delta": 0.45670236662704866
-    },
-    {
-      "iteration": 149,
-      "alpha": 0.006711409395973154,
-      "max_flow_delta": 0.45413307128422176
-    },
-    {
-      "iteration": 150,
-      "alpha": 0.006666666666666667,
-      "max_flow_delta": 0.451594774475808
-    },
-    {
-      "iteration": 151,
-      "alpha": 0.006622516556291391,
-      "max_flow_delta": 0.44908690304420773
-    },
-    {
-      "iteration": 152,
-      "alpha": 0.006578947368421052,
-      "max_flow_delta": 0.446608898078626
-    },
-    {
-      "iteration": 153,
-      "alpha": 0.006535947712418301,
-      "max_flow_delta": 0.4441602144714487
-    },
-    {
-      "iteration": 154,
-      "alpha": 0.006493506493506494,
-      "max_flow_delta": 0.4417403204908261
-    },
-    {
-      "iteration": 155,
-      "alpha": 0.0064516129032258064,
-      "max_flow_delta": 0.43934869736932924
-    },
-    {
-      "iteration": 156,
-      "alpha": 0.00641025641025641,
-      "max_flow_delta": 0.43698483890775464
-    },
-    {
-      "iteration": 157,
-      "alpha": 0.006369426751592357,
-      "max_flow_delta": 0.43464825109338534
-    },
-    {
-      "iteration": 158,
-      "alpha": 0.006329113924050633,
-      "max_flow_delta": 0.43233845173225305
-    },
-    {
-      "iteration": 159,
-      "alpha": 0.006289308176100629,
-      "max_flow_delta": 0.43005497009469096
-    },
-    {
-      "iteration": 160,
-      "alpha": 0.00625,
-      "max_flow_delta": 0.42779734657355206
-    },
-    {
-      "iteration": 161,
-      "alpha": 0.006211180124223602,
-      "max_flow_delta": 0.42556513235486193
-    },
-    {
-      "iteration": 162,
-      "alpha": 0.006172839506172839,
-      "max_flow_delta": 0.42335788909993965
-    },
-    {
-      "iteration": 163,
-      "alpha": 0.006134969325153374,
-      "max_flow_delta": 0.4211751886389017
-    },
-    {
-      "iteration": 164,
-      "alpha": 0.006097560975609756,
-      "max_flow_delta": 0.4190166126748842
-    },
-    {
-      "iteration": 165,
-      "alpha": 0.006060606060606061,
-      "max_flow_delta": 0.4168817524986679
-    },
-    {
-      "iteration": 166,
-      "alpha": 0.006024096385542169,
-      "max_flow_delta": 0.4147702087129801
-    },
-    {
-      "iteration": 167,
-      "alpha": 0.005988023952095809,
-      "max_flow_delta": 0.4126815909665922
-    },
-    {
-      "iteration": 168,
-      "alpha": 0.005952380952380952,
-      "max_flow_delta": 0.41061551769740134
-    },
-    {
-      "iteration": 169,
-      "alpha": 0.005917159763313609,
-      "max_flow_delta": 0.40857161588418833
-    },
-    {
-      "iteration": 170,
-      "alpha": 0.0058823529411764705,
-      "max_flow_delta": 0.4065495208069443
-    },
-    {
-      "iteration": 171,
-      "alpha": 0.005847953216374269,
-      "max_flow_delta": 0.40454887581521604
-    },
-    {
-      "iteration": 172,
-      "alpha": 0.005813953488372093,
-      "max_flow_delta": 0.4025693321041288
-    },
-    {
-      "iteration": 173,
-      "alpha": 0.005780346820809248,
-      "max_flow_delta": 0.40061054849801536
-    },
-    {
-      "iteration": 174,
-      "alpha": 0.005747126436781609,
-      "max_flow_delta": 0.39867219124112907
-    },
-    {
-      "iteration": 175,
-      "alpha": 0.005714285714285714,
-      "max_flow_delta": 0.39675393379522106
-    },
-    {
-      "iteration": 176,
-      "alpha": 0.005681818181818182,
-      "max_flow_delta": 0.3948554566438105
-    },
-    {
-      "iteration": 177,
-      "alpha": 0.005649717514124294,
-      "max_flow_delta": 0.3929764471027859
-    },
-    {
-      "iteration": 178,
-      "alpha": 0.0056179775280898875,
-      "max_flow_delta": 0.39111659913719876
-    },
-    {
-      "iteration": 179,
-      "alpha": 0.00558659217877095,
-      "max_flow_delta": 0.3892756131838766
-    },
-    {
-      "iteration": 180,
-      "alpha": 0.005555555555555556,
-      "max_flow_delta": 0.3874531959797203
+      "alpha": 0.05,
+      "max_flow_delta": 0.002877728923635914
     }
   ],
+  "convergence": {
+    "final_iteration": 141,
+    "final_max_flow_delta": 0.002877728923635914,
+    "stopping_reason": "tol_flow",
+    "tol_flow": 0.003
+  },
   "shared_power_price_signal_check": {
     "solver_used": "highs",
     "lp_dual_available": true,
     "shared_power_fallback_used": false,
-    "binding_cap_total_count": 0,
-    "binding_cap_with_positive_dual_count": 0
+    "binding_cap_total_count": 2,
+    "binding_cap_with_positive_dual_count": 2
   },
   "aircraft_inventory_by_station_time": {
     "H1": {
-      "0": 8.0,
-      "1": 0.008517585081248669,
+      "0": 10.0,
+      "1": 1.258244093664776,
       "2": 0.0,
-      "3": 0.0,
-      "4": 0.0
+      "3": 5.568833433747284,
+      "4": 0.7
     },
     "H2": {
       "0": 6.0,
-      "1": 0.45728414342892876,
-      "2": 7.991482414918751,
-      "3": 0.008517585081248669,
+      "1": 0.2710033402623937,
+      "2": 3.628752673068261,
+      "3": 1.3540650706278374,
       "4": 0.0
     },
     "H3": {
       "0": 7.0,
-      "1": 2.9174298045144003,
-      "2": 13.534198271489823,
-      "3": 8.895692612147547,
-      "4": 7.991482414918751
+      "1": 0.7,
+      "2": 12.100243986669344,
+      "3": 3.715654194852448,
+      "4": 3.628752673068261
     }
   },
   "aircraft_departures_by_station_time": {
     "H1": {
-      "0": 7.991482414918751,
-      "1": 0.008517585081248669,
+      "0": 10.0,
+      "1": 1.258244093664776,
       "2": 0.0,
-      "3": 0.0,
-      "4": 0.0
+      "3": 5.568833433747284,
+      "4": 0.7
     },
     "H2": {
-      "0": 5.542715856571071,
-      "1": 0.45728414342892876,
-      "2": 7.991482414918751,
-      "3": 0.008517585081248669,
+      "0": 5.728996659737606,
+      "1": 0.2710033402623937,
+      "2": 3.628752673068261,
+      "3": 1.3540650706278374,
       "4": 0.0
     },
     "H3": {
-      "0": 4.0825701954856,
-      "1": 2.9174298045144003,
-      "2": 5.104307387852452,
-      "3": 8.895692612147547,
-      "4": 4.818308704446172
+      "0": 5.041755906335224,
+      "1": 0.7,
+      "2": 8.032694627704169,
+      "3": 3.715654194852448,
+      "4": 3.628752673068261
     }
   },
   "aircraft_returns_by_station_time": {
@@ -2091,25 +3740,71 @@
       "0": 0.0,
       "1": 0.0,
       "2": 0.0,
+      "3": 5.041755906335224,
+      "4": 0.7
+    },
+    "H2": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 3.628752673068261,
+      "3": 0.48114259803989723,
+      "4": 0.0
+    },
+    "H3": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 12.100243986669344,
+      "3": 1.0481048358872727,
+      "4": 3.628752673068261
+    }
+  },
+  "aircraft_reposition_in_by_station_time": {
+    "H1": {
+      "0": 0.0,
+      "1": 1.258244093664776,
+      "2": 0.0,
+      "3": 0.5270775274120597,
+      "4": 0.0
+    },
+    "H2": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.8729224725879402,
+      "4": 0.0
+    },
+    "H3": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 0.0
+    }
+  },
+  "aircraft_reposition_out_by_station_time": {
+    "H1": {
+      "0": 0.0,
+      "1": 0.0,
+      "2": 0.0,
       "3": 0.0,
       "4": 0.0
     },
     "H2": {
       "0": 0.0,
       "1": 0.0,
-      "2": 7.991482414918751,
-      "3": 4.091087780566848,
-      "4": 2.9174298045144003
+      "2": 0.0,
+      "3": 0.0,
+      "4": 0.0
     },
     "H3": {
-      "0": 0.0,
+      "0": 1.258244093664776,
       "1": 0.0,
-      "2": 13.534198271489823,
-      "3": 0.4658017285101774,
-      "4": 7.991482414918751
+      "2": 1.4,
+      "3": 0.0,
+      "4": 0.0
     }
   },
-  "aircraft_binding_count": 10.0,
+  "aircraft_binding_count": 12.0,
   "summary": {
     "time_periods": 5,
     "hybrid_hubs": [
@@ -2117,28 +3812,7 @@
       "H2",
       "H3"
     ],
-    "access_mode_assumptions": {
-      "it_ev_A": "",
-      "it_vt_A": "",
-      "it_mm_A": "",
-      "it_ev_B": "",
-      "it_vt_B": "",
-      "it_mm_B": ""
-    },
-    "avg_vt_service_probability": 1.0,
-    "avg_ev_service_probability": 0.9123043333432641
-  },
-  "semantic_clarifications": {
-    "power_cap_semantics": "grid_side_connection_limit",
-    "storage_support_semantics": "VT_protective_buffer"
-  },
-  "model_validation_notes": {
-    "price_mechanism_validated_with_lp_duals": true,
-    "summary_is_not_sensitivity_proof": true
-  },
-  "unused_legacy_paths": [
-    "mfd.py",
-    "runner_new_background_boundary_flow.py MFD and boundary-flow logic",
-    "CBD accumulation states n_t/g_t"
-  ]
+    "avg_vt_service_probability": 0.5429032369689921,
+    "avg_ev_service_probability": 0.8813558916357445
+  }
 }
