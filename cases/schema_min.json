@@ -5,21 +5,11 @@
     "sets.groups",
     "sets.ev_stations",
     "sets.hybrid_stations",
-    "sets.stations",
     "parameters.q",
     "parameters.vot",
-    "parameters.lambda",
     "parameters.stations",
-    "parameters.electricity_price",
-    "parameters.vertiport_storage",
-    "parameters.vt_aircraft_init_by_station",
-    "parameters.vertiport_cap_pax",
-    "parameters.vt_departure_capacity_total",
-    "parameters.vt_departure_capacity_fast",
     "parameters.arc_params",
-    "itineraries",
-    "config",
-    "config.shared_power_solver",
-    "config.multimodal_continuity_penalty"
+    "parameters.electricity_price",
+    "itineraries"
   ]
 }
