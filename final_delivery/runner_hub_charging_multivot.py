@@ -189,10 +189,16 @@ def _compute_vt_departure_waits(
             req_total = req[s]["fast"][t] + req[s]["slow"][t]
             cap_total = float(params.get("vt_departure_capacity_total", {}).get(s, {}).get(t, 0.0))
             cap_fast = float(params.get("vt_departure_capacity_fast", {}).get(s, {}).get(t, 0.0))
+            cap_pax = float(params.get("vertiport_cap_pax", {}).get(s, {}).get(t, 1.0e12))
             served_fast = min(req[s]["fast"][t], cap_fast, carry[s])
             carry[s] -= served_fast
             served_slow = min(req[s]["slow"][t], max(0.0, cap_total - served_fast), carry[s])
             carry[s] -= served_slow
+            served_pax = served_fast * pax_fast + served_slow * pax_slow
+            if served_pax > cap_pax + 1.0e-9:
+                scale = cap_pax / max(1.0e-9, served_pax)
+                served_fast *= scale
+                served_slow *= scale
             served_total = served_fast + served_slow
             served_total_map[s] = served_total
             shortage_map[s] = max(0.0, req_total - served_total)
@@ -328,6 +334,11 @@ def _compute_vt_ev_service_probabilities(
     vt_wait_diag: Dict[str, Dict[str, Dict[int, float]]],
 ) -> Tuple[Dict[str, Dict[int, float]], Dict[str, Dict[int, float]], Dict[str, Dict[int, Dict[str, float]]]]:
     stations = [str(s) for s in data["sets"]["hybrid_stations"]]
+    cfg = data.get("config", {})
+    vt_floor = float(cfg.get("vt_service_prob_floor", 0.01))
+    ev_floor = float(cfg.get("ev_service_prob_floor", 0.01))
+    vt_energy_weight = float(cfg.get("vt_energy_weight", 0.45))
+    vt_energy_weight = max(0.0, min(1.0, vt_energy_weight))
     ev_prob = _init_station_time(stations, times, 1.0)
     vt_prob = _init_station_time(stations, times, 1.0)
     components = {s: {t: {"energy": 1.0, "departure_capacity": 1.0, "aircraft": 1.0} for t in times} for s in stations}
@@ -343,8 +354,9 @@ def _compute_vt_ev_service_probabilities(
             p_depart = 1.0 if req_dep <= 1.0e-9 else max(0.0, min(1.0, cap_dep / req_dep))
             p_air = max(0.0, min(1.0, float(vt_wait_diag.get(s, {}).get("served_ratio", {}).get(t, 1.0))))
             p_ops = min(1.0, 0.5 * (p_depart + p_air))
-            vt_prob[s][t] = max(0.05, min(1.0, min(p_energy, p_ops)))
-            ev_prob[s][t] = 1.0 if ev_req_kwh <= 1.0e-9 else max(0.02, min(1.0, (ev_req_kwh - ev_shed_kwh) / ev_req_kwh))
+            vt_integrated = vt_energy_weight * p_energy + (1.0 - vt_energy_weight) * p_ops
+            vt_prob[s][t] = max(vt_floor, min(1.0, vt_integrated))
+            ev_prob[s][t] = 1.0 if ev_req_kwh <= 1.0e-9 else max(ev_floor, min(1.0, (ev_req_kwh - ev_shed_kwh) / ev_req_kwh))
             components[s][t] = {"energy": p_energy, "departure_capacity": p_depart, "aircraft": p_air, "ops_blend": p_ops}
     return vt_prob, ev_prob, components
 
@@ -421,6 +433,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             vt_reliability_gamma=float(cfg.get("vt_reliability_gamma", 0.28)),
             ev_reliability_gamma=float(cfg.get("ev_reliability_gamma", 0.12)),
             multimodal_reliability_gamma=float(cfg.get("multimodal_reliability_gamma", 0.3)),
+            vt_service_prob_skip_below=float(cfg.get("vt_service_prob_skip_below", 0.0)),
+            ev_service_prob_skip_below=float(cfg.get("ev_service_prob_skip_below", 0.0)),
         )
         station_loads = compute_station_loads_from_flows(data, itineraries, flows_new, times)
         B_out, P_out, shed_ev, shed_vt, shadow_prices, _, lp_diag = solve_shared_power_inventory_lp(
@@ -448,8 +462,9 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         for s in stations:
             for t in times:
                 base_p = float(data["parameters"]["electricity_price"][s][t])
-                mu = min(max_shadow, max(0.0, float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0)))
-                electricity_price[s][t] = (1.0 - price_relax) * electricity_price[s][t] + price_relax * (base_p + mu)
+                mu_dual = max(0.0, float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0))
+                mu_used = min(max_shadow, mu_dual)
+                electricity_price[s][t] = (1.0 - price_relax) * electricity_price[s][t] + price_relax * (base_p + mu_used)
                 vt_service_prob[s][t] = (1.0 - price_relax) * vt_service_prob[s][t] + price_relax * vt_service_prob_new[s][t]
                 ev_service_prob[s][t] = (1.0 - price_relax) * ev_service_prob[s][t] + price_relax * ev_service_prob_new[s][t]
 
@@ -471,7 +486,9 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "vt_grid_support_kw": vt_grid_support_kw,
                     "storage_state_kwh": float(B_out.get(s, {}).get(t, 0.0)),
                     "storage_state_next_kwh": float(B_out.get(s, {}).get(t + 1, B_out.get(s, {}).get(t, 0.0))),
-                    "local_shadow_price": mu,
+                    "local_shadow_price_dual_raw": mu_dual,
+                    "local_shadow_price_used_for_price": mu_used,
+                    "storage_port_semantics": "overlap_capped_charge_with_departure",
                     "vt_service_probability": vt_service_prob[s][t],
                     "ev_service_probability": ev_service_prob[s][t],
                     "vt_service_components": vt_diag_components[s][t],

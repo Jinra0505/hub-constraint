@@ -268,11 +268,6 @@
     "vt_turnaround_lag": 2,
     "vt_pax_per_departure_fast": 2.0,
     "vt_pax_per_departure_slow": 4.0,
-    "transfer_base_time": {
-      "H1": 0.18,
-      "H2": 0.26,
-      "H3": 0.21
-    },
     "transfer_capacity": {
       "H1": 44,
       "H2": 36,
@@ -402,29 +397,6 @@
         "alpha": 0.15,
         "beta": 4.0,
         "type": "G"
-      }
-    },
-    "VOT": {
-      "low": {
-        "0": 7.0,
-        "1": 7.0,
-        "2": 7.0,
-        "3": 7.0,
-        "4": 7.0
-      },
-      "mid": {
-        "0": 11.0,
-        "1": 11.0,
-        "2": 11.0,
-        "3": 11.0,
-        "4": 11.0
-      },
-      "high": {
-        "0": 16.0,
-        "1": 16.0,
-        "2": 16.0,
-        "3": 16.0,
-        "4": 16.0
       }
     },
     "lambda": {
@@ -874,14 +846,13 @@
     "tol": 0.001,
     "tol_flow": 0.003,
     "shared_power_solver": "highs",
-    "terminal_soc_policy": "target",
+    "terminal_soc_policy": "at_least_init",
     "multimodal_access_utilization_factor": 1.0,
     "voll_ev_per_kwh": 70.0,
     "voll_vt_per_kwh": 140.0,
     "ev_shed_penalty_multiplier": 1.0,
-    "vt_shed_penalty_multiplier": 1.15,
+    "vt_shed_penalty_multiplier": 1.0,
     "storage_throughput_penalty_per_kwh": 6.0,
-    "storage_single_port_discharge_priority": true,
     "multimodal_continuity_penalty": {
       "base_transfer_fragility_penalty": 0.01,
       "coeff_ev_unreliability": 0.05,
@@ -890,9 +861,9 @@
       "coeff_transfer_overrun": 0.35,
       "transfer_buffer_threshold": 0.16
     },
-    "flow_step_relax": 0.45,
+    "flow_step_relax": 0.35,
     "flow_step_floor": 0.05,
-    "price_step_relax": 0.1,
+    "price_step_relax": 0.08,
     "vt_reliability_gamma": 0.14,
     "ev_reliability_gamma": 0.06,
     "multimodal_reliability_gamma": 0.1,
@@ -901,11 +872,11 @@
     "vt_reposition_reserve": 0.7,
     "vt_reposition_max_send_per_period": 1.4,
     "max_local_shadow_price": 2.0,
-    "terminal_soc_target_kwh": {
-      "H1": 58,
-      "H2": 54,
-      "H3": 56
-    },
-    "storage_single_port_overlap_ratio": 0.04
+    "vt_service_prob_skip_below": 0.03,
+    "ev_service_prob_skip_below": 0.02,
+    "storage_charge_with_departure_cap_ratio": 0.03,
+    "vt_service_prob_floor": 0.01,
+    "ev_service_prob_floor": 0.01,
+    "vt_energy_weight": 0.45
   }
 }

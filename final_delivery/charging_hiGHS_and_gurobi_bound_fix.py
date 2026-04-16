@@ -371,8 +371,11 @@ def solve_shared_power_inventory_highs(
     voll_ev_per_kwh = float(voll_ev_cfg) if voll_ev_cfg is not None else 50.0
     voll_vt_per_kwh = float(voll_vt_cfg) if voll_vt_cfg is not None else 200.0
     throughput_penalty = float(data.get("config", {}).get("storage_throughput_penalty_per_kwh", 0.0) or 0.0)
-    single_port_priority = bool(data.get("config", {}).get("storage_single_port_discharge_priority", False))
-    overlap_ratio = float(data.get("config", {}).get("storage_single_port_overlap_ratio", 0.15))
+    overlap_ratio = float(data.get("config", {}).get("storage_charge_with_departure_cap_ratio", 0.0))
+    ev_pen_mult = float(data.get("config", {}).get("ev_shed_penalty_multiplier", 1.0) or 1.0)
+    vt_pen_mult = float(data.get("config", {}).get("vt_shed_penalty_multiplier", 1.0) or 1.0)
+    voll_ev_per_kwh *= ev_pen_mult
+    voll_vt_per_kwh *= vt_pen_mult
 
     var_idx: Dict[tuple[str, str, int], int] = {}
     bounds = []
@@ -393,7 +396,7 @@ def solve_shared_power_inventory_highs(
             add_var("B", dep, tau, storage_params[dep]["B_min"], storage_params[dep]["B_max"], 0.0)
         for t in times:
             p_ub = _vt_charge_power_upper_bound(data, dep, t, e_dep)
-            if single_port_priority and float(e_dep.get(dep, {}).get(t, 0.0)) > 1.0e-9:
+            if overlap_ratio > 0.0 and float(e_dep.get(dep, {}).get(t, 0.0)) > 1.0e-9:
                 p_ub = overlap_ratio * p_ub
             add_var("P", dep, t, 0.0, p_ub, (prices[dep][t] + throughput_penalty) * delta_t)
             add_var("SVT", dep, t, 0.0, float(e_dep.get(dep, {}).get(t, 0.0)), voll_vt_per_kwh - throughput_penalty)
@@ -521,18 +524,6 @@ def solve_shared_power_inventory_highs(
                 "dual_raw": m,
                 "mu_kw": mu,
             }
-    for s in stations:
-        for t in times:
-            p_vt_sum = sum(P_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
-            p_ev_served = max(0.0, p_ev_req_kw[s][t] - shed_ev_out[s][t])
-            draw = p_vt_sum + p_ev_served
-            cap = float(_effective_station_power_cap(data, s, t))
-            if cap - draw <= 1.0e-6 and float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0) <= 1.0e-10:
-                # HiGHS can return near-zero marginals under degeneracy when shedding variables are active.
-                scarcity_proxy = max(0.0, voll_ev_per_kwh - float(prices[s][t]))
-                if shed_ev_out[s][t] > 1.0e-8 or p_vt_sum > 1.0e-8:
-                    shadow_prices[s][t] = scarcity_proxy
-                    dual_trace[s][t]["mu_kw"] = scarcity_proxy
 
     objective_components = {s: {t: {"energy_cost_term": 0.0, "ev_shed_penalty": 0.0, "vt_shed_penalty": 0.0} for t in times} for s in stations}
     total_energy_cost = 0.0
@@ -663,6 +654,8 @@ def _solve_shared_power_core_heuristic(
     prices = data["parameters"].get("electricity_price", {})
     voll_ev_per_kwh = float(data.get("config", {}).get("voll_ev_per_kwh", 50.0))
     voll_vt_per_kwh = float(data.get("config", {}).get("voll_vt_per_kwh", 200.0))
+    voll_ev_per_kwh *= float(data.get("config", {}).get("ev_shed_penalty_multiplier", 1.0) or 1.0)
+    voll_vt_per_kwh *= float(data.get("config", {}).get("vt_shed_penalty_multiplier", 1.0) or 1.0)
     max_shadow = float(data.get("config", {}).get("max_local_shadow_price", 2.5))
 
     t_terminal = times[-1] + 1
