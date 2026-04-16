@@ -283,64 +283,6 @@
       "H2": 3.4,
       "H3": 3.1
     },
-    "arc_params": {
-      "ra_evA": {
-        "tau0": 0.95,
-        "cap": 120,
-        "alpha": 0.15,
-        "beta": 4.0,
-        "type": "G"
-      },
-      "ra_accessA_h1": {
-        "tau0": 0.22,
-        "cap": 80,
-        "alpha": 0.15,
-        "beta": 4.0,
-        "type": "G"
-      },
-      "ra_accessA_h2": {
-        "tau0": 0.34,
-        "cap": 70,
-        "alpha": 0.15,
-        "beta": 4.0,
-        "type": "G"
-      },
-      "ra_egressA_h3": {
-        "tau0": 0.19,
-        "cap": 85,
-        "alpha": 0.15,
-        "beta": 4.0,
-        "type": "G"
-      },
-      "rb_evB": {
-        "tau0": 1.05,
-        "cap": 105,
-        "alpha": 0.15,
-        "beta": 4.0,
-        "type": "G"
-      },
-      "rb_accessB_h3": {
-        "tau0": 0.25,
-        "cap": 75,
-        "alpha": 0.15,
-        "beta": 4.0,
-        "type": "G"
-      },
-      "rb_accessB_h1": {
-        "tau0": 0.3,
-        "cap": 66,
-        "alpha": 0.15,
-        "beta": 4.0,
-        "type": "G"
-      },
-      "rb_egressB_h2": {
-        "tau0": 0.21,
-        "cap": 88,
-        "alpha": 0.15,
-        "beta": 4.0,
-        "type": "G"
-      }
-    },
     "arcs": {
       "ra_evA": {
         "tau0": 0.95,
@@ -351,7 +293,7 @@
       },
       "ra_accessA_h1": {
         "tau0": 0.22,
-        "cap": 80,
+        "cap": 95,
         "alpha": 0.15,
         "beta": 4.0,
         "type": "G"
@@ -386,7 +328,7 @@
       },
       "rb_accessB_h1": {
         "tau0": 0.3,
-        "cap": 66,
+        "cap": 85,
         "alpha": 0.15,
         "beta": 4.0,
         "type": "G"
@@ -858,7 +800,7 @@
       "coeff_ev_unreliability": 0.05,
       "coeff_vt_unreliability": 0.08,
       "coeff_joint_unreliability": 0.06,
-      "coeff_transfer_overrun": 0.35,
+      "coeff_transfer_overrun": 0.3,
       "transfer_buffer_threshold": 0.16
     },
     "flow_step_relax": 0.3,
@@ -866,7 +808,7 @@
     "price_step_relax": 0.08,
     "vt_reliability_gamma": 0.14,
     "ev_reliability_gamma": 0.06,
-    "multimodal_reliability_gamma": 0.1,
+    "multimodal_reliability_gamma": 0.09,
     "vt_reposition_enabled": true,
     "vt_reposition_lag": 1,
     "vt_reposition_reserve": 0.7,
