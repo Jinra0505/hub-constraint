@@ -301,9 +301,9 @@ def logit_assignment(
     ev_service_prob: Dict[str, Dict[int, float]] | None = None,
     vt_service_prob_floor: float = 1.0e-4,
     ev_service_prob_floor: float = 1.0e-4,
-    vt_reliability_gamma: float = 0.2,
-    ev_reliability_gamma: float = 0.1,
-    multimodal_reliability_gamma: float = 0.25,
+    vt_reliability_gamma: float = 0.15,
+    ev_reliability_gamma: float = 0.08,
+    multimodal_reliability_gamma: float = 0.12,
     vt_service_prob_skip_below: float = 0.0,
     ev_service_prob_skip_below: float = 0.0,
     fail_on_infeasible_demand: bool = False,
@@ -404,7 +404,8 @@ def logit_assignment(
                     ev_term = ev_reliability_gamma * math.log(max(ev_prob, ev_service_prob_floor))
                     mm_term = 0.0
                     if is_multimodal_evtol(it):
-                        mm_term = multimodal_reliability_gamma * math.log(max(vt_prob * ev_prob, 1.0e-8))
+                        mm_joint = min(vt_prob, ev_prob)
+                        mm_term = multimodal_reliability_gamma * math.log(max(mm_joint, 1.0e-8))
                     lam = max(float(lambdas[group]), 1.0e-9)
                     perceived_cost = raw_cost - (vt_term + ev_term + mm_term) / lam
                     util = -lam * raw_cost + vt_term + ev_term + mm_term

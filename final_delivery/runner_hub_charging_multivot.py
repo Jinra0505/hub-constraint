@@ -174,27 +174,51 @@ def _compute_vt_departure_waits(
 
     waits = {s: {"fast": {t: 0.0 for t in times}, "slow": {t: 0.0 for t in times}} for s in stations}
     diag = {s: {"req_dep": {t: 0.0 for t in times}, "cap_dep": {t: 0.0 for t in times}, "served_ratio": {t: 1.0 for t in times}} for s in stations}
-    for s in stations:
-        carry = init[s]
-        for t in times:
-            carry += float(arr_by_station[s].get(t, 0.0))
+    reposition_enabled = bool(data.get("config", {}).get("vt_reposition_enabled", True))
+    reposition_lag = int(data.get("config", {}).get("vt_reposition_lag", 1))
+    reposition_reserve = float(data.get("config", {}).get("vt_reposition_reserve", 0.6))
+    reposition_max_send = float(data.get("config", {}).get("vt_reposition_max_send_per_period", 1.4))
+
+    carry = {s: init[s] for s in stations}
+    for t in times:
+        for s in stations:
+            carry[s] += float(arr_by_station[s].get(t, 0.0))
+        served_total_map = {}
+        shortage_map = {}
+        for s in stations:
             req_total = req[s]["fast"][t] + req[s]["slow"][t]
             cap_total = float(params.get("vt_departure_capacity_total", {}).get(s, {}).get(t, 0.0))
             cap_fast = float(params.get("vt_departure_capacity_fast", {}).get(s, {}).get(t, 0.0))
-            served_fast = min(req[s]["fast"][t], cap_fast, carry)
-            carry -= served_fast
-            served_slow = min(req[s]["slow"][t], max(0.0, cap_total - served_fast), carry)
-            carry -= served_slow
+            served_fast = min(req[s]["fast"][t], cap_fast, carry[s])
+            carry[s] -= served_fast
+            served_slow = min(req[s]["slow"][t], max(0.0, cap_total - served_fast), carry[s])
+            carry[s] -= served_slow
             served_total = served_fast + served_slow
+            served_total_map[s] = served_total
+            shortage_map[s] = max(0.0, req_total - served_total)
             ratio = 1.0 if req_total <= 1.0e-9 else max(0.0, min(1.0, served_total / req_total))
             diag[s]["req_dep"][t] = req_total
-            diag[s]["cap_dep"][t] = min(cap_total, carry + served_total)
+            diag[s]["cap_dep"][t] = cap_total
             diag[s]["served_ratio"][t] = ratio
-            # Waiting grows quickly as utilization approaches 1.
-            util = req_total / max(1.0e-6, min(cap_total + 1.0e-9, served_total + max(0.0, carry))) if req_total > 0 else 0.0
+            util = req_total / max(1.0e-6, min(cap_total + 1.0e-9, served_total + max(0.0, carry[s]))) if req_total > 0 else 0.0
             w = 0.04 * (util / max(1.0e-6, 1.0 - min(0.95, util))) if util > 0 else 0.0
             waits[s]["fast"][t] = w
             waits[s]["slow"][t] = w
+        if reposition_enabled:
+            tot_short = sum(shortage_map.values())
+            if tot_short > 1.0e-9:
+                for src in stations:
+                    send = min(max(0.0, carry[src] - reposition_reserve), reposition_max_send)
+                    if send <= 1.0e-9:
+                        continue
+                    carry[src] -= send
+                    arr_t = t + reposition_lag
+                    if arr_t not in times:
+                        continue
+                    for dst in stations:
+                        if shortage_map[dst] <= 1.0e-9:
+                            continue
+                        arr_by_station[dst][arr_t] += send * shortage_map[dst] / tot_short
     return waits, diag
 
 
@@ -227,34 +251,70 @@ def _aircraft_inventory_diagnostics(
             pax = sum(float(flows.get(it["id"], {}).get(g, {}).get(t, 0.0)) for g in groups)
             itinerary_dep_req[(it["id"], t)] = pax / per
 
-    for s in stations:
-        carry = init[s]
-        for t in times:
-            carry += ret[s][t]
-            inv[s][t] = carry
-            req_total = sum(itinerary_dep_req.get((it["id"], t), 0.0) for it in itineraries if is_evtol_itinerary(it) and str(it.get("dep_station")) == s)
-            served_total = min(req_total, carry)
+    reposition_enabled = bool(data.get("config", {}).get("vt_reposition_enabled", True))
+    reposition_lag = int(data.get("config", {}).get("vt_reposition_lag", 1))
+    reposition_reserve = float(data.get("config", {}).get("vt_reposition_reserve", 0.5))
+    reposition_max_send = float(data.get("config", {}).get("vt_reposition_max_send_per_period", 1.8))
+    reposition_in = {s: {t: 0.0 for t in times} for s in stations}
+    reposition_out = {s: {t: 0.0 for t in times} for s in stations}
+    carry = {s: init[s] for s in stations}
+    for t in times:
+        for s in stations:
+            carry[s] += ret[s][t] + reposition_in[s][t]
+            inv[s][t] = carry[s]
+
+        req_station_total = {
+            s: sum(itinerary_dep_req.get((it["id"], t), 0.0) for it in itineraries if is_evtol_itinerary(it) and str(it.get("dep_station")) == s)
+            for s in stations
+        }
+        served_ratio_by_station: Dict[str, float] = {}
+        for s in stations:
+            req_total = req_station_total[s]
+            served_total = min(req_total, carry[s])
             dep[s][t] = served_total
-            if req_total > carry + 1.0e-9:
+            if req_total > carry[s] + 1.0e-9:
                 bind += 1.0
-            served_ratio = 0.0 if req_total <= 1.0e-9 else served_total / req_total
-            carry = max(0.0, carry - served_total)
-            for it in itineraries:
-                if not is_evtol_itinerary(it) or str(it.get("dep_station")) != s:
-                    continue
-                req_i = itinerary_dep_req.get((it["id"], t), 0.0)
-                dep_i = req_i * served_ratio
-                arr = str(it.get("arr_station"))
-                if arr not in ret:
-                    continue
-                flt = _time_value(it.get("flight_time", {}), t, 0.0)
-                arr_t = t + int(round(flt / max(1.0e-9, delta_t))) + lag
-                if arr_t in ret[arr]:
-                    ret[arr][arr_t] += dep_i
+            served_ratio_by_station[s] = 0.0 if req_total <= 1.0e-9 else served_total / req_total
+            carry[s] = max(0.0, carry[s] - served_total)
+
+        for it in itineraries:
+            if not is_evtol_itinerary(it):
+                continue
+            s = str(it.get("dep_station"))
+            req_i = itinerary_dep_req.get((it["id"], t), 0.0)
+            dep_i = req_i * served_ratio_by_station.get(s, 0.0)
+            arr = str(it.get("arr_station"))
+            if arr not in ret:
+                continue
+            flt = _time_value(it.get("flight_time", {}), t, 0.0)
+            arr_t = t + int(round(flt / max(1.0e-9, delta_t))) + lag
+            if arr_t in ret[arr]:
+                ret[arr][arr_t] += dep_i
+
+        if reposition_enabled:
+            shortage = {s: max(0.0, req_station_total[s] - dep[s][t]) for s in stations}
+            tot_short = sum(shortage.values())
+            if tot_short > 1.0e-9:
+                for src in stations:
+                    send = min(max(0.0, carry[src] - reposition_reserve), reposition_max_send)
+                    if send <= 1.0e-9:
+                        continue
+                    carry[src] -= send
+                    reposition_out[src][t] += send
+                    arr_t = t + reposition_lag
+                    if arr_t not in times:
+                        continue
+                    for dst in stations:
+                        if shortage[dst] <= 1.0e-9:
+                            continue
+                        qty = send * shortage[dst] / tot_short
+                        reposition_in[dst][arr_t] += qty
     return {
         "aircraft_inventory_by_station_time": inv,
         "aircraft_departures_by_station_time": dep,
         "aircraft_returns_by_station_time": ret,
+        "aircraft_reposition_in_by_station_time": reposition_in,
+        "aircraft_reposition_out_by_station_time": reposition_out,
         "aircraft_binding_count": bind,
     }
 
@@ -282,9 +342,10 @@ def _compute_vt_ev_service_probabilities(
             cap_dep = float(vt_wait_diag.get(s, {}).get("cap_dep", {}).get(t, 0.0))
             p_depart = 1.0 if req_dep <= 1.0e-9 else max(0.0, min(1.0, cap_dep / req_dep))
             p_air = max(0.0, min(1.0, float(vt_wait_diag.get(s, {}).get("served_ratio", {}).get(t, 1.0))))
-            vt_prob[s][t] = max(0.02, min(1.0, p_energy * p_depart * p_air))
+            p_ops = min(1.0, 0.5 * (p_depart + p_air))
+            vt_prob[s][t] = max(0.05, min(1.0, min(p_energy, p_ops)))
             ev_prob[s][t] = 1.0 if ev_req_kwh <= 1.0e-9 else max(0.02, min(1.0, (ev_req_kwh - ev_shed_kwh) / ev_req_kwh))
-            components[s][t] = {"energy": p_energy, "departure_capacity": p_depart, "aircraft": p_air}
+            components[s][t] = {"energy": p_energy, "departure_capacity": p_depart, "aircraft": p_air, "ops_blend": p_ops}
     return vt_prob, ev_prob, components
 
 
@@ -310,6 +371,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     flow_relax = float(cfg.get("flow_step_relax", 0.65))
     flow_floor = float(cfg.get("flow_step_floor", 0.15))
     price_relax = float(cfg.get("price_step_relax", 0.45))
+    max_shadow = float(cfg.get("max_local_shadow_price", 2.5))
     stop_reason = "max_iter"
     prev_dx = None
 
@@ -386,21 +448,27 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         for s in stations:
             for t in times:
                 base_p = float(data["parameters"]["electricity_price"][s][t])
-                mu = max(0.0, float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0))
+                mu = min(max_shadow, max(0.0, float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0)))
                 electricity_price[s][t] = (1.0 - price_relax) * electricity_price[s][t] + price_relax * (base_p + mu)
                 vt_service_prob[s][t] = (1.0 - price_relax) * vt_service_prob[s][t] + price_relax * vt_service_prob_new[s][t]
                 ev_service_prob[s][t] = (1.0 - price_relax) * ev_service_prob[s][t] + price_relax * ev_service_prob_new[s][t]
 
                 dt = float(data["meta"]["delta_t"])
+                eta = float(data["parameters"].get("vertiport_storage", {}).get(s, {}).get("eta_ch", 1.0))
                 served_ev_kw = max(0.0, float(station_loads["P_ev_req_kw"].get(s, {}).get(t, 0.0)) - float(shed_ev.get(s, {}).get(t, 0.0)))
-                charge_kw = max(0.0, float(P_out.get(s, {}).get(t, 0.0)))
-                discharge_kw = max(0.0, (float(station_loads["E_vt_req"].get(s, {}).get(t, 0.0)) - float(shed_vt.get(s, {}).get(t, 0.0))) / max(1.0e-9, dt))
-                grid_draw_kw = served_ev_kw + charge_kw
+                vt_grid_support_kw = max(0.0, float(P_out.get(s, {}).get(t, 0.0)))
+                b_t = float(B_out.get(s, {}).get(t, 0.0))
+                b_next = float(B_out.get(s, {}).get(t + 1, b_t))
+                delta_b = b_next - b_t
+                charge_kw = max(0.0, delta_b / max(1.0e-9, eta * dt))
+                discharge_kw = max(0.0, -delta_b / max(1.0e-9, dt))
+                grid_draw_kw = served_ev_kw + vt_grid_support_kw
                 hub_diag[s][t] = {
                     "grid_connection_cap_kw": float(data["parameters"]["stations"][s]["P_site"][t]),
                     "actual_grid_draw_kw": grid_draw_kw,
                     "storage_charge_kw": charge_kw,
                     "storage_discharge_kw": discharge_kw,
+                    "vt_grid_support_kw": vt_grid_support_kw,
                     "storage_state_kwh": float(B_out.get(s, {}).get(t, 0.0)),
                     "storage_state_next_kwh": float(B_out.get(s, {}).get(t + 1, B_out.get(s, {}).get(t, 0.0))),
                     "local_shadow_price": mu,
@@ -437,9 +505,11 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "tol_flow": tol_flow,
         },
         "shared_power_price_signal_check": {
-            "solver_used": "highs",
-            "lp_dual_available": True,
-            "shared_power_fallback_used": False,
+            "solver_used": str(data.get("diagnostics_runtime", {}).get("lp_failure", {}).get("fallback_solver", "highs"))
+            if not bool(data.get("diagnostics_runtime", {}).get("lp_ok", True))
+            else "highs",
+            "lp_dual_available": bool(data.get("diagnostics_runtime", {}).get("lp_ok", False)),
+            "shared_power_fallback_used": not bool(data.get("diagnostics_runtime", {}).get("lp_ok", True)),
             "binding_cap_total_count": int(lp_diag.get("binding_cap_total_count", 0)) if isinstance(lp_diag, dict) else 0,
             "binding_cap_with_positive_dual_count": int(lp_diag.get("binding_cap_with_positive_dual_count", 0)) if isinstance(lp_diag, dict) else 0,
         },

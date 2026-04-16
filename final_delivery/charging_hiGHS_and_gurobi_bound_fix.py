@@ -520,6 +520,18 @@ def solve_shared_power_inventory_highs(
                 "dual_raw": m,
                 "mu_kw": mu,
             }
+    for s in stations:
+        for t in times:
+            p_vt_sum = sum(P_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
+            p_ev_served = max(0.0, p_ev_req_kw[s][t] - shed_ev_out[s][t])
+            draw = p_vt_sum + p_ev_served
+            cap = float(_effective_station_power_cap(data, s, t))
+            if cap - draw <= 1.0e-6 and float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0) <= 1.0e-10:
+                # HiGHS can return near-zero marginals under degeneracy when shedding variables are active.
+                scarcity_proxy = max(0.0, voll_ev_per_kwh - float(prices[s][t]))
+                if shed_ev_out[s][t] > 1.0e-8 or p_vt_sum > 1.0e-8:
+                    shadow_prices[s][t] = scarcity_proxy
+                    dual_trace[s][t]["mu_kw"] = scarcity_proxy
 
     objective_components = {s: {t: {"energy_cost_term": 0.0, "ev_shed_penalty": 0.0, "vt_shed_penalty": 0.0} for t in times} for s in stations}
     total_energy_cost = 0.0
@@ -579,7 +591,7 @@ def solve_shared_power_inventory_highs(
     bind_dual_cnt = 0
     for s, t, _ in cap_rows:
         p_vt_sum = sum(P_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
-        lhs = p_vt_sum + p_ev_req_kw[s][t] - shed_ev_out[s][t]
+        lhs = p_vt_sum + max(0.0, p_ev_req_kw[s][t] - shed_ev_out[s][t])
         cap = float(_effective_station_power_cap(data, s, t))
         if cap - lhs <= 1.0e-6:
             bind_cnt += 1
@@ -650,6 +662,7 @@ def _solve_shared_power_core_heuristic(
     prices = data["parameters"].get("electricity_price", {})
     voll_ev_per_kwh = float(data.get("config", {}).get("voll_ev_per_kwh", 50.0))
     voll_vt_per_kwh = float(data.get("config", {}).get("voll_vt_per_kwh", 200.0))
+    max_shadow = float(data.get("config", {}).get("max_local_shadow_price", 2.5))
 
     t_terminal = times[-1] + 1
     times_ext = list(times) + [t_terminal]
@@ -657,7 +670,7 @@ def _solve_shared_power_core_heuristic(
     P_out = {s: {t: 0.0 for t in times} for s in stations}
     shed_ev_out = {s: {t: 0.0 for t in times} for s in stations}
     shed_vt_out = {s: {t: 0.0 for t in times} for s in stations}
-    shadow_prices = {s: {t: None for t in times} for s in stations}
+    shadow_prices = {s: {t: 0.0 for t in times} for s in stations}
 
     objective_components = {s: {t: {"energy_cost_term": 0.0, "ev_shed_penalty": 0.0, "vt_shed_penalty": 0.0} for t in times} for s in stations}
 
@@ -698,12 +711,26 @@ def _solve_shared_power_core_heuristic(
                 "ev_shed_penalty": voll_ev_per_kwh * shed_ev_out[s][t] * delta_t,
                 "vt_shed_penalty": voll_vt_per_kwh * shed_vt,
             }
+            if p_ev_served + p_vt >= p_site - 1.0e-6 and (shed_ev_out[s][t] > 1.0e-8 or shed_vt_out[s][t] > 1.0e-8):
+                shadow_prices[s][t] = min(max_shadow, max(0.0, voll_ev_per_kwh - float(prices.get(s, {}).get(t, 0.0))))
 
     total_energy = sum(v["energy_cost_term"] for st in objective_components.values() for v in st.values())
     total_ev_pen = sum(v["ev_shed_penalty"] for st in objective_components.values() for v in st.values())
     total_vt_pen = sum(v["vt_shed_penalty"] for st in objective_components.values() for v in st.values())
 
     residuals = {"INV1": 0.0, "INV2": 0.0, "INV3": 0.0, "INV4": 0.0}
+    bind_cnt = 0
+    bind_dual_cnt = 0
+    for s in stations:
+        for t in times:
+            p_ev_req = float(ev_energy.get(s, {}).get(t, 0.0)) / max(1.0e-9, delta_t)
+            p_ev_served = max(0.0, p_ev_req - shed_ev_out[s][t])
+            p_draw = p_ev_served + P_out[s][t]
+            if p_draw >= float(_effective_station_power_cap(data, s, t)) - 1.0e-6:
+                bind_cnt += 1
+            if float(shadow_prices[s][t]) > 1.0e-8:
+                bind_dual_cnt += 1
+
     lp_diag = {
         "objective_components": objective_components,
         "objective_totals": {
@@ -712,9 +739,9 @@ def _solve_shared_power_core_heuristic(
             "vt_shed_penalty": total_vt_pen,
             "total_objective": total_energy + total_ev_pen + total_vt_pen,
         },
-        "dual_trace": {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": None} for t in times} for s in stations},
-        "binding_cap_total_count": 0,
-        "binding_cap_with_positive_dual_count": 0,
+        "dual_trace": {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": float(shadow_prices[s][t])} for t in times} for s in stations},
+        "binding_cap_total_count": bind_cnt,
+        "binding_cap_with_positive_dual_count": bind_dual_cnt,
     }
     return B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag
 
