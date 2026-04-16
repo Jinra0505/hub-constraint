@@ -120,8 +120,8 @@
         "P_site": {
           "0": 90,
           "1": 82,
-          "2": 64,
-          "3": 58,
+          "2": 46,
+          "3": 42,
           "4": 74
         }
       },
@@ -131,8 +131,8 @@
         "P_site": {
           "0": 88,
           "1": 78,
-          "2": 62,
-          "3": 56,
+          "2": 44,
+          "3": 40,
           "4": 70
         }
       },
@@ -142,8 +142,8 @@
         "P_site": {
           "0": 84,
           "1": 76,
-          "2": 60,
-          "3": 52,
+          "2": 43,
+          "3": 38,
           "4": 68
         }
       }
@@ -192,7 +192,7 @@
       }
     },
     "vt_aircraft_init_by_station": {
-      "H1": 8,
+      "H1": 10,
       "H2": 6,
       "H3": 7
     },
@@ -268,25 +268,20 @@
     "vt_turnaround_lag": 2,
     "vt_pax_per_departure_fast": 2.0,
     "vt_pax_per_departure_slow": 4.0,
-    "transfer_base_time": {
-      "H1": 0.18,
-      "H2": 0.26,
-      "H3": 0.21
-    },
     "transfer_capacity": {
-      "H1": 62,
-      "H2": 46,
-      "H3": 54
+      "H1": 44,
+      "H2": 36,
+      "H3": 40
     },
     "transfer_alpha": {
-      "H1": 0.48,
-      "H2": 0.62,
-      "H3": 0.52
+      "H1": 0.95,
+      "H2": 1.15,
+      "H3": 1.0
     },
     "transfer_beta": {
-      "H1": 3.5,
-      "H2": 3.7,
-      "H3": 3.4
+      "H1": 3.2,
+      "H2": 3.4,
+      "H3": 3.1
     },
     "arc_params": {
       "ra_evA": {
@@ -402,29 +397,6 @@
         "alpha": 0.15,
         "beta": 4.0,
         "type": "G"
-      }
-    },
-    "VOT": {
-      "low": {
-        "0": 7.0,
-        "1": 7.0,
-        "2": 7.0,
-        "3": 7.0,
-        "4": 7.0
-      },
-      "mid": {
-        "0": 11.0,
-        "1": 11.0,
-        "2": 11.0,
-        "3": 11.0,
-        "4": 11.0
-      },
-      "high": {
-        "0": 16.0,
-        "1": 16.0,
-        "2": 16.0,
-        "3": 16.0,
-        "4": 16.0
       }
     },
     "lambda": {
@@ -711,7 +683,7 @@
         "4": 8.5
       },
       "dep_station": "H3",
-      "arr_station": "H2",
+      "arr_station": "H1",
       "flight_time": {
         "0": 0.52,
         "1": 0.52,
@@ -870,25 +842,41 @@
     }
   ],
   "config": {
-    "max_iter": 180,
+    "max_iter": 260,
     "tol": 0.001,
     "tol_flow": 0.003,
     "shared_power_solver": "highs",
-    "terminal_soc_policy": "at_least_min",
+    "terminal_soc_policy": "at_least_init",
     "multimodal_access_utilization_factor": 1.0,
-    "voll_ev_per_kwh": 12.0,
-    "voll_vt_per_kwh": 11.0,
+    "voll_ev_per_kwh": 70.0,
+    "voll_vt_per_kwh": 140.0,
     "ev_shed_penalty_multiplier": 1.0,
-    "vt_shed_penalty_multiplier": 1.15,
+    "vt_shed_penalty_multiplier": 1.0,
     "storage_throughput_penalty_per_kwh": 6.0,
-    "storage_single_port_discharge_priority": true,
     "multimodal_continuity_penalty": {
-      "base_transfer_fragility_penalty": 0.03,
-      "coeff_ev_unreliability": 0.14,
-      "coeff_vt_unreliability": 0.12,
-      "coeff_joint_unreliability": 0.18,
-      "coeff_transfer_overrun": 0.12,
-      "transfer_buffer_threshold": 0.52
-    }
+      "base_transfer_fragility_penalty": 0.01,
+      "coeff_ev_unreliability": 0.05,
+      "coeff_vt_unreliability": 0.08,
+      "coeff_joint_unreliability": 0.06,
+      "coeff_transfer_overrun": 0.35,
+      "transfer_buffer_threshold": 0.16
+    },
+    "flow_step_relax": 0.35,
+    "flow_step_floor": 0.05,
+    "price_step_relax": 0.08,
+    "vt_reliability_gamma": 0.14,
+    "ev_reliability_gamma": 0.06,
+    "multimodal_reliability_gamma": 0.1,
+    "vt_reposition_enabled": true,
+    "vt_reposition_lag": 1,
+    "vt_reposition_reserve": 0.7,
+    "vt_reposition_max_send_per_period": 1.4,
+    "max_local_shadow_price": 2.0,
+    "vt_service_prob_skip_below": 0.03,
+    "ev_service_prob_skip_below": 0.02,
+    "storage_charge_with_departure_cap_ratio": 0.03,
+    "vt_service_prob_floor": 0.01,
+    "ev_service_prob_floor": 0.01,
+    "vt_energy_weight": 0.45
   }
 }
