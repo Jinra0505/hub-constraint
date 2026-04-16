@@ -370,6 +370,8 @@ def solve_shared_power_inventory_highs(
     voll_vt_cfg = data.get("config", {}).get("voll_vt_per_kwh")
     voll_ev_per_kwh = float(voll_ev_cfg) if voll_ev_cfg is not None else 50.0
     voll_vt_per_kwh = float(voll_vt_cfg) if voll_vt_cfg is not None else 200.0
+    throughput_penalty = float(data.get("config", {}).get("storage_throughput_penalty_per_kwh", 0.0) or 0.0)
+    single_port_priority = bool(data.get("config", {}).get("storage_single_port_discharge_priority", False))
 
     var_idx: Dict[tuple[str, str, int], int] = {}
     bounds = []
@@ -389,8 +391,11 @@ def solve_shared_power_inventory_highs(
         for tau in times_ext:
             add_var("B", dep, tau, storage_params[dep]["B_min"], storage_params[dep]["B_max"], 0.0)
         for t in times:
-            add_var("P", dep, t, 0.0, _vt_charge_power_upper_bound(data, dep, t, e_dep), prices[dep][t] * delta_t)
-            add_var("SVT", dep, t, 0.0, float(e_dep.get(dep, {}).get(t, 0.0)), voll_vt_per_kwh)
+            p_ub = _vt_charge_power_upper_bound(data, dep, t, e_dep)
+            if single_port_priority and float(e_dep.get(dep, {}).get(t, 0.0)) > 1.0e-9:
+                p_ub = 0.0
+            add_var("P", dep, t, 0.0, p_ub, (prices[dep][t] + throughput_penalty) * delta_t)
+            add_var("SVT", dep, t, 0.0, float(e_dep.get(dep, {}).get(t, 0.0)), voll_vt_per_kwh - throughput_penalty)
 
     for s in stations:
         for t in times:
@@ -567,7 +572,22 @@ def solve_shared_power_inventory_highs(
             "total_objective": total_energy_cost + total_ev_shed_penalty + total_vt_shed_penalty,
         },
         "dual_trace": dual_trace,
+        "binding_cap_total_count": 0,
+        "binding_cap_with_positive_dual_count": 0,
     }
+    bind_cnt = 0
+    bind_dual_cnt = 0
+    for s, t, _ in cap_rows:
+        p_vt_sum = sum(P_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
+        lhs = p_vt_sum + p_ev_req_kw[s][t] - shed_ev_out[s][t]
+        cap = float(_effective_station_power_cap(data, s, t))
+        if cap - lhs <= 1.0e-6:
+            bind_cnt += 1
+            mu = float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0)
+            if mu > 1.0e-8:
+                bind_dual_cnt += 1
+    lp_diag["binding_cap_total_count"] = bind_cnt
+    lp_diag["binding_cap_with_positive_dual_count"] = bind_dual_cnt
 
     return B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag
 
@@ -693,6 +713,8 @@ def _solve_shared_power_core_heuristic(
             "total_objective": total_energy + total_ev_pen + total_vt_pen,
         },
         "dual_trace": {s: {t: {"label": f"cap_constraint[{s},{t}]", "dual_raw": None, "mu_kw": None} for t in times} for s in stations},
+        "binding_cap_total_count": 0,
+        "binding_cap_with_positive_dual_count": 0,
     }
     return B_out, P_out, shed_ev_out, shed_vt_out, shadow_prices, residuals, lp_diag
 
