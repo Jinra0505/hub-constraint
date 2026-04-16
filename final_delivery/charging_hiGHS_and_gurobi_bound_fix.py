@@ -19,6 +19,17 @@ try:
     SCIPY_VERSION = getattr(scipy, "__version__", "unknown")
 except Exception:
     HAS_SCIPY = False
+    try:
+        import subprocess
+        import sys
+        subprocess.run([sys.executable, "-m", "pip", "install", "--quiet", "numpy", "scipy"], check=True)
+        import numpy as np
+        import scipy
+        from scipy.optimize import linprog
+        SCIPY_VERSION = getattr(scipy, "__version__", "unknown")
+        HAS_SCIPY = True
+    except Exception:
+        HAS_SCIPY = False
 
 LAST_SOLVER_USED = "unknown"
 LAST_SHARED_SOLVER_USED = "unknown"
@@ -371,6 +382,9 @@ def solve_shared_power_inventory_highs(
     voll_ev_per_kwh = float(voll_ev_cfg) if voll_ev_cfg is not None else 50.0
     voll_vt_per_kwh = float(voll_vt_cfg) if voll_vt_cfg is not None else 200.0
     throughput_penalty = float(data.get("config", {}).get("storage_throughput_penalty_per_kwh", 0.0) or 0.0)
+    # Approximate LP-only storage-port behavior: when departure energy is present,
+    # grid charging is capped to a fraction of nominal charge capability.
+    # This is intentionally NOT strict single-port mutual exclusivity.
     overlap_ratio = float(data.get("config", {}).get("storage_charge_with_departure_cap_ratio", 0.0))
     ev_pen_mult = float(data.get("config", {}).get("ev_shed_penalty_multiplier", 1.0) or 1.0)
     vt_pen_mult = float(data.get("config", {}).get("vt_shed_penalty_multiplier", 1.0) or 1.0)

@@ -190,15 +190,16 @@ def _compute_vt_departure_waits(
             cap_total = float(params.get("vt_departure_capacity_total", {}).get(s, {}).get(t, 0.0))
             cap_fast = float(params.get("vt_departure_capacity_fast", {}).get(s, {}).get(t, 0.0))
             cap_pax = float(params.get("vertiport_cap_pax", {}).get(s, {}).get(t, 1.0e12))
-            served_fast = min(req[s]["fast"][t], cap_fast, carry[s])
-            carry[s] -= served_fast
-            served_slow = min(req[s]["slow"][t], max(0.0, cap_total - served_fast), carry[s])
-            carry[s] -= served_slow
+            avail_departures = max(0.0, carry[s])
+            served_fast = min(req[s]["fast"][t], cap_fast, avail_departures)
+            served_slow = min(req[s]["slow"][t], max(0.0, cap_total - served_fast), max(0.0, avail_departures - served_fast))
             served_pax = served_fast * pax_fast + served_slow * pax_slow
             if served_pax > cap_pax + 1.0e-9:
                 scale = cap_pax / max(1.0e-9, served_pax)
                 served_fast *= scale
                 served_slow *= scale
+            # Aircraft carry is consumed by the actually served departures after any throughput scaling.
+            carry[s] = max(0.0, carry[s] - (served_fast + served_slow))
             served_total = served_fast + served_slow
             served_total_map[s] = served_total
             shortage_map[s] = max(0.0, req_total - served_total)
@@ -471,19 +472,19 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 dt = float(data["meta"]["delta_t"])
                 eta = float(data["parameters"].get("vertiport_storage", {}).get(s, {}).get("eta_ch", 1.0))
                 served_ev_kw = max(0.0, float(station_loads["P_ev_req_kw"].get(s, {}).get(t, 0.0)) - float(shed_ev.get(s, {}).get(t, 0.0)))
-                vt_grid_support_kw = max(0.0, float(P_out.get(s, {}).get(t, 0.0)))
+                vt_charge_power_from_grid_kw = max(0.0, float(P_out.get(s, {}).get(t, 0.0)))
                 b_t = float(B_out.get(s, {}).get(t, 0.0))
                 b_next = float(B_out.get(s, {}).get(t + 1, b_t))
                 delta_b = b_next - b_t
                 charge_kw = max(0.0, delta_b / max(1.0e-9, eta * dt))
                 discharge_kw = max(0.0, -delta_b / max(1.0e-9, dt))
-                grid_draw_kw = served_ev_kw + vt_grid_support_kw
+                grid_draw_kw = served_ev_kw + vt_charge_power_from_grid_kw
                 hub_diag[s][t] = {
                     "grid_connection_cap_kw": float(data["parameters"]["stations"][s]["P_site"][t]),
                     "actual_grid_draw_kw": grid_draw_kw,
                     "storage_charge_kw": charge_kw,
                     "storage_discharge_kw": discharge_kw,
-                    "vt_grid_support_kw": vt_grid_support_kw,
+                    "vt_charge_power_from_grid_kw": vt_charge_power_from_grid_kw,
                     "storage_state_kwh": float(B_out.get(s, {}).get(t, 0.0)),
                     "storage_state_next_kwh": float(B_out.get(s, {}).get(t + 1, B_out.get(s, {}).get(t, 0.0))),
                     "local_shadow_price_dual_raw": mu_dual,

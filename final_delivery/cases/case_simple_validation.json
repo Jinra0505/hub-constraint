@@ -861,7 +861,7 @@
       "coeff_transfer_overrun": 0.35,
       "transfer_buffer_threshold": 0.16
     },
-    "flow_step_relax": 0.35,
+    "flow_step_relax": 0.3,
     "flow_step_floor": 0.05,
     "price_step_relax": 0.08,
     "vt_reliability_gamma": 0.14,
