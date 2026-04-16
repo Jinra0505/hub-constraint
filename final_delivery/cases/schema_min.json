@@ -8,7 +8,7 @@
     "parameters.q",
     "parameters.vot",
     "parameters.stations",
-    "parameters.arc_params",
+    "parameters.arcs",
     "parameters.electricity_price",
     "itineraries"
   ]
