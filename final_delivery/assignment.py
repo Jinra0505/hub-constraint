@@ -1,7 +1,14 @@
 import math
 from typing import Any, Dict, List, Tuple
 
-from .utils import logsumexp
+def logsumexp(values) -> float:
+    vals = list(values)
+    if not vals:
+        return -float("inf")
+    m = max(vals)
+    if math.isinf(m):
+        return m
+    return m + math.log(sum(math.exp(v - m) for v in vals))
 
 
 EVTOL_MODES = {"eVTOL", "eVTOL_fast", "eVTOL_slow", "EV_to_eVTOL_fast", "EV_to_eVTOL_slow"}
@@ -163,6 +170,8 @@ def compute_itinerary_costs(
     vt_departure_waits: Dict[str, Dict[str, Dict[int, float]]] | None = None,
     transfer_time_by_station: Dict[str, float] | Dict[str, Dict[int, float]] | None = None,
     transfer_time_default: float = 0.0,
+    transfer_congestion_waits: Dict[str, Dict[int, float]] | None = None,
+    multimodal_continuity_penalty: Dict[str, Dict[int, float]] | None = None,
 ) -> Dict[str, Dict[int, Dict[str, float]]]:
     costs: Dict[str, Dict[int, Dict[str, float]]] = {it["id"]: {} for it in itineraries}
     for it in itineraries:
@@ -194,8 +203,10 @@ def compute_itinerary_costs(
                 charge_cost += float(stop.get("energy", 0.0)) * float(electricity_price[station][t])
 
             transfer_time_applied = 0.0
+            transfer_congestion_time = 0.0
             transfer_time_source = "none"
             access_energy_price_source = "none"
+            continuity_penalty = 0.0
 
             # Optional scalar access energy (multimodal).
             # If access_stations already provide per-station energy for this time, scalar access_energy_kwh
@@ -247,6 +258,12 @@ def compute_itinerary_costs(
                         transfer_time_applied = float(transfer_time_default)
                         transfer_time_source = "global_default"
                     tt += transfer_time_applied
+                    if dep_station is not None and transfer_congestion_waits and dep_station in transfer_congestion_waits:
+                        transfer_congestion_time = float(transfer_congestion_waits[dep_station].get(t, 0.0))
+                        tt += transfer_congestion_time
+                    if dep_station is not None and multimodal_continuity_penalty and dep_station in multimodal_continuity_penalty:
+                        continuity_penalty = float(multimodal_continuity_penalty[dep_station].get(t, 0.0))
+                        money_t += continuity_penalty
                 tt += flight_time
                 svc_class = get_evtol_service_class(it)
                 if vt_departure_waits is not None:
@@ -264,6 +281,8 @@ def compute_itinerary_costs(
                 "ChargeCost": charge_cost,
                 "cost_breakdown": {
                     "transfer_time_applied": transfer_time_applied,
+                    "transfer_congestion_time": transfer_congestion_time,
+                    "continuity_penalty": continuity_penalty,
                     "transfer_time_source": transfer_time_source,
                     "access_energy_price_source": access_energy_price_source,
                 },
@@ -282,8 +301,9 @@ def logit_assignment(
     ev_service_prob: Dict[str, Dict[int, float]] | None = None,
     vt_service_prob_floor: float = 1.0e-4,
     ev_service_prob_floor: float = 1.0e-4,
-    vt_reliability_gamma: float = 0.0,
-    ev_reliability_gamma: float = 0.0,
+    vt_reliability_gamma: float = 0.15,
+    ev_reliability_gamma: float = 0.08,
+    multimodal_reliability_gamma: float = 0.12,
     vt_service_prob_skip_below: float = 0.0,
     ev_service_prob_skip_below: float = 0.0,
     fail_on_infeasible_demand: bool = False,
@@ -309,10 +329,24 @@ def logit_assignment(
     utility_breakdown: Dict[str, Dict[str, Dict[int, Dict[str, float]]]] = {
         it["id"]: {group: {t: {} for t in times} for group in all_groups} for it in itineraries
     }
+    feasibility_mask: Dict[str, Dict[str, Dict[int, bool]]] = {
+        it["id"]: {group: {t: False for t in times} for group in all_groups} for it in itineraries
+    }
+    infeasible_reasons: Dict[str, Dict[str, Dict[int, str]]] = {
+        it["id"]: {group: {t: "not_evaluated" for t in times} for group in all_groups} for it in itineraries
+    }
 
     unserved_demand: Dict[str, Dict[str, Dict[int, float]]] = {}
     unserved_demand_total = 0.0
     unserved_cases_count = 0
+    skip_threshold_stats = {
+        "vt_skip_threshold": float(vt_service_prob_skip_below),
+        "ev_skip_threshold": float(ev_service_prob_skip_below),
+        "alts_skipped_vt_below_threshold": 0,
+        "alts_skipped_ev_below_threshold": 0,
+        "od_group_time_with_any_vt_skip": 0,
+        "od_group_time_with_any_ev_skip": 0,
+    }
 
     itineraries_by_od: Dict[str, List[Dict[str, Any]]] = {}
     for it in itineraries:
@@ -347,6 +381,8 @@ def logit_assignment(
 
                 feasible_alts = []
                 total_demand = float(time_map.get(t, 0.0))
+                any_vt_skip = False
+                any_ev_skip = False
                 for it in available_alts:
                     comp = costs[it["id"]][t]
                     raw_cost = float(vot[group][t]) * comp["TT"] + comp["Money"] + comp["ChargeCost"]
@@ -354,6 +390,7 @@ def logit_assignment(
                     if math.isinf(raw_cost):
                         generalized_costs_perceived[it["id"]][group][t] = float("inf")
                         utilities[it["id"]][group][t] = -float("inf")
+                        infeasible_reasons[it["id"]][group][t] = "inf_raw_cost"
                         continue
 
                     vt_prob = 1.0
@@ -363,6 +400,9 @@ def logit_assignment(
                             vt_prob = float(vt_service_prob[dep_station].get(t, 1.0))
                         vt_prob = min(1.0, max(vt_service_prob_floor, vt_prob))
                         if vt_service_prob_skip_below > 0.0 and vt_prob < vt_service_prob_skip_below:
+                            skip_threshold_stats["alts_skipped_vt_below_threshold"] += 1
+                            any_vt_skip = True
+                            infeasible_reasons[it["id"]][group][t] = "vt_skip_threshold"
                             continue
 
                     ev_prob = 1.0
@@ -378,13 +418,25 @@ def logit_assignment(
                             ev_prob = min(ev_candidates)
                     ev_prob = min(1.0, max(ev_service_prob_floor, ev_prob))
                     if (str(it.get("mode", "")) == "EV" or is_multimodal_evtol(it)) and ev_service_prob_skip_below > 0.0 and ev_prob < ev_service_prob_skip_below:
+                        skip_threshold_stats["alts_skipped_ev_below_threshold"] += 1
+                        any_ev_skip = True
+                        infeasible_reasons[it["id"]][group][t] = "ev_skip_threshold"
                         continue
 
                     vt_term = vt_reliability_gamma * math.log(max(vt_prob, vt_service_prob_floor))
                     ev_term = ev_reliability_gamma * math.log(max(ev_prob, ev_service_prob_floor))
+                    mm_term = 0.0
+                    # Avoid double counting unreliability for multimodal:
+                    # multimodal alternatives use a joint reliability term as the main utility-side
+                    # reliability signal; pure-mode terms are strongly down-weighted.
+                    if is_multimodal_evtol(it):
+                        mm_joint = min(vt_prob, ev_prob)
+                        mm_term = multimodal_reliability_gamma * math.log(max(mm_joint, 1.0e-8))
+                        vt_term *= 0.25
+                        ev_term *= 0.25
                     lam = max(float(lambdas[group]), 1.0e-9)
-                    perceived_cost = raw_cost - (vt_term + ev_term) / lam
-                    util = -lam * raw_cost + vt_term + ev_term
+                    perceived_cost = raw_cost - (vt_term + ev_term + mm_term) / lam
+                    util = -lam * raw_cost + vt_term + ev_term + mm_term
 
                     generalized_costs_perceived[it["id"]][group][t] = perceived_cost
                     utilities[it["id"]][group][t] = util
@@ -395,12 +447,21 @@ def logit_assignment(
                         "ev_prob": ev_prob,
                         "vt_reliability_term": vt_term,
                         "ev_reliability_term": ev_term,
+                        "multimodal_reliability_term": mm_term,
                         "perceived_cost": perceived_cost,
                         "transfer_time_applied": float(cb.get("transfer_time_applied", 0.0) or 0.0),
+                        "transfer_congestion_time": float(cb.get("transfer_congestion_time", 0.0) or 0.0),
+                        "continuity_penalty": float(cb.get("continuity_penalty", 0.0) or 0.0),
                         "transfer_time_source": str(cb.get("transfer_time_source", "none")),
                         "access_energy_price_source": str(cb.get("access_energy_price_source", "none")),
                     }
+                    feasibility_mask[it["id"]][group][t] = True
+                    infeasible_reasons[it["id"]][group][t] = "feasible"
                     feasible_alts.append((it, util))
+                if any_vt_skip:
+                    skip_threshold_stats["od_group_time_with_any_vt_skip"] += 1
+                if any_ev_skip:
+                    skip_threshold_stats["od_group_time_with_any_ev_skip"] += 1
 
                 if total_demand <= 0.0:
                     continue
@@ -422,6 +483,9 @@ def logit_assignment(
         "unserved_demand": unserved_demand,
         "unserved_demand_total": unserved_demand_total,
         "unserved_cases_count": unserved_cases_count,
+        "skip_threshold_stats": skip_threshold_stats,
+        "feasibility_mask": feasibility_mask,
+        "infeasible_reasons": infeasible_reasons,
     }
     return flows, details
 
