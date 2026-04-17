@@ -325,6 +325,11 @@ def load_data(data_path: str, schema_path: str) -> Dict[str, Any]:
     cfg.setdefault("flow_step_relax", 0.65)
     cfg.setdefault("flow_step_floor", 0.15)
     cfg.setdefault("price_step_relax", 0.45)
+    cfg.setdefault("readiness_step_relax", cfg.get("price_step_relax", 0.45))
+    cfg.setdefault("tol_raw_gap", 0.08)
+    cfg.setdefault("tol_price_gap", 0.025)
+    cfg.setdefault("tol_readiness_gap", 0.015)
+    cfg.setdefault("tol_stable_iters", 3)
 
     required_paths = schema.get("required_paths", [])
     try:

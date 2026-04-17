@@ -388,6 +388,10 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     ev_service_prob = _init_station_time(stations, times, 1.0)
 
     flows = {it["id"]: {g: {t: 0.0 for t in times} for g in groups} for it in itineraries}
+    itineraries_by_od: Dict[str, List[Dict[str, Any]]] = {}
+    for it in itineraries:
+        od_key = f"{it['od'][0]}-{it['od'][1]}"
+        itineraries_by_od.setdefault(od_key, []).append(it)
     hub_diag: Dict[str, Dict[int, Dict[str, Any]]] = {s: {} for s in stations}
     iteration_history: List[Dict[str, Any]] = []
 
@@ -408,6 +412,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     tol_raw_gap = float(cfg.get("tol_raw_gap", 0.02))
     tol_price_gap = float(cfg.get("tol_price_gap", 0.02))
     tol_readiness_gap = float(cfg.get("tol_readiness_gap", 0.02))
+    tol_stable_iters = max(1, int(cfg.get("tol_stable_iters", 3)))
+    stable_hit_count = 0
 
     vt_diag_components: Dict[str, Dict[int, Dict[str, float]]] = {s: {t: {} for t in times} for s in stations}
 
@@ -458,36 +464,47 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             vt_service_prob_skip_below=float(cfg.get("vt_service_prob_skip_below", 0.0)),
             ev_service_prob_skip_below=float(cfg.get("ev_service_prob_skip_below", 0.0)),
         )
-        station_loads = compute_station_loads_from_flows(data, itineraries, flows_new, times)
+        dx_raw = 0.0
+        dx = 0.0
+        feasibility = assign_details.get("feasibility_mask", {})
+        flows_relaxed = {it["id"]: {g: {t: 0.0 for t in times} for g in groups} for it in itineraries}
+        for od_key, it_list in itineraries_by_od.items():
+            for g in groups:
+                for t in times:
+                    for it in it_list:
+                        it_id = it["id"]
+                        old = float(flows[it_id][g][t])
+                        new = float(flows_new[it_id][g][t])
+                        gap = abs(new - old)
+                        dx_raw = max(dx_raw, gap)
+                        is_feasible = bool(feasibility.get(it_id, {}).get(g, {}).get(t, False))
+                        if is_feasible:
+                            val = (1.0 - alpha) * old + alpha * new
+                            flows_relaxed[it_id][g][t] = max(0.0, val)
+                        else:
+                            # Strict ghost-flow cleanup: skipped/infeasible alternatives cannot retain positive flow.
+                            flows_relaxed[it_id][g][t] = 0.0
+        for it in itineraries:
+            for g in groups:
+                for t in times:
+                    dx = max(dx, abs(float(flows_relaxed[it["id"]][g][t]) - float(flows[it["id"]][g][t])))
+        flows = flows_relaxed
+        if prev_dx is not None and dx_raw > prev_dx * 1.03:
+            alpha = max(flow_floor, 0.7 * alpha)
+        prev_dx = dx_raw
+
+        # IMPORTANT iterate-consistency rule:
+        # station loads, shared power, prices/readiness, and diagnostics are all computed from the same relaxed iterate.
+        transfer_wait_iter = _compute_transfer_waits(data, itineraries, flows, times)
+        _, vt_wait_diag_iter = _compute_vt_departure_waits(data, itineraries, flows, times)
+        station_loads = compute_station_loads_from_flows(data, itineraries, flows, times)
         B_out, P_out, shed_ev, shed_vt, shadow_prices, _, lp_diag = solve_shared_power_inventory_lp(
             data,
             station_loads["E_vt_req"],
             station_loads["E_ev_req"],
         )
-
-        dx_raw = 0.0
-        dx = 0.0
-        for it in itineraries:
-            for g in groups:
-                for t in times:
-                    old = float(flows[it["id"]][g][t])
-                    new = float(flows_new[it["id"]][g][t])
-                    gap = abs(new - old)
-                    dx_raw = max(dx_raw, gap)
-                    applied = alpha * gap
-                    dx = max(dx, applied)
-                    util_val = float(assign_details.get("utilities", {}).get(it["id"], {}).get(g, {}).get(t, 0.0))
-                    # Ghost-flow guard: infeasible/filtered alternatives are zeroed directly.
-                    if util_val == -float("inf"):
-                        flows[it["id"]][g][t] = 0.0
-                    else:
-                        flows[it["id"]][g][t] = (1.0 - alpha) * old + alpha * new
-        if prev_dx is not None and dx_raw > prev_dx * 1.03:
-            alpha = max(flow_floor, 0.7 * alpha)
-        prev_dx = dx_raw
-
         vt_service_prob_new, ev_service_prob_new, vt_diag_components = _compute_vt_ev_service_probabilities(
-            data, times, station_loads, shed_ev, shed_vt, vt_wait_diag
+            data, times, station_loads, shed_ev, shed_vt, vt_wait_diag_iter
         )
 
         price_gap = 0.0
@@ -533,7 +550,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "vt_operational_readiness": vt_service_prob[s][t],
                     "ev_service_probability": ev_service_prob[s][t],
                     "vt_service_components": vt_diag_components[s][t],
-                    "transfer_congestion_wait": transfer_wait[s][t],
+                    "transfer_congestion_wait": transfer_wait_iter[s][t],
                     "multimodal_continuity_penalty": mm_penalty[s][t],
                 }
         iteration_history.append({
@@ -549,8 +566,10 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         last_readiness_gap = readiness_gap
         prev_price = {s: {t: float(electricity_price[s][t]) for t in times} for s in stations}
         prev_vt_ready = {s: {t: float(vt_service_prob[s][t]) for t in times} for s in stations}
-        if dx <= tol_flow and dx_raw <= tol_raw_gap and price_gap <= tol_price_gap and readiness_gap <= tol_readiness_gap:
-            stop_reason = "tol_flow"
+        meets_tol = dx <= tol_flow and dx_raw <= tol_raw_gap and price_gap <= tol_price_gap and readiness_gap <= tol_readiness_gap
+        stable_hit_count = stable_hit_count + 1 if meets_tol else 0
+        if stable_hit_count >= tol_stable_iters:
+            stop_reason = "tol_stable"
             break
 
     # Final-state recomputation to ensure output consistency on one coherent final state.
@@ -597,6 +616,14 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         vt_service_prob_skip_below=float(cfg.get("vt_service_prob_skip_below", 0.0)),
         ev_service_prob_skip_below=float(cfg.get("ev_service_prob_skip_below", 0.0)),
     )
+    # Final strict cleanup on terminal iterate (no positive flow on infeasible/skipped alts).
+    feasibility_final = assign_details.get("feasibility_mask", {})
+    for it in itineraries:
+        it_id = it["id"]
+        for g in groups:
+            for t in times:
+                if not bool(feasibility_final.get(it_id, {}).get(g, {}).get(t, False)):
+                    flows[it_id][g][t] = 0.0
 
     mode_share = _mode_share_by_group_time(itineraries, flows, groups, times)
     group_metrics = _group_time_supermode_metrics(itineraries, flows, costs, groups, times, vot)
@@ -629,6 +656,8 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             "tol_raw_gap": tol_raw_gap,
             "tol_price_gap": tol_price_gap,
             "tol_readiness_gap": tol_readiness_gap,
+            "tol_stable_iters": tol_stable_iters,
+            "stable_hit_count_final": stable_hit_count,
         },
         "shared_power_price_signal_check": {
             "solver_used": str(data.get("diagnostics_runtime", {}).get("lp_failure", {}).get("fallback_solver", "highs"))

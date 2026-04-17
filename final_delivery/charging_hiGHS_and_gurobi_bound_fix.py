@@ -567,8 +567,15 @@ def solve_shared_power_inventory_highs(
         p_ch = sum(P_ch_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
         p_ev_served = max(0.0, p_ev_req_kw[s][t] - shed_ev_out[s][t])
         cap = float(_effective_station_power_cap(data, s, t))
-        if cap - (p_ch + p_ev_served) <= 1.0e-6 and (shed_ev_out[s][t] > 1.0e-8 or sum(shed_vt_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s) > 1.0e-8):
-            mu = min(max_shadow, max(0.0, voll_ev_per_kwh - float(prices[s][t])))
+        total_req = p_ev_req_kw[s][t] + sum(float(e_dep.get(dep, {}).get(t, 0.0)) / max(1.0e-9, delta_t) for dep in deps if dep == s)
+        vt_shed_kw = sum(shed_vt_out.get(dep, {}).get(t, 0.0) / max(1.0e-9, delta_t) for dep in deps if dep == s)
+        shed_total = max(0.0, shed_ev_out[s][t] + vt_shed_kw)
+        util = (p_ch + p_ev_served) / max(1.0e-9, cap) if cap > 0.0 else 0.0
+        shed_ratio = shed_total / max(1.0e-9, total_req) if total_req > 0.0 else 0.0
+        if util >= 0.92 or shed_ratio > 1.0e-6:
+            base = max(0.0, voll_ev_per_kwh - float(prices[s][t]))
+            intensity = min(1.0, 0.55 * max(0.0, util - 0.8) / 0.2 + 0.45 * min(1.0, shed_ratio * 3.0))
+            mu = min(max_shadow, base * intensity)
             shadow_prices[s][t] = mu
             scarcity_trace[s][t]["proxy_signal_kw"] = mu
 

@@ -329,6 +329,12 @@ def logit_assignment(
     utility_breakdown: Dict[str, Dict[str, Dict[int, Dict[str, float]]]] = {
         it["id"]: {group: {t: {} for t in times} for group in all_groups} for it in itineraries
     }
+    feasibility_mask: Dict[str, Dict[str, Dict[int, bool]]] = {
+        it["id"]: {group: {t: False for t in times} for group in all_groups} for it in itineraries
+    }
+    infeasible_reasons: Dict[str, Dict[str, Dict[int, str]]] = {
+        it["id"]: {group: {t: "not_evaluated" for t in times} for group in all_groups} for it in itineraries
+    }
 
     unserved_demand: Dict[str, Dict[str, Dict[int, float]]] = {}
     unserved_demand_total = 0.0
@@ -384,6 +390,7 @@ def logit_assignment(
                     if math.isinf(raw_cost):
                         generalized_costs_perceived[it["id"]][group][t] = float("inf")
                         utilities[it["id"]][group][t] = -float("inf")
+                        infeasible_reasons[it["id"]][group][t] = "inf_raw_cost"
                         continue
 
                     vt_prob = 1.0
@@ -395,6 +402,7 @@ def logit_assignment(
                         if vt_service_prob_skip_below > 0.0 and vt_prob < vt_service_prob_skip_below:
                             skip_threshold_stats["alts_skipped_vt_below_threshold"] += 1
                             any_vt_skip = True
+                            infeasible_reasons[it["id"]][group][t] = "vt_skip_threshold"
                             continue
 
                     ev_prob = 1.0
@@ -412,6 +420,7 @@ def logit_assignment(
                     if (str(it.get("mode", "")) == "EV" or is_multimodal_evtol(it)) and ev_service_prob_skip_below > 0.0 and ev_prob < ev_service_prob_skip_below:
                         skip_threshold_stats["alts_skipped_ev_below_threshold"] += 1
                         any_ev_skip = True
+                        infeasible_reasons[it["id"]][group][t] = "ev_skip_threshold"
                         continue
 
                     vt_term = vt_reliability_gamma * math.log(max(vt_prob, vt_service_prob_floor))
@@ -441,6 +450,8 @@ def logit_assignment(
                         "transfer_time_source": str(cb.get("transfer_time_source", "none")),
                         "access_energy_price_source": str(cb.get("access_energy_price_source", "none")),
                     }
+                    feasibility_mask[it["id"]][group][t] = True
+                    infeasible_reasons[it["id"]][group][t] = "feasible"
                     feasible_alts.append((it, util))
                 if any_vt_skip:
                     skip_threshold_stats["od_group_time_with_any_vt_skip"] += 1
@@ -468,6 +479,8 @@ def logit_assignment(
         "unserved_demand_total": unserved_demand_total,
         "unserved_cases_count": unserved_cases_count,
         "skip_threshold_stats": skip_threshold_stats,
+        "feasibility_mask": feasibility_mask,
+        "infeasible_reasons": infeasible_reasons,
     }
     return flows, details
 
