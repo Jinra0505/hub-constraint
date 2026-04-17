@@ -321,7 +321,7 @@ def load_data(data_path: str, schema_path: str) -> Dict[str, Any]:
     cfg.setdefault("use_distribution_grid", False)
     cfg.setdefault("vt_reliability_gamma", 0.28)
     cfg.setdefault("ev_reliability_gamma", 0.12)
-    cfg.setdefault("multimodal_reliability_gamma", 0.3)
+    cfg.setdefault("multimodal_reliability_gamma", 0.08)
     cfg.setdefault("flow_step_relax", 0.65)
     cfg.setdefault("flow_step_floor", 0.15)
     cfg.setdefault("price_step_relax", 0.45)
@@ -330,6 +330,10 @@ def load_data(data_path: str, schema_path: str) -> Dict[str, Any]:
     cfg.setdefault("tol_price_gap", 0.025)
     cfg.setdefault("tol_readiness_gap", 0.015)
     cfg.setdefault("tol_stable_iters", 3)
+    cfg.setdefault("scarcity_util_start", 0.72)
+    cfg.setdefault("scarcity_util_full", 1.03)
+    cfg.setdefault("scarcity_shed_scale", 0.25)
+    cfg.setdefault("scarcity_proxy_power", 1.35)
 
     required_paths = schema.get("required_paths", [])
     try:

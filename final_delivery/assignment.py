@@ -426,9 +426,14 @@ def logit_assignment(
                     vt_term = vt_reliability_gamma * math.log(max(vt_prob, vt_service_prob_floor))
                     ev_term = ev_reliability_gamma * math.log(max(ev_prob, ev_service_prob_floor))
                     mm_term = 0.0
+                    # Avoid double counting unreliability for multimodal:
+                    # multimodal alternatives use a joint reliability term as the main utility-side
+                    # reliability signal; pure-mode terms are strongly down-weighted.
                     if is_multimodal_evtol(it):
                         mm_joint = min(vt_prob, ev_prob)
                         mm_term = multimodal_reliability_gamma * math.log(max(mm_joint, 1.0e-8))
+                        vt_term *= 0.25
+                        ev_term *= 0.25
                     lam = max(float(lambdas[group]), 1.0e-9)
                     perceived_cost = raw_cost - (vt_term + ev_term + mm_term) / lam
                     util = -lam * raw_cost + vt_term + ev_term + mm_term

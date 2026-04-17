@@ -562,7 +562,12 @@ def solve_shared_power_inventory_highs(
     # MILP has no reliable LP dual semantics for binding-cap rows; use an honest scarcity proxy.
     shadow_prices = {s: {t: 0.0 for t in times} for s in stations}
     scarcity_trace = {s: {t: {"label": f"cap_constraint[{s},{t}]", "proxy_signal_kw": None} for t in times} for s in stations}
-    max_shadow = float(data.get("config", {}).get("max_local_shadow_price", 2.5))
+    cfg = data.get("config", {})
+    max_shadow = float(cfg.get("max_local_shadow_price", 2.5))
+    scarcity_util_start = float(cfg.get("scarcity_util_start", 0.72))
+    scarcity_util_full = float(cfg.get("scarcity_util_full", 1.03))
+    scarcity_shed_scale = float(cfg.get("scarcity_shed_scale", 0.25))
+    scarcity_power = max(0.5, float(cfg.get("scarcity_proxy_power", 1.35)))
     for s, t, _ in cap_rows:
         p_ch = sum(P_ch_out.get(dep, {}).get(t, 0.0) for dep in deps if dep == s)
         p_ev_served = max(0.0, p_ev_req_kw[s][t] - shed_ev_out[s][t])
@@ -572,10 +577,11 @@ def solve_shared_power_inventory_highs(
         shed_total = max(0.0, shed_ev_out[s][t] + vt_shed_kw)
         util = (p_ch + p_ev_served) / max(1.0e-9, cap) if cap > 0.0 else 0.0
         shed_ratio = shed_total / max(1.0e-9, total_req) if total_req > 0.0 else 0.0
-        if util >= 0.92 or shed_ratio > 1.0e-6:
-            base = max(0.0, voll_ev_per_kwh - float(prices[s][t]))
-            intensity = min(1.0, 0.55 * max(0.0, util - 0.8) / 0.2 + 0.45 * min(1.0, shed_ratio * 3.0))
-            mu = min(max_shadow, base * intensity)
+        if util >= scarcity_util_start or shed_ratio > 1.0e-6:
+            util_component = max(0.0, min(1.0, (util - scarcity_util_start) / max(1.0e-6, scarcity_util_full - scarcity_util_start)))
+            shed_component = max(0.0, min(1.0, shed_ratio / max(1.0e-6, scarcity_shed_scale)))
+            intensity = min(1.0, 0.6 * util_component + 0.4 * shed_component)
+            mu = min(max_shadow, max_shadow * (intensity ** scarcity_power))
             shadow_prices[s][t] = mu
             scarcity_trace[s][t]["proxy_signal_kw"] = mu
 

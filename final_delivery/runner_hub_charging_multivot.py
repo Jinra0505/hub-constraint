@@ -399,6 +399,7 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     tol_flow = float(cfg.get("tol_flow", cfg.get("tol", 1e-3)))
     flow_relax = float(cfg.get("flow_step_relax", 0.65))
     flow_floor = float(cfg.get("flow_step_floor", 0.15))
+    flow_decay = max(0.0, float(cfg.get("flow_step_decay", 0.0)))
     price_relax = float(cfg.get("price_step_relax", 0.45))
     readiness_relax = float(cfg.get("readiness_step_relax", price_relax))
     max_shadow = float(cfg.get("max_local_shadow_price", 2.5))
@@ -416,9 +417,10 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     stable_hit_count = 0
 
     vt_diag_components: Dict[str, Dict[int, Dict[str, float]]] = {s: {t: {} for t in times} for s in stations}
+    alpha_state = min(1.0, max(flow_floor, flow_relax))
 
     for itn in range(1, max_iter + 1):
-        alpha = max(flow_floor, flow_relax / (1.0 + 0.08 * (itn - 1)))
+        alpha = max(flow_floor, alpha_state / (1.0 + flow_decay * (itn - 1)))
         arc_flows = aggregate_arc_flows(itineraries, flows, times)
         travel_times = _compute_road_times(arc_flows, data["parameters"]["arcs"], times)
         ev_wait = _compute_station_waits(aggregate_ev_station_utilization(itineraries, flows, times), data["parameters"]["stations"], times)
@@ -428,15 +430,14 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         mm_penalty = {s: {t: 0.0 for t in times} for s in stations}
         cpen = cfg.get("multimodal_continuity_penalty", {})
         base = float(cpen.get("base_transfer_fragility_penalty", 0.0))
-        cev = float(cpen.get("coeff_ev_unreliability", 0.0))
-        cvt = float(cpen.get("coeff_vt_unreliability", 0.0))
-        cjoint = float(cpen.get("coeff_joint_unreliability", 0.0))
         cover = float(cpen.get("coeff_transfer_overrun", 0.0))
         th = float(cpen.get("transfer_buffer_threshold", 0.0))
         for s in stations:
             for t in times:
                 overrun = max(0.0, transfer_wait[s][t] - th)
-                mm_penalty[s][t] = base + cev * (1.0 - ev_service_prob[s][t]) + cvt * (1.0 - vt_service_prob[s][t]) + cjoint * (1.0 - ev_service_prob[s][t]) * (1.0 - vt_service_prob[s][t]) + cover * overrun
+                # Continuity penalty only represents transfer-specific fragility.
+                # Reliability effects are handled in assignment utility terms.
+                mm_penalty[s][t] = base + cover * overrun
 
         costs = compute_itinerary_costs(
             itineraries,
@@ -489,10 +490,6 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                 for t in times:
                     dx = max(dx, abs(float(flows_relaxed[it["id"]][g][t]) - float(flows[it["id"]][g][t])))
         flows = flows_relaxed
-        if prev_dx is not None and dx_raw > prev_dx * 1.03:
-            alpha = max(flow_floor, 0.7 * alpha)
-        prev_dx = dx_raw
-
         # IMPORTANT iterate-consistency rule:
         # station loads, shared power, prices/readiness, and diagnostics are all computed from the same relaxed iterate.
         transfer_wait_iter = _compute_transfer_waits(data, itineraries, flows, times)
@@ -564,6 +561,12 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         last_raw_gap = dx_raw
         last_price_gap = price_gap
         last_readiness_gap = readiness_gap
+        if prev_dx is not None:
+            if dx_raw > prev_dx * 1.01:
+                alpha_state = max(flow_floor, alpha_state * 0.85)
+            elif dx_raw < prev_dx * 0.97 and price_gap <= (2.0 * tol_price_gap) and readiness_gap <= (2.0 * tol_readiness_gap):
+                alpha_state = min(flow_relax, alpha_state * 1.03)
+        prev_dx = dx_raw
         prev_price = {s: {t: float(electricity_price[s][t]) for t in times} for s in stations}
         prev_vt_ready = {s: {t: float(vt_service_prob[s][t]) for t in times} for s in stations}
         meets_tol = dx <= tol_flow and dx_raw <= tol_raw_gap and price_gap <= tol_price_gap and readiness_gap <= tol_readiness_gap
@@ -581,15 +584,12 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     mm_penalty_f = {s: {t: 0.0 for t in times} for s in stations}
     cpen = cfg.get("multimodal_continuity_penalty", {})
     base = float(cpen.get("base_transfer_fragility_penalty", 0.0))
-    cev = float(cpen.get("coeff_ev_unreliability", 0.0))
-    cvt = float(cpen.get("coeff_vt_unreliability", 0.0))
-    cjoint = float(cpen.get("coeff_joint_unreliability", 0.0))
     cover = float(cpen.get("coeff_transfer_overrun", 0.0))
     th = float(cpen.get("transfer_buffer_threshold", 0.0))
     for s in stations:
         for t in times:
             overrun = max(0.0, transfer_wait_f[s][t] - th)
-            mm_penalty_f[s][t] = base + cev * (1.0 - ev_service_prob[s][t]) + cvt * (1.0 - vt_service_prob[s][t]) + cjoint * (1.0 - ev_service_prob[s][t]) * (1.0 - vt_service_prob[s][t]) + cover * overrun
+            mm_penalty_f[s][t] = base + cover * overrun
     costs = compute_itinerary_costs(
         itineraries,
         travel_times_f,

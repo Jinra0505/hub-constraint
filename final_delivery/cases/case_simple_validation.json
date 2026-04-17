@@ -58,11 +58,11 @@
         "4": 11.0
       },
       "high": {
-        "0": 30.0,
-        "1": 30.0,
-        "2": 30.0,
-        "3": 30.0,
-        "4": 30.0
+        "0": 26.0,
+        "1": 26.0,
+        "2": 26.0,
+        "3": 26.0,
+        "4": 26.0
       }
     },
     "q": {
@@ -480,11 +480,11 @@
       "mode": "EV_to_eVTOL_fast",
       "service_class": "fast",
       "money": {
-        "0": 8.6,
-        "1": 8.6,
-        "2": 8.6,
-        "3": 8.6,
-        "4": 8.6
+        "0": 8.2,
+        "1": 8.2,
+        "2": 8.2,
+        "3": 8.2,
+        "4": 8.2
       },
       "dep_station": "H2",
       "arr_station": "H3",
@@ -690,11 +690,11 @@
       "mode": "EV_to_eVTOL_fast",
       "service_class": "fast",
       "money": {
-        "0": 9.0,
-        "1": 9.0,
-        "2": 9.0,
-        "3": 9.0,
-        "4": 9.0
+        "0": 8.7,
+        "1": 8.7,
+        "2": 8.7,
+        "3": 8.7,
+        "4": 8.7
       },
       "dep_station": "H1",
       "arr_station": "H2",
@@ -785,24 +785,24 @@
     "vt_shed_penalty_multiplier": 1.0,
     "storage_throughput_penalty_per_kwh": 6.0,
     "multimodal_continuity_penalty": {
-      "base_transfer_fragility_penalty": 0.005,
+      "base_transfer_fragility_penalty": 0.004,
       "coeff_ev_unreliability": 0.03,
       "coeff_vt_unreliability": 0.04,
       "coeff_joint_unreliability": 0.02,
-      "coeff_transfer_overrun": 0.15,
+      "coeff_transfer_overrun": 0.12,
       "transfer_buffer_threshold": 0.16
     },
-    "flow_step_relax": 0.08,
-    "flow_step_floor": 0.01,
+    "flow_step_relax": 0.12,
+    "flow_step_floor": 0.02,
     "price_step_relax": 0.02,
     "vt_reliability_gamma": 0.14,
     "ev_reliability_gamma": 0.06,
-    "multimodal_reliability_gamma": 0.004,
+    "multimodal_reliability_gamma": 0.003,
     "vt_reposition_enabled": true,
     "vt_reposition_lag": 1,
     "vt_reposition_reserve": 0.7,
     "vt_reposition_max_send_per_period": 1.4,
-    "max_local_shadow_price": 2.0,
+    "max_local_shadow_price": 1.8,
     "vt_service_prob_skip_below": 0.0,
     "ev_service_prob_skip_below": 0.0,
     "storage_charge_with_departure_cap_ratio": 0.03,
@@ -810,11 +810,16 @@
     "ev_service_prob_floor": 0.01,
     "vt_energy_weight": 0.45,
     "vt_departure_wait_util_cap": 5.7,
-    "tol_raw_gap": 0.08,
-    "tol_price_gap": 0.025,
+    "tol_raw_gap": 0.09,
+    "tol_price_gap": 0.02,
     "tol_readiness_gap": 0.015,
     "vt_ops_aircraft_weight": 0.8,
     "readiness_step_relax": 0.02,
-    "tol_stable_iters": 3
+    "tol_stable_iters": 3,
+    "flow_step_decay": 0.0,
+    "scarcity_util_start": 0.65,
+    "scarcity_util_full": 1.15,
+    "scarcity_proxy_power": 1.0,
+    "scarcity_shed_scale": 0.35
   }
 }
