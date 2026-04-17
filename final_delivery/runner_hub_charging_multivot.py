@@ -400,6 +400,14 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
     max_shadow = float(cfg.get("max_local_shadow_price", 2.5))
     stop_reason = "max_iter"
     prev_dx = None
+    prev_price = {s: {t: float(electricity_price[s][t]) for t in times} for s in stations}
+    prev_vt_ready = {s: {t: float(vt_service_prob[s][t]) for t in times} for s in stations}
+    last_raw_gap = None
+    last_price_gap = None
+    last_readiness_gap = None
+    tol_raw_gap = float(cfg.get("tol_raw_gap", 0.02))
+    tol_price_gap = float(cfg.get("tol_price_gap", 0.02))
+    tol_readiness_gap = float(cfg.get("tol_readiness_gap", 0.02))
 
     vt_diag_components: Dict[str, Dict[int, Dict[str, float]]] = {s: {t: {} for t in times} for s in stations}
 
@@ -468,7 +476,12 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     dx_raw = max(dx_raw, gap)
                     applied = alpha * gap
                     dx = max(dx, applied)
-                    flows[it["id"]][g][t] = (1.0 - alpha) * old + alpha * new
+                    util_val = float(assign_details.get("utilities", {}).get(it["id"], {}).get(g, {}).get(t, 0.0))
+                    # Ghost-flow guard: infeasible/filtered alternatives are zeroed directly.
+                    if util_val == -float("inf"):
+                        flows[it["id"]][g][t] = 0.0
+                    else:
+                        flows[it["id"]][g][t] = (1.0 - alpha) * old + alpha * new
         if prev_dx is not None and dx_raw > prev_dx * 1.03:
             alpha = max(flow_floor, 0.7 * alpha)
         prev_dx = dx_raw
@@ -477,14 +490,21 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
             data, times, station_loads, shed_ev, shed_vt, vt_wait_diag
         )
 
+        price_gap = 0.0
+        readiness_gap = 0.0
         for s in stations:
             for t in times:
                 base_p = float(data["parameters"]["electricity_price"][s][t])
                 scarcity_proxy_raw = max(0.0, float(shadow_prices.get(s, {}).get(t, 0.0) or 0.0))
                 mu_used = min(max_shadow, scarcity_proxy_raw)
-                electricity_price[s][t] = (1.0 - price_relax) * electricity_price[s][t] + price_relax * (base_p + mu_used)
-                vt_service_prob[s][t] = (1.0 - readiness_relax) * vt_service_prob[s][t] + readiness_relax * vt_service_prob_new[s][t]
-                ev_service_prob[s][t] = (1.0 - readiness_relax) * ev_service_prob[s][t] + readiness_relax * ev_service_prob_new[s][t]
+                new_price = (1.0 - price_relax) * electricity_price[s][t] + price_relax * (base_p + mu_used)
+                new_vt_ready = (1.0 - readiness_relax) * vt_service_prob[s][t] + readiness_relax * vt_service_prob_new[s][t]
+                new_ev_ready = (1.0 - readiness_relax) * ev_service_prob[s][t] + readiness_relax * ev_service_prob_new[s][t]
+                price_gap = max(price_gap, abs(new_price - prev_price[s][t]))
+                readiness_gap = max(readiness_gap, abs(new_vt_ready - prev_vt_ready[s][t]))
+                electricity_price[s][t] = new_price
+                vt_service_prob[s][t] = new_vt_ready
+                ev_service_prob[s][t] = new_ev_ready
 
                 dt = float(data["meta"]["delta_t"])
                 eta = float(data["parameters"].get("vertiport_storage", {}).get(s, {}).get("eta_ch", 1.0))
@@ -516,10 +536,67 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
                     "transfer_congestion_wait": transfer_wait[s][t],
                     "multimodal_continuity_penalty": mm_penalty[s][t],
                 }
-        iteration_history.append({"iteration": itn, "alpha": alpha, "max_flow_delta": dx, "max_flow_delta_raw": dx_raw})
-        if dx <= tol_flow:
+        iteration_history.append({
+            "iteration": itn,
+            "alpha": alpha,
+            "max_flow_delta": dx,
+            "max_flow_delta_raw": dx_raw,
+            "max_price_delta": price_gap,
+            "max_readiness_delta": readiness_gap,
+        })
+        last_raw_gap = dx_raw
+        last_price_gap = price_gap
+        last_readiness_gap = readiness_gap
+        prev_price = {s: {t: float(electricity_price[s][t]) for t in times} for s in stations}
+        prev_vt_ready = {s: {t: float(vt_service_prob[s][t]) for t in times} for s in stations}
+        if dx <= tol_flow and dx_raw <= tol_raw_gap and price_gap <= tol_price_gap and readiness_gap <= tol_readiness_gap:
             stop_reason = "tol_flow"
             break
+
+    # Final-state recomputation to ensure output consistency on one coherent final state.
+    arc_flows_f = aggregate_arc_flows(itineraries, flows, times)
+    travel_times_f = _compute_road_times(arc_flows_f, data["parameters"]["arcs"], times)
+    ev_wait_f = _compute_station_waits(aggregate_ev_station_utilization(itineraries, flows, times), data["parameters"]["stations"], times)
+    transfer_wait_f = _compute_transfer_waits(data, itineraries, flows, times)
+    vt_waits_f, vt_wait_diag_f = _compute_vt_departure_waits(data, itineraries, flows, times)
+    mm_penalty_f = {s: {t: 0.0 for t in times} for s in stations}
+    cpen = cfg.get("multimodal_continuity_penalty", {})
+    base = float(cpen.get("base_transfer_fragility_penalty", 0.0))
+    cev = float(cpen.get("coeff_ev_unreliability", 0.0))
+    cvt = float(cpen.get("coeff_vt_unreliability", 0.0))
+    cjoint = float(cpen.get("coeff_joint_unreliability", 0.0))
+    cover = float(cpen.get("coeff_transfer_overrun", 0.0))
+    th = float(cpen.get("transfer_buffer_threshold", 0.0))
+    for s in stations:
+        for t in times:
+            overrun = max(0.0, transfer_wait_f[s][t] - th)
+            mm_penalty_f[s][t] = base + cev * (1.0 - ev_service_prob[s][t]) + cvt * (1.0 - vt_service_prob[s][t]) + cjoint * (1.0 - ev_service_prob[s][t]) * (1.0 - vt_service_prob[s][t]) + cover * overrun
+    costs = compute_itinerary_costs(
+        itineraries,
+        travel_times_f,
+        ev_wait_f,
+        electricity_price,
+        times,
+        vt_waits_f,
+        data["parameters"].get("transfer_base_time"),
+        transfer_congestion_waits=transfer_wait_f,
+        multimodal_continuity_penalty=mm_penalty_f,
+    )
+    _, assign_details = logit_assignment(
+        itineraries,
+        costs,
+        data["parameters"]["q"],
+        vot,
+        lambdas,
+        times,
+        vt_service_prob=vt_service_prob,
+        ev_service_prob=ev_service_prob,
+        vt_reliability_gamma=float(cfg.get("vt_reliability_gamma", 0.28)),
+        ev_reliability_gamma=float(cfg.get("ev_reliability_gamma", 0.12)),
+        multimodal_reliability_gamma=float(cfg.get("multimodal_reliability_gamma", 0.3)),
+        vt_service_prob_skip_below=float(cfg.get("vt_service_prob_skip_below", 0.0)),
+        ev_service_prob_skip_below=float(cfg.get("ev_service_prob_skip_below", 0.0)),
+    )
 
     mode_share = _mode_share_by_group_time(itineraries, flows, groups, times)
     group_metrics = _group_time_supermode_metrics(itineraries, flows, costs, groups, times, vot)
@@ -544,8 +621,14 @@ def run_hub_charging_multivot(data: Dict[str, Any]) -> Dict[str, Any]:
         "convergence": {
             "final_iteration": iteration_history[-1]["iteration"] if iteration_history else 0,
             "final_max_flow_delta": iteration_history[-1]["max_flow_delta"] if iteration_history else None,
+            "final_max_flow_delta_raw": last_raw_gap,
+            "final_max_price_delta": last_price_gap,
+            "final_max_readiness_delta": last_readiness_gap,
             "stopping_reason": stop_reason,
             "tol_flow": tol_flow,
+            "tol_raw_gap": tol_raw_gap,
+            "tol_price_gap": tol_price_gap,
+            "tol_readiness_gap": tol_readiness_gap,
         },
         "shared_power_price_signal_check": {
             "solver_used": str(data.get("diagnostics_runtime", {}).get("lp_failure", {}).get("fallback_solver", "highs"))
