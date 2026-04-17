@@ -277,7 +277,7 @@
       "H3": 40
     },
     "transfer_alpha": {
-      "H1": 0.95,
+      "H1": 0.9,
       "H2": 0.95,
       "H3": 1.0
     },
@@ -480,11 +480,11 @@
       "mode": "EV_to_eVTOL_fast",
       "service_class": "fast",
       "money": {
-        "0": 8.2,
-        "1": 8.2,
-        "2": 8.2,
-        "3": 8.2,
-        "4": 8.2
+        "0": 8.0,
+        "1": 8.0,
+        "2": 8.0,
+        "3": 8.0,
+        "4": 8.0
       },
       "dep_station": "H2",
       "arr_station": "H3",
@@ -690,11 +690,11 @@
       "mode": "EV_to_eVTOL_fast",
       "service_class": "fast",
       "money": {
-        "0": 8.7,
-        "1": 8.7,
-        "2": 8.7,
-        "3": 8.7,
-        "4": 8.7
+        "0": 8.5,
+        "1": 8.5,
+        "2": 8.5,
+        "3": 8.5,
+        "4": 8.5
       },
       "dep_station": "H1",
       "arr_station": "H2",
@@ -792,8 +792,8 @@
       "coeff_transfer_overrun": 0.12,
       "transfer_buffer_threshold": 0.16
     },
-    "flow_step_relax": 0.12,
-    "flow_step_floor": 0.02,
+    "flow_step_relax": 0.14,
+    "flow_step_floor": 0.025,
     "price_step_relax": 0.02,
     "vt_reliability_gamma": 0.14,
     "ev_reliability_gamma": 0.06,
